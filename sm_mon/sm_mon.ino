@@ -8,6 +8,8 @@ int total = 0;
 int readings = 0;
 int currentAverage = 0;
 int reportedAverage = 0;
+float stdDev = 0;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -29,21 +31,25 @@ void loop() {
  // Serial.println();
   //Serial.println(val);
   float avg = stats.average();
-  float stdDev = stats.pop_stdev();
   
-  if(val < avg - (stdDev * 3)){
+  
+  if(val < avg - (100)){
     Serial.println(avg);
     Serial.println(val);
-    Serial.println(stdDev);
+    //Serial.println(stdDev);
     Serial.println();
     checkpoint();
   }
   
+  
+  
   if(timeElapsed / 1000 > 5){
+    //stdDev = stats.pop_stdev();
+    
     Serial.println("Clear");
     Serial.println(avg);
     Serial.println(val);
-    Serial.println(stdDev);
+    //Serial.println(stdDev);
     stats.clear();
     timeElapsed = 0;
   }
