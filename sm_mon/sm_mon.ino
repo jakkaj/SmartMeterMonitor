@@ -55,7 +55,7 @@ void loop() {
   
   
   
-  if(timeElapsed / 1000 > 10 && isCounting){  
+  if(timeElapsed / 1000 > 30 && isCounting){  
     stats.clear();
     timeElapsed = 0;
     send();
