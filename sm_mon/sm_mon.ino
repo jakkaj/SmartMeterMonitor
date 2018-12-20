@@ -124,7 +124,7 @@ void checkpoint(){
     Serial.println("Beginning checkpoint session"); 
     isCounting = true;
     timeElapsed = 0;    
-    impressionsCounted = 1;
+    impressionsCounted = 0;
     return;    
   }
 
