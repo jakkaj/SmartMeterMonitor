@@ -19,7 +19,7 @@ namespace Smart.Tests
         [TestMethod]
         public async Task TestPostToPowerBi()
         {
-            await PowerBIHelper.Push(1.20);
+            //await PowerBIHelper.Push(1.20);
         }
     }
 }

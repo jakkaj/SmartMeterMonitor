@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Smart.Web.Models;
 
 namespace Smart.Web
 {
@@ -31,6 +33,12 @@ namespace Smart.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            services.Configure<PowerSecrets>(Configuration.GetSection("Power"));
+
+            var connection = Configuration.GetSection("Power").Get<PowerSecrets>().DBConnectionString;
+            services.AddDbContext<PowerContext>
+                (options => options.UseSqlServer(connection));
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
