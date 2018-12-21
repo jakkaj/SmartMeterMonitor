@@ -17,9 +17,12 @@ namespace Smart.Web.Controllers
 
             var result = KWHelper.CalcKWH(imp, time);
             var resultDay = result * 24;
+            decimal resultDollars = ((decimal)resultDay * 28.52M) / 100M;
             var rString = string.Format("{0:0.00}", result);
             var rStringDay = string.Format("{0:0.00}", resultDay);
-            Console.WriteLine($"{rString}kwh -> {rStringDay} per day");
+            var rDollars = resultDollars.ToString("C0");
+
+            Console.WriteLine($"{rString}kwh -> {rStringDay} kwh per day -> {rDollars} per day @ {DateTime.Now.ToString()}");
 
             await PowerBIHelper.Push(result);
 
