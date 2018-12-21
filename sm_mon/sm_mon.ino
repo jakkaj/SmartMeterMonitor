@@ -4,11 +4,11 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 
-const char* ssid = "CMO2";
-const char* password = "HellaAwesome2";
+//const char* ssid = "CMO2";
+//const char* password = "HellaAwesome2";
 
-//const char* ssid = "TelstraAE6511";
-//const char* password = "bpjzhvssks";
+const char* ssid = "TelstraAE6511";
+const char* password = "bpjzhvssks";
 
 
 elapsedMillis timeElapsed;
@@ -21,20 +21,10 @@ int impressionsCounted = 0;
 bool isCounting = false;
 
 void setup() {
-  // put your setup code here, to run once:
+  
   Serial.begin(115200);
+  post("http://10.0.0.38:5000/impress/boot");
 
-  //WiFi.begin(ssid, password);
- 
-  //while (WiFi.status() != WL_CONNECTED) {
- 
-  //  delay(1000);
-  //  Serial.println("Connecting..");
- 
- // }
- // Serial.println("Connected");
-//
- // WiFi.mode(WIFI_OFF);
 }
 
 void loop() {
@@ -55,7 +45,17 @@ void loop() {
   
   
   
-  if(timeElapsed / 1000 > 30 && isCounting){  
+  if(timeElapsed / 1000 > 15){ 
+
+    String debugStart = "Avg";
+    debugStart = debugStart + avg;
+    debugStart += "val";
+    debugStart += val;
+      
+
+    String url = "http://10.0.0.38:5000/impress/debug?debugString=";
+    String sendUrl = url + debugStart;
+    post(sendUrl);
     stats.clear();
     timeElapsed = 0;
     send();
@@ -63,14 +63,8 @@ void loop() {
   
 }
 
-void send(){
-  Serial.print("Sending impressions:");
-  Serial.print(impressionsCounted);
-  Serial.println();
-
-  String url = "http://10.0.0.38:5000/impress?time=30&imp=";
-  String sendUrl = url + impressionsCounted;
-  Serial.println(sendUrl);
+void post(String sendUrl){
+   Serial.println(sendUrl);
 
   if (WiFi.status() != WL_CONNECTED) {    
     WiFi.begin(ssid, password);
@@ -111,6 +105,16 @@ void send(){
   }
 
   WiFi.disconnect();
+}
+
+void send(){
+  Serial.print("Sending impressions:");
+  Serial.print(impressionsCounted);
+  Serial.println();
+
+  String url = "http://10.0.0.38:5000/impress?time=15&imp=";
+  String sendUrl = url + impressionsCounted;
+  post(sendUrl);
   impressionsCounted = 0;
   isCounting = false;
   Serial.println("Sending done");
