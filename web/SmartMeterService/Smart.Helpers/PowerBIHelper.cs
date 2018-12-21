@@ -12,14 +12,23 @@ namespace Smart.Helpers
         public static async Task Push(double kwh, string url)
         {
             const string timeFormat = "yyyy-MM-ddTHH:mm:ss.fffZ"; // Time format required by Power BI
+
+            var max = (int)Math.Ceiling(kwh);
+            if (max < 4)
+            {
+                max = 4;
+            }
+
             var model = new PowerBIModel
             {
                 kwh = kwh,
-                measuretime = DateTime.Now.ToString(timeFormat),
-                kwhday = kwh * 24
+                measuretime = DateTime.UtcNow.ToString(timeFormat),
+                kwhday = kwh * 24,
+                maxvalue = max
             };
 
             var ser = JsonConvert.SerializeObject(model);
+            Console.WriteLine($"Pushing: {ser}");
 
             var client = new HttpClient();
 
