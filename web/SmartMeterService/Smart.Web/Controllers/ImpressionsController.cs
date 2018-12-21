@@ -26,7 +26,12 @@ namespace Smart.Web.Controllers
             Console.WriteLine($"Impressions: {imp} -> time: {time}");
 
             var result = KWHelper.CalcKWH(imp, time);
+            
             var resultDay = result * 24;
+            if (resultDay < 0)
+            {
+                resultDay = 0;
+            }
             decimal resultDollars = ((decimal)resultDay * 28.52M) / 100M;
             var rString = string.Format("{0:0.00}", result);
             var rStringDay = string.Format("{0:0.00}", resultDay);

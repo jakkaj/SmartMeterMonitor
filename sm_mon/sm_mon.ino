@@ -13,11 +13,13 @@ const char* password = "bpjzhvssks";
 
 elapsedMillis timeElapsed;
 elapsedMillis lastPulse;
+
 Statistic stats;
 
 
 int impressionsCounted = 0;
 int lastPeriod = 0;
+int resetCounter = 0;
 
 bool isCounting = false;
 
@@ -47,7 +49,7 @@ void loop() {
   
   
   if(timeElapsed / 1000 > 30){ 
-
+  
     String debugStart = "Avg";
     debugStart = debugStart + avg;
     debugStart += "val";
@@ -60,7 +62,13 @@ void loop() {
     stats.clear();
     timeElapsed = 0;
     send();
-  }
+
+    resetCounter+=1;
+
+    if(resetCounter > 120){
+      //ESP.restart();
+    }
+  } 
   
 }
 
@@ -112,13 +120,13 @@ void send(){
   Serial.print("Sending impressions:");
   Serial.print(impressionsCounted);
   Serial.println();
-  if(lastPeriod == 0){
-    lastPeriod = impressionsCounted * 2;
-  }
-  int totalImpressions = impressionsCounted + lastPeriod;
+  //if(lastPeriod == 0){
+  //  lastPeriod = impressionsCounted * 2;
+  //}
+  //int totalImpressions = impressionsCounted + lastPeriod;
   
-  String url = "http://10.0.0.38:5000/impress?time=60&imp=";
-  String sendUrl = url + totalImpressions;
+  String url = "http://10.0.0.38:5000/impress?time=30&imp=";
+  String sendUrl = url + impressionsCounted;
   post(sendUrl);
   lastPeriod = impressionsCounted;
   impressionsCounted = 0;
@@ -148,4 +156,3 @@ void checkpoint(){
   impressionsCounted ++; 
   lastPulse = 0; 
 }
-
