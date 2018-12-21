@@ -16,8 +16,10 @@ namespace Smart.Web.Controllers
             Console.WriteLine($"Impressions: {imp} -> time: {time}");
 
             var result = KWHelper.CalcKWH(imp, time);
+            var resultDay = result * 24;
             var rString = string.Format("{0:0.00}", result);
-            Console.WriteLine($"{rString}kwh");
+            var rStringDay = string.Format("{0:0.00}", resultDay);
+            Console.WriteLine($"{rString}kwh -> {rStringDay} per day");
 
             await PowerBIHelper.Push(result);
 

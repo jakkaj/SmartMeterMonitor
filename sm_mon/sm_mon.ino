@@ -17,6 +17,7 @@ Statistic stats;
 
 
 int impressionsCounted = 0;
+int lastPeriod = 0;
 
 bool isCounting = false;
 
@@ -45,7 +46,7 @@ void loop() {
   
   
   
-  if(timeElapsed / 1000 > 15){ 
+  if(timeElapsed / 1000 > 30){ 
 
     String debugStart = "Avg";
     debugStart = debugStart + avg;
@@ -55,7 +56,7 @@ void loop() {
 
     String url = "http://10.0.0.38:5000/impress/debug?debugString=";
     String sendUrl = url + debugStart;
-    post(sendUrl);
+    //post(sendUrl);
     stats.clear();
     timeElapsed = 0;
     send();
@@ -111,10 +112,15 @@ void send(){
   Serial.print("Sending impressions:");
   Serial.print(impressionsCounted);
   Serial.println();
-
-  String url = "http://10.0.0.38:5000/impress?time=15&imp=";
-  String sendUrl = url + impressionsCounted;
+  if(lastPeriod == 0){
+    lastPeriod = impressionsCounted * 2;
+  }
+  int totalImpressions = impressionsCounted + lastPeriod;
+  
+  String url = "http://10.0.0.38:5000/impress?time=60&imp=";
+  String sendUrl = url + totalImpressions;
   post(sendUrl);
+  lastPeriod = impressionsCounted;
   impressionsCounted = 0;
   isCounting = false;
   Serial.println("Sending done");

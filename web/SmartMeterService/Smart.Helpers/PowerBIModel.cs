@@ -8,5 +8,6 @@ namespace Smart.Helpers
     {
         public double kwh { get; set; }
         public string measuretime { get; set; }
+        public double kwhday { get; set; }
     }
 }

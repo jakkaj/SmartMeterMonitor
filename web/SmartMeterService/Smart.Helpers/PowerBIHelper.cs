@@ -15,7 +15,8 @@ namespace Smart.Helpers
             var model = new PowerBIModel
             {
                 kwh = kwh,
-                measuretime = DateTime.Now.ToString(timeFormat)
+                measuretime = DateTime.Now.ToString(timeFormat),
+                kwhday = kwh * 24
             };
 
             var ser = JsonConvert.SerializeObject(model);

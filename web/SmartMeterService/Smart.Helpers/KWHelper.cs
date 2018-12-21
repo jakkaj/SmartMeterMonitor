@@ -5,7 +5,7 @@ namespace Smart.Helpers
     public class KWHelper
     {
         private const int impKwh = 800;
-
+        
         public static double CalcKWH(int imp, int time)
         {
             if (imp < 1 || time < 1)
