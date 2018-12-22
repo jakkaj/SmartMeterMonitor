@@ -35,7 +35,7 @@ void setup() {
 }
 
 void loop() {
-  delay(15);
+  delay(10);
   // put your main code here, to run repeatedly:
   int val = analogRead(0);
   stats.add(val);
