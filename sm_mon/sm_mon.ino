@@ -26,12 +26,16 @@ bool isCounting = false;
 void setup() {
   
   Serial.begin(115200);
+  WiFi.mode( WIFI_OFF );
+  WiFi.forceSleepBegin();
+  delay( 1 );
+  
   post("http://10.0.0.38:5000/impress/boot");
 
 }
 
 void loop() {
-  delay(10);
+  delay(15);
   // put your main code here, to run repeatedly:
   int val = analogRead(0);
   stats.add(val);
@@ -73,11 +77,24 @@ void loop() {
 }
 
 void post(String sendUrl){
-   Serial.println(sendUrl);
+  Serial.println(sendUrl);
 
-  if (WiFi.status() != WL_CONNECTED) {    
-    WiFi.begin(ssid, password);
-  }
+  //static ip
+  IPAddress ip( 10, 0, 0, 190 );
+  IPAddress gateway( 10, 0, 0, 138 );
+  IPAddress subnet( 255, 255, 255, 0 );
+
+  WiFi.forceSleepWake();
+  
+  delay( 1 );
+
+  WiFi.persistent( false );
+
+  // Bring up the WiFi connection
+  WiFi.mode( WIFI_STA );  
+  WiFi.config( ip, gateway, subnet );
+  WiFi.begin(ssid, password);
+  
 
   while (WiFi.status() != WL_CONNECTED) {
     
@@ -114,6 +131,10 @@ void post(String sendUrl){
   }
 
   WiFi.disconnect();
+  WiFi.mode( WIFI_OFF );
+  WiFi.forceSleepBegin();
+  delay( 1 );
+  
 }
 
 void send(){
