@@ -9,7 +9,7 @@ namespace Smart.Helpers
 {
     public static class PowerBIHelper
     {
-        public static async Task Push(double kwh, string url)
+        public static async Task Push(double kwh, double soFarToday, double soFarYesterday, double last24h, double avgYesterday,  string url)
         {
             const string timeFormat = "yyyy-MM-ddTHH:mm:ss.fffZ"; // Time format required by Power BI
 
@@ -24,7 +24,11 @@ namespace Smart.Helpers
                 kwh = kwh,
                 measuretime = DateTime.UtcNow.ToString(timeFormat),
                 kwhday = kwh * 24,
-                maxvalue = max
+                maxvalue = max,
+                AverageSoFarYesterday = soFarYesterday, 
+                AverageLast24Hours = last24h,
+                AverageSoFarToday = soFarToday,
+                AverageYesterday = avgYesterday
             };
 
             var ser = JsonConvert.SerializeObject(model);

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Smart.Helpers;
+using Smart.Helpers.Contracts;
+using Smart.Helpers.DB;
 using Smart.Web.Models;
 
 namespace Smart.Web.Controllers
@@ -15,11 +17,14 @@ namespace Smart.Web.Controllers
     {
         private readonly IOptions<PowerSecrets> _powerOptions;
         private readonly PowerContext _context;
+        private readonly IDatabaseService _databaseService;
 
-        public ImpressionsController(IOptions<PowerSecrets> powerOptions, PowerContext context)
+        public ImpressionsController(IOptions<PowerSecrets> powerOptions, PowerContext context, 
+            IDatabaseService databaseService)
         {
             _powerOptions = powerOptions;
             _context = context;
+            _databaseService = databaseService;
         }
         public async Task<IActionResult> Index(int imp, int time)
         {
@@ -40,7 +45,7 @@ namespace Smart.Web.Controllers
            
             Console.WriteLine($"{rString}kwh -> {rStringDay} kwh per day -> {rDollars} per day @ {DateTime.Now.ToString()}");
 
-            await PowerBIHelper.Push(result, _powerOptions.Value.PowerBiUrl);
+            
 
             await _context.PowerReadings.AddAsync(new PowerReading
             {
@@ -51,8 +56,21 @@ namespace Smart.Web.Controllers
 
             await _context.SaveChangesAsync();
 
+            var averageSoFarYesterday = await _databaseService.AverageSoFarYesterday();
+            var averageSoFarToday = await _databaseService.AverageSoFarToday();
+            var averageLast24Hours = await _databaseService.AverageLast24Hours();
+            var averageYesterday = await _databaseService.AverageYesterday();
+
+            await PowerBIHelper.Push(result,
+                averageSoFarToday, 
+                averageSoFarYesterday,
+                averageLast24Hours, 
+                averageYesterday,
+                _powerOptions.Value.PowerBiUrl);
+
             return Ok(result);
         }
+        
 
         [Route("boot")]
         public IActionResult BootTest()

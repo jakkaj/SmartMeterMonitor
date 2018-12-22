@@ -11,6 +11,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Smart.Helpers;
+using Smart.Helpers.Contracts;
+using Smart.Helpers.DB;
+using Smart.Helpers.Service;
 using Smart.Web.Models;
 
 namespace Smart.Web
@@ -34,9 +38,11 @@ namespace Smart.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.Configure<PowerSecrets>(Configuration.GetSection("Power"));
+            services.Configure<PowerSecrets>(Configuration.GetSection("PowerSecrets"));
 
-            var connection = Configuration.GetSection("Power").Get<PowerSecrets>().DBConnectionString;
+            services.AddTransient<IDatabaseService, DatabaseService>();
+
+            var connection = Configuration.GetSection("PowerSecrets").Get<PowerSecrets>().DBConnectionString;
             services.AddDbContext<PowerContext>
                 (options => options.UseSqlServer(connection));
 

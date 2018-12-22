@@ -5,7 +5,7 @@ namespace Smart.Helpers
     public class KWHelper
     {
         private const int impKwh = 800;
-        
+        public const decimal CostPerKwh = 28.52M;
         public static double CalcKWH(int imp, int time)
         {
             if (imp < 1 || time < 1)

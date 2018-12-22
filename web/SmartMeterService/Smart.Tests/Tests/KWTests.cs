@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Smart.Helpers;
 
-namespace Smart.Tests
+namespace Smart.Tests.Tests
 {
     [TestClass]
     public class KWTests
