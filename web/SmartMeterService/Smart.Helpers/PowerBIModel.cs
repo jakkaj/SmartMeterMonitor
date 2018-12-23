@@ -6,6 +6,7 @@ namespace Smart.Helpers
 {
     public class PowerBIModel
     {
+        public string StatusText { get; set; }
         public double kwh { get; set; }
         public string measuretime { get; set; }
         public double kwhday { get; set; }

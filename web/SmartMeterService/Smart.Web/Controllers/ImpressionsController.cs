@@ -73,15 +73,19 @@ namespace Smart.Web.Controllers
         
 
         [Route("boot")]
-        public IActionResult BootTest()
+        public async Task<IActionResult> BootTest()
         {
+            await PowerBIHelper.Push("Booted",
+                _powerOptions.Value.PowerBiUrl);
             Console.WriteLine("Booted");
             return Ok("Good");
         }
 
         [Route("debug")]
-        public IActionResult Debug(string debugString)
+        public async Task<IActionResult> Debug(string debugString)
         {
+            await PowerBIHelper.Push(debugString,
+                _powerOptions.Value.PowerBiUrl);
             Console.WriteLine($"From Device Debug: {debugString}");
             return Ok("Good");
         }
