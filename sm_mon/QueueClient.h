@@ -6,19 +6,27 @@
 #include <ESP8266HTTPClient.h>
 #include <PubSubClient.h>
 
+#include "HttpClient.h"
+
 class QueueClient {
     public:
-        QueueClient(const char *mqtt_server){
-            WiFiClient espClient;
-            _client = PubSubClient(espClient);     
-            _client.setServer(mqtt_server, 1883);       
+        QueueClient(HttpClient *httpClient, const char *mqtt_server){
+            
+            _client = PubSubClient(_espClient);     
+            _client.setServer(mqtt_server, 1883);     
+
+            _httpClient = httpClient;
         }
         void MQTT_connect();
         void sendQueue(char *topic, char *msg);
         void reconnectQueue();
+        void setEnabled(boolean state);
         
-    private:        
-        PubSubClient _client;         
+    private: 
+        WiFiClient _espClient;       
+        PubSubClient _client;  
+        HttpClient *_httpClient;     
+        boolean _enabled;  
 };
 
 #endif

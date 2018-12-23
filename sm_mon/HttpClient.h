@@ -14,6 +14,7 @@ class HttpClient {
 
         void post(String sendUrl);
         void wifiOff();
+        void wifiOn();
   
     private:
         boolean _wifiAlwaysOn;

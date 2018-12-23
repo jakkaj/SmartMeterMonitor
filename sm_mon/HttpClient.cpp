@@ -4,14 +4,16 @@ void HttpClient::wifiOff()
 {
   if (!_wifiAlwaysOn)
   {
+    WiFi.disconnect(true);
     WiFi.mode(WIFI_OFF);
     WiFi.forceSleepBegin();
+    delay(1);
+    //Serial.println("Wifi off");    
+    
   }
 }
 
-void HttpClient::post(String sendUrl){
-    Serial.println(sendUrl);
-
+void HttpClient::wifiOn(){
   //static ip
   IPAddress ip(10, 0, 0, 190);
   IPAddress gateway(10, 0, 0, 138);
@@ -20,12 +22,9 @@ void HttpClient::post(String sendUrl){
   if (!_wifiAlwaysOn)
   {
     WiFi.forceSleepWake();
+    delay(1);
   }
-
-  delay(1);
-
-  WiFi.persistent(false);
-
+  
   // Bring up the WiFi connection
   if (!_wifiAlwaysOn)
   {
@@ -34,19 +33,21 @@ void HttpClient::post(String sendUrl){
 
   WiFi.config(ip, gateway, subnet);
 
-  if (WiFi.status() != WL_CONNECTED)
-  {
+  if(WiFi.status() != WL_CONNECTED || !_wifiAlwaysOn){
     WiFi.begin(_ssid, _pwd);
-  }
-
+  }    
+  
   while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");
     delay(1000);
-  }
+  }  
+}
 
-  Serial.print(WiFi.localIP());
-  Serial.println(" Connected");
+void HttpClient::post(String sendUrl){
+    Serial.println(sendUrl);
+
+  wifiOn();
 
   if (WiFi.status() == WL_CONNECTED)
   { //Check WiFi connection status
@@ -72,13 +73,9 @@ void HttpClient::post(String sendUrl){
   else
   {
     Serial.println("Not connected");
-  }
-
-  if (!_wifiAlwaysOn)
-  {
-    WiFi.disconnect();
-    WiFi.mode(WIFI_OFF);
-    WiFi.forceSleepBegin();
-  }
+  }  
+  
+  wifiOff();
+  
   delay(1);
 }

@@ -1,13 +1,24 @@
 #include "QueueClient.h"
 
+void QueueClient::setEnabled(boolean state){
+  _enabled = state;
+}
+
 void QueueClient::sendQueue(char *topic, char *msg)
 {
+    if(!_enabled){
+      return;
+    }
+    _httpClient->wifiOn();
+    
     if (!_client.connected())
     {
         reconnectQueue();
     }
 
     _client.publish(topic, msg);
+
+    _httpClient->wifiOff();
 }
 
 void QueueClient::reconnectQueue()

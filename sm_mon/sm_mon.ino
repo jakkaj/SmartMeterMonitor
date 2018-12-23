@@ -16,10 +16,9 @@ const char *password = "bpjzhvssks";
 const char *mqtt_server = "10.0.0.59";
 
 const boolean wifiAlwaysOn = true;
-const boolean everyPulse = true;
 
 HttpClient httpClient(ssid, password, wifiAlwaysOn);
-QueueClient queueClient(mqtt_server);
+QueueClient queueClient(&httpClient, mqtt_server);
 
 elapsedMillis timeElapsed;
 elapsedMillis thisPulse;
@@ -39,6 +38,7 @@ bool isCounting = false;
 
 void setup()
 {
+  queueClient.setEnabled(wifiAlwaysOn);
 
   Serial.begin(115200);
   httpClient.wifiOff();
@@ -98,7 +98,7 @@ void loop()
     //nothing
   }
 
-  if (timeElapsed / 1000 > 30)
+  if (timeElapsed / 1000 > 10)
   {
     stats.clear();
     timeElapsed = 0;
@@ -136,7 +136,7 @@ void pulseStart()
 
   wasLow = true;
   thisPulse = 0;
-  Serial.println("New pulse");
+  //Serial.println("New pulse");
 }
 
 void pulseEnd()
@@ -144,10 +144,10 @@ void pulseEnd()
 
   wasLow = false;
 
-  Serial.println("End pulse");
-  Serial.print(thisPulse);
+  //Serial.println("End pulse");
+  //Serial.print(thisPulse);
 
-  Serial.println(" pulse ms");
+  //Serial.println(" pulse ms");
 
   snprintf(msg, 50, "%ld", (int)pulsePeriod);
 
@@ -156,7 +156,7 @@ void pulseEnd()
     if (isCounting)
     {
       queueClient.sendQueue("pulsePeriod", msg);
-      Serial.println("Pulse OK");
+      //Serial.println("Pulse OK");
     }
     else
     {
