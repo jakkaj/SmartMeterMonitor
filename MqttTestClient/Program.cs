@@ -45,20 +45,24 @@ namespace MqttTestClient
 
                 // Subscribe to a topic
                 await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("pulsePeriod").Build());
+                await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("impressions").Build());
+                await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("log").Build());
 
-                Console.WriteLine("### SUBSCRIBED ###");
+
+                //Console.WriteLine("### SUBSCRIBED ###");
             };
 
             await mqttClient.ConnectAsync(options);
 
             mqttClient.ApplicationMessageReceived += (s, e) =>
             {
-                Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
-                Console.WriteLine();
+                Console.WriteLine($"({e.ApplicationMessage.Topic}) {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+                // Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
+                // Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
+                // Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+                // Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
+                // Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
+                // Console.WriteLine();
             };
             Console.ReadLine();
         }

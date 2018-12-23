@@ -16,6 +16,8 @@ const char* mqtt_server = "10.0.0.59";
 const boolean wifiAlwaysOn = true;
 const boolean everyPulse = true;
 
+
+
 WiFiClient espClient;
 PubSubClient client(espClient);
 
@@ -29,6 +31,8 @@ Statistic stats;
 int impressionsCounted = 0;
 int lastPeriod = 0;
 int resetCounter = 0;
+
+char msg[50];
 
 bool wasLow = false;
 
@@ -45,7 +49,7 @@ void setup()
   
   post("http://10.0.0.38:5000/impress/boot");
   client.setServer(mqtt_server, 1883);
-  sendQueue("log", "Booted");
+  log("Booted");
 }
 
 
@@ -61,6 +65,7 @@ void loop()
   }
   
   if(stats.count() < 100){
+    
     return;
   }
   
@@ -113,7 +118,12 @@ void send()
   String url = "http://10.0.0.38:5000/impress?time=30&imp=";
   String sendUrl = url + impressionsCounted;
   post(sendUrl);
+
+  snprintf (msg, 50, "%ld", impressionsCounted);
+  sendQueue("impressions", msg);
+  
   lastPeriod = impressionsCounted;
+  
   impressionsCounted = 0;
   isCounting = false;
   Serial.println("Sending done");
@@ -130,7 +140,7 @@ void pulseStart(){
   Serial.println("New pulse");  
 }
 
-char msg[50];
+
 
 void pulseEnd(){
   
@@ -141,25 +151,24 @@ void pulseEnd(){
   Serial.print (thisPulse);
   
   Serial.println(" pulse ms");
-  if(thisPulse < 80){
-    
-    snprintf (msg, 50, "%ld", (int)pulsePeriod);
+
+  snprintf (msg, 50, "%ld", (int)pulsePeriod);
+  
+  if(thisPulse < 80){    
     
     sendQueue("pulsePeriod", msg);
     
     Serial.println("Pulse OK");
     checkpoint();    
   }else{
-    Serial.println("Pulse Too Long");
+    log("Pulse Too Long");
+    log(msg);
   }
 
   pulsePeriod = 0;
 }
 
-void sendQueue(char* topic, char* msg){
-
-   Serial.println("Sending: ");
-   Serial.println(msg);
+void sendQueue(char* topic, char* msg){   
    
    if (!client.connected()) {
       reconnectQueue();
@@ -186,6 +195,12 @@ void wifiOff()
     WiFi.forceSleepBegin();
   }
 }
+
+void log(char* message){
+  Serial.println(message);
+  sendQueue("log", message);
+}
+
 void post(String sendUrl)
 {
   Serial.println(sendUrl);
