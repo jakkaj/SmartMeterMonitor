@@ -54,6 +54,7 @@ void loop()
   delay(10);
   // put your main code here, to run repeatedly:
   int val = analogRead(0);
+  //Serial.println(val);
   if (!wasLow)
   {
     stats.add(val);
@@ -98,7 +99,7 @@ void loop()
     //nothing
   }
 
-  if (timeElapsed / 1000 > 10)
+  if (timeElapsed / 1000 > 60)
   {
     stats.clear();
     timeElapsed = 0;
@@ -112,7 +113,7 @@ void send()
   Serial.print(impressionsCounted);
   Serial.println();
 
-  String url = "http://10.0.0.38:5000/impress?time=30&imp=";
+  String url = "http://10.0.0.38:5000/impress?time=60&imp=";
   String sendUrl = url + impressionsCounted;
   httpClient.post(sendUrl);
 

@@ -16,7 +16,7 @@ namespace Smart.Helpers
             //if i get 4 in 15 seconds, how many would i get an hour?
 
             //how many seconds would it take to get to 800imp
-            var impSegments = impKwh / imp; //this is per 15s
+            double impSegments = impKwh / imp; //this is per 15s
 
 
 

@@ -8,6 +8,7 @@ using MQTTnet.Exceptions;
 using MQTTnet.Packets;
 using MQTTnet.Server;
 using MQTTnet;
+using Smart.Helpers;
 namespace MqttTestClient
 {
     class Program
@@ -56,7 +57,16 @@ namespace MqttTestClient
 
             mqttClient.ApplicationMessageReceived += (s, e) =>
             {
-                Console.WriteLine($"({e.ApplicationMessage.Topic}) {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+                var topic = e.ApplicationMessage.Topic;
+                var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                Console.WriteLine($"({topic}) {value}");
+                
+                if(topic == "pulsePeriod"){
+                    var val = Convert.ToInt32(value);
+                    var kwh = KWHelper.CalcKWH(1, val / 1000);
+                    Console.WriteLine($"kwh -> {kwh.ToString("0.##")}");
+                }
+                
                 // Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
                 // Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
                 // Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
