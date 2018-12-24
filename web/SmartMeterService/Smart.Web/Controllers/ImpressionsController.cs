@@ -26,11 +26,18 @@ namespace Smart.Web.Controllers
             _context = context;
             _databaseService = databaseService;
         }
+
+        [Route("impressimp")]
         public async Task<IActionResult> Index(int imp, int time)
         {
-            Console.WriteLine($"Impressions: {imp} -> time: {time}");
-
             var result = KWHelper.CalcKWH(imp, time);
+            return await Index(result);
+        }
+
+        [Route("kwh")]
+        public async Task<IActionResult> Index(double kwh)
+        {
+            var result = kwh;
             
             var resultDay = result * 24;
             if (resultDay < 0)
