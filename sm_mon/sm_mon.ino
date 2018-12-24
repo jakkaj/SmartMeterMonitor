@@ -23,6 +23,7 @@ QueueClient queueClient(&httpClient, mqtt_server);
 elapsedMillis timeElapsed;
 elapsedMillis thisPulse;
 elapsedMillis pulsePeriod;
+elapsedMillis pulseSimulate;
 
 Statistic stats;
 
@@ -33,20 +34,29 @@ int resetCounter = 0;
 char msg[50];
 
 bool wasLow = false;
+bool simulate = false;
 
 bool isCounting = false;
 
 void setup()
 {
+  
   queueClient.setEnabled(wifiAlwaysOn);
 
-  Serial.begin(115200);
+  Serial.begin(115200);  
+
+  
   httpClient.wifiOff();
   delay(1);
 
   httpClient.post("http://10.0.0.38:5000/impress/boot");
   
-  log("Booted");
+  
+  if(simulate){
+    log("****Simulate - booted");
+  }else{
+    log("Booted");
+  }
 }
 
 void loop()
@@ -60,8 +70,11 @@ void loop()
     stats.add(val);
   }
 
-  if (stats.count() < 100)
+  if (stats.count() < 500)
   {
+    if(stats.count() % 10 == 0){
+      log("Collecting stats");
+    }
     return;
   }
 
@@ -72,6 +85,14 @@ void loop()
   boolean isLow = false;
 
   float avgPercent = avg * 20 / 100;
+  float avgPercentTen = avg * 10 / 100;
+
+  //if (val < avg - avgPercentTen)
+  //{
+    //log("ten percent");
+    //log(val);
+    
+  //}
 
   if (val < avg - avgPercent)
   {
@@ -99,21 +120,42 @@ void loop()
     //nothing
   }
 
-  if (timeElapsed / 1000 > 60)
+  if(simulate){
+    if(pulseSimulate / 1000 > 5){
+      pulseSimulate = 0;
+      pulseStart();
+      delay(30);
+      pulseEnd();
+    }
+  }
+
+  if (timeElapsed / 1000 > 600)
   {
     stats.clear();
     timeElapsed = 0;
     send();
+    isLow = false;
+    wasLow = false;
   }
 }
 
 void send()
 {
+  //in wifialways mode the mqtt does this work for every pulse (needs the mqtt client .netapp running)
+  
+  isCounting = false;
+  
+  if(wifiAlwaysOn){
+    log("****************    HeartBeat");
+    Serial.println("Not sending to web, wifiAlwaysOn is set");
+    return;
+  }
+  
   Serial.print("Sending impressions:");
   Serial.print(impressionsCounted);
   Serial.println();
 
-  String url = "http://10.0.0.38:5000/impress?time=60&imp=";
+  String url = "http://10.0.0.38:5000/impress?time=600&imp=";
   String sendUrl = url + impressionsCounted;
   httpClient.post(sendUrl);
 
@@ -123,7 +165,7 @@ void send()
   lastPeriod = impressionsCounted;
 
   impressionsCounted = 0;
-  isCounting = false;
+  
   Serial.println("Sending done");
 }
 
@@ -145,10 +187,10 @@ void pulseEnd()
 
   wasLow = false;
 
-  //Serial.println("End pulse");
-  //Serial.print(thisPulse);
+  log("End pulse");
+  log(thisPulse);
 
-  //Serial.println(" pulse ms");
+  log(" pulse ms");
 
   snprintf(msg, 50, "%ld", (int)pulsePeriod);
 
@@ -161,7 +203,7 @@ void pulseEnd()
     }
     else
     {
-      Serial.println("Pulse period counting started");
+      log("Pulse period counting started");
     }
 
     checkpoint();

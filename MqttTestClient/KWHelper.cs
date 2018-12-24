@@ -6,34 +6,13 @@ namespace Smart.Helpers
     {
         private const int impKwh = 800;
         
-        public static double CalcKWH(int imp, int time)
+        public static double CalcKWH(int val)
         {
-            if (imp < 1 || time < 1)
-            {
-                return -1;
-            }
-
-            //if i get 4 in 15 seconds, how many would i get an hour?
-
-            //how many seconds would it take to get to 800imp
-            double impSegments = impKwh / imp; //this is per 15s
-
-
-
-            //how many 15s per hour
-            var segments = 3600 / time;
-
-            double kwh = (double)segments / (double)impSegments;
-
-            // var impSegments = impKwh / imp;
-
-            //var perHour = impSegments * imp;
-
-            //how many times per hour?
-            //var segments = 3600 / time;
-
-            return kwh;
-
+            
+            Console.WriteLine(val);
+            double msToKwh = val * impKwh;
+            double secToKwh = msToKwh / 1000;
+            return 3600 / secToKwh;
         }
     }
 }

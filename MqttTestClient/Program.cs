@@ -9,6 +9,8 @@ using MQTTnet.Packets;
 using MQTTnet.Server;
 using MQTTnet;
 using Smart.Helpers;
+using System.Net;
+using System.Net.Http;
 namespace MqttTestClient
 {
     class Program
@@ -55,7 +57,7 @@ namespace MqttTestClient
 
             await mqttClient.ConnectAsync(options);
 
-            mqttClient.ApplicationMessageReceived += (s, e) =>
+            mqttClient.ApplicationMessageReceived += async (s, e) =>
             {
                 var topic = e.ApplicationMessage.Topic;
                 var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
@@ -63,10 +65,14 @@ namespace MqttTestClient
                 
                 if(topic == "pulsePeriod"){
                     var val = Convert.ToInt32(value);
-                    var kwh = KWHelper.CalcKWH(1, val / 1000);
+                    var kwh = KWHelper.CalcKWH(val);
                     Console.WriteLine($"kwh -> {kwh.ToString("0.##")}");
+                    var c = new HttpClient();
+                    await c.GetAsync($"http://10.0.0.38:5000/impress?time={val/1000}&imp=1");
                 }
                 
+                
+  
                 // Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
                 // Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
                 // Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
