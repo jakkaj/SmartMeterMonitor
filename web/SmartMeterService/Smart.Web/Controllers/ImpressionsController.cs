@@ -73,6 +73,7 @@ namespace Smart.Web.Controllers
                 averageSoFarYesterday,
                 averageLast24Hours, 
                 averageYesterday,
+                resultDollars,
                 _powerOptions.Value.PowerBiUrl);
 
             return Ok(result);
