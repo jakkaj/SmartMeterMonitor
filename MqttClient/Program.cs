@@ -79,7 +79,8 @@ namespace MqttTestClient
                     var kwh = KWHelper.CalcKWH(val);
                     Console.WriteLine($"kwh -> {kwh.ToString("0.##")}");
                     var c = new HttpClient();
-                    await c.GetAsync($"http://10.0.0.38:5000/impress/kwh?kwh={kwh}");
+                    var result = await c.GetAsync($"http://apiserver:5000/impress/kwh?kwh={kwh}");
+                    Console.WriteLine(result.Content.ReadAsStringAsync());
                 }
 
 

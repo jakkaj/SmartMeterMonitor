@@ -12,7 +12,7 @@ RUN dotnet restore
 # Copy everything else and build
 COPY . ./
 WORKDIR /app/Smart.Web
-RUN dotnet publish -c Release -o /app/out
+RUN dotnet publish -c Debug -o /app/out
 
 # Build runtime image
 FROM microsoft/dotnet:aspnetcore-runtime
