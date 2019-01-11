@@ -14,6 +14,7 @@ namespace Smart.Helpers
         public double AverageSoFarYesterday { get; set; }
         public double AverageLast24Hours { get; set; }
         public double AverageYesterday { get; set; }
+        public decimal CurrentDollars { get; set; }
        
         public int maxvalue { get; set; }
     }

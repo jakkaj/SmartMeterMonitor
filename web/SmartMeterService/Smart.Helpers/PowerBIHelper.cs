@@ -22,7 +22,7 @@ namespace Smart.Helpers
             await PushToPowerBi(model, url);
         }
 
-        public static async Task Push(double kwh, double soFarToday, double soFarYesterday, double last24h, double avgYesterday,  string url)
+        public static async Task Push(double kwh, double soFarToday, double soFarYesterday, double last24h, double avgYesterday, decimal rDollars, string url)
         {
             const string timeFormat = "yyyy-MM-ddTHH:mm:ss.fffZ"; // Time format required by Power BI
 
@@ -41,7 +41,8 @@ namespace Smart.Helpers
                 AverageSoFarYesterday = soFarYesterday, 
                 AverageLast24Hours = last24h,
                 AverageSoFarToday = soFarToday,
-                AverageYesterday = avgYesterday
+                AverageYesterday = avgYesterday,
+                CurrentDollars = rDollars
             };
 
             await PushToPowerBi(model, url);
