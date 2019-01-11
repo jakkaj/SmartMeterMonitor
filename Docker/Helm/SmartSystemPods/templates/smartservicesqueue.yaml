@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: "servicesqueue-{{.Values.Version}}"
+  annotations:
+    helm.sh/created: {{.Release.Time.Seconds | quote }}
+  labels:
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    #chart: "{{.Chart.Name}}-{{.Chart.Version}}"   
+    app: "servicesqueue-{{.Values.Version}}"
+spec: 
+  selector:
+    matchLabels:
+      app: "servicesqueue-{{.Values.Version}}"      
+  replicas: {{.Values.Servers}}
+  template:
+    metadata:
+      labels:
+        app: "servicesqueue-{{.Values.Version}}"        
+    spec:
+      containers:
+      - name: queue
+        imagePullPolicy: {{.Values.ImagePullPolicy}}
+        image: {{.Values.ImageQueue}}
+        resources:
+          requests:
+            memory: {{.Values.Memory}}
+            cpu: {{.Values.Cpu}} 
+        ports:
+          - containerPort: {{.Values.QueuePortA}}
+            name: queueporta
+          - containerPort: {{.Values.QueuePortB}}
+            name: queueportb    
+        

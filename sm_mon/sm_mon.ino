@@ -13,7 +13,7 @@
 
 const char *ssid = "TelstraAE6511";
 const char *password = "bpjzhvssks";
-const char *mqtt_server = "10.0.0.59";
+const char *mqtt_server = "10.0.0.208";
 
 const boolean wifiAlwaysOn = true;
 
@@ -49,7 +49,7 @@ void setup()
   httpClient.wifiOff();
   delay(1);
 
-  httpClient.post("http://10.0.0.38:5000/impress/boot");
+  httpClient.post("http://10.0.0.208:5000/impress/boot");
   
   
   if(simulate){
@@ -155,7 +155,7 @@ void send()
   Serial.print(impressionsCounted);
   Serial.println();
 
-  String url = "http://10.0.0.38:5000/impress?time=600&imp=";
+  String url = "http://10.0.0.208:5000/impress?time=600&imp=";
   String sendUrl = url + impressionsCounted;
   httpClient.post(sendUrl);
 

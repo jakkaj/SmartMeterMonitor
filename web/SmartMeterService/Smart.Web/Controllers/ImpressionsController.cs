@@ -83,6 +83,7 @@ namespace Smart.Web.Controllers
         [Route("boot")]
         public async Task<IActionResult> BootTest()
         {
+            Console.WriteLine($"Options: DB - ${_powerOptions.Value.DBConnectionString}, PowerBi - {_powerOptions.Value.PowerBiUrl}");
             await PowerBIHelper.Push("Booted",
                 _powerOptions.Value.PowerBiUrl);
             Console.WriteLine("Booted");

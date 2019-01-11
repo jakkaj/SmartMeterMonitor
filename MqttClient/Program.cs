@@ -11,6 +11,8 @@ using MQTTnet;
 using Smart.Helpers;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
+
 namespace MqttTestClient
 {
     class Program
@@ -23,7 +25,7 @@ namespace MqttTestClient
             var mqttClient = factory.CreateMqttClient();
 
             var options = new MqttClientOptionsBuilder()
-            .WithTcpServer("10.0.0.59")
+            .WithTcpServer("mqttserver")
             .WithCleanSession()
             .Build();
 
@@ -44,15 +46,23 @@ namespace MqttTestClient
 
             mqttClient.Connected += async (s, e) =>
             {
-                Console.WriteLine("### CONNECTED WITH SERVER ###");
+                Console.WriteLine("### CONNECTED WITH SERVER. Attempt subs ###");
 
                 // Subscribe to a topic
-                await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("pulsePeriod").Build());
-                await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("impressions").Build());
-                await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("log").Build());
+                try
+                {
+                    await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("pulsePeriod").Build());
+                    await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("impressions").Build());
+                    await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("log").Build());
+                }catch(Exception ex){
+                    Console.WriteLine("Exception");
+                    Console.WriteLine(ex.Message);
+                }
 
 
-                //Console.WriteLine("### SUBSCRIBED ###");
+
+
+                Console.WriteLine("### SUBSCRIBED ###");
             };
 
             await mqttClient.ConnectAsync(options);
@@ -61,18 +71,19 @@ namespace MqttTestClient
             {
                 var topic = e.ApplicationMessage.Topic;
                 var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                Console.WriteLine($"({topic}) {value}");
-                
-                if(topic == "pulsePeriod"){
+                Console.WriteLine($"Mqtt client received: ({topic}) {value}");
+
+                if (topic == "pulsePeriod")
+                {
                     var val = Convert.ToInt32(value);
                     var kwh = KWHelper.CalcKWH(val);
                     Console.WriteLine($"kwh -> {kwh.ToString("0.##")}");
                     var c = new HttpClient();
-                    await c.GetAsync($"http://10.0.0.38:5000/impress?time={val/1000}&imp=1");
+                    await c.GetAsync($"http://apiserver:5000/impress?time={val / 1000}&imp=1");
                 }
-                
-                
-  
+
+
+
                 // Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
                 // Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
                 // Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
@@ -80,7 +91,7 @@ namespace MqttTestClient
                 // Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
                 // Console.WriteLine();
             };
-            Console.ReadLine();
+            System.Threading.Thread.Sleep(Timeout.Infinite);
         }
     }
 }

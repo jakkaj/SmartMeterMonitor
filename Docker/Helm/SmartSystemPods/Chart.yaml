@@ -1,0 +1,10 @@
+name: SmartMetermonitoringservice
+home: https://github.com/jakkaj/SmartMeterMonitor
+version: "1.0"
+description: Charts to build the queue and api pods for the smart meter services
+icon: https://docs.microsoft.com/favicon.ico
+sources:
+  - https://github.com/jakkaj/SmartMeterMonitor
+maintainers:
+  - name: Jordan Kight
+    email: jakkaj@gmail.com 

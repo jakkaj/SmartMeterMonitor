@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "smartapi-svc-{{.Values.Version}}"
+  labels:
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    component: "smartapi-svc-{{.Values.Version}}"
+spec:
+  ports:
+  - port: {{.Values.APIPort}}
+    name: apiport   
+  selector:
+    app: "servicesapi-{{.Values.Version}}"
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "smartqueue-svc-{{.Values.Version}}"
+  labels:
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    component: "smartsvc-{{.Values.Version}}"
+spec:
+  ports:
+  - port: {{.Values.QueuePortA}}
+    name: queueporta 
+  - port: {{.Values.QueuePortB}}
+    name: queueportb  
+  selector:
+    app: "servicesqueue-{{.Values.Version}}"
+  type: LoadBalancer
+---

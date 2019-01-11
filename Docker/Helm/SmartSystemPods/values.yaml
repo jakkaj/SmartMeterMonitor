@@ -1,0 +1,13 @@
+Version: 1
+
+Servers: 1
+
+Cpu: ".5"
+Memory: "500m"
+
+ImageAPI: "jakkaj/smartmeterapi:latest"
+ImageQueue: "jakkaj/smartmeterqueue:latest"
+ImagePullPolicy: "IfNotPresent"
+APIPort: 5000
+QueuePortA: 1883
+QueuePortB: 9001

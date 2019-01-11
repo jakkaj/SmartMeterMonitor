@@ -1,0 +1,33 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: "servicesapi-{{.Values.Version}}"
+  annotations:
+    helm.sh/created: {{.Release.Time.Seconds | quote }}
+  labels:
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    #chart: "{{.Chart.Name}}-{{.Chart.Version}}"   
+    app: "servicesapi-{{.Values.Version}}"
+spec: 
+  selector:
+    matchLabels:
+      app: "servicesapi-{{.Values.Version}}"      
+  replicas: {{.Values.Servers}}
+  template:
+    metadata:
+      labels:
+        app: "servicesapi-{{.Values.Version}}"        
+    spec:
+      containers:
+      - name: api
+        imagePullPolicy: {{.Values.ImagePullPolicy}}
+        image: {{.Values.ImageAPI}}
+        resources:
+          requests:
+            memory: {{.Values.Memory}}
+            cpu: {{.Values.Cpu}}  
+        ports:
+          - containerPort: {{.Values.APIPort}}
+            name: apiport
+          
