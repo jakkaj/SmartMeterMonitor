@@ -2,12 +2,14 @@ version: '3'
 services:
   apiserver:
     image: "jakkaj/smartmeterapi"
+    restart: always
     ports:
      - "5000:5000"
     env_file:
     - /Users/jak/Scripts/.env
   mqttserver:
     image: "eclipse-mosquitto"
+    restart: always
     hostname: mqttserver
     expose:
       - "1883"
@@ -18,6 +20,7 @@ services:
     volumes:
     - eclipse-mosquitto
   mqttclient:
+    restart: always
     depends_on: 
     - mqttserver
     - apiserver
