@@ -45,7 +45,11 @@ void HttpClient::wifiOn(){
 }
 
 void HttpClient::post(String sendUrl){
-    Serial.println(sendUrl);
+  
+  
+   Serial.println(sendUrl);
+
+  
 
   wifiOn();
 

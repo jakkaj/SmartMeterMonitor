@@ -65,27 +65,39 @@ void loop()
   // put your main code here, to run repeatedly:
   int val = analogRead(0);
   //Serial.println(val);
-  if (!wasLow)
+  if (!wasLow && stats.count() < 1000)
   {
     stats.add(val);
   }
 
-  if (stats.count() < 500)
+  if (stats.count() < 1000)
   {
     if(stats.count() % 10 == 0){
       log("Collecting stats");
     }
     return;
+  }else if(stats.count() <= 1000){
+    stats.add(val);
+    log("variance", stats.variance());
+    log("minimum", stats.minimum());
+    log("maximum", stats.maximum());
+    log("pop_stdev", stats.pop_stdev());
+    log("unbiased_stdev", stats.unbiased_stdev());
+    log("average", stats.average());
   }
-
+  
   float avg = stats.average();
+  float stddev = stats.pop_stdev();
+  
 
   //when we don't know the blink level yet
   //blink event will lower the val by some margin we don't yet know
   boolean isLow = false;
 
-  float avgPercent = avg * 20 / 100;
-  float avgPercentTen = avg * 10 / 100;
+  float tooLow = avg - (stddev * 2);
+
+ // float avgPercent = avg * 20 / 100;
+ // float avgPercentTen = avg * 10 / 100;
 
   //if (val < avg - avgPercentTen)
   //{
@@ -94,13 +106,15 @@ void loop()
     
   //}
 
-  if (val < avg - avgPercent)
+  if (val < tooLow)
   {
     isLow = true;
   }
 
   if (isLow && !wasLow)
   {
+    log("start with val", val);
+    log("Current average", avg);
     //this is a new pulse
     pulseStart();
   }
@@ -111,6 +125,7 @@ void loop()
   }
   else if (!isLow && wasLow)
   {
+    log("end with val", val);
     //a finishing pulse
     pulseEnd();
     delay(400); //we can delay a bit to save power as there is no chance of action just now
@@ -228,6 +243,14 @@ void checkpoint()
   Serial.println();
 }
 
+void log(char *message, float value)
+{
+  Serial.println(message);
+  queueClient.sendQueue("log", message);
+  Serial.println(value);
+  snprintf(msg, 50, "%f", value);
+  queueClient.sendQueue("log", msg);
+}
 
 
 void log(char *message)
