@@ -26,13 +26,13 @@ services:
     - influxdb
     volumes:
     - /data/grafana:/var/lib/grafana 
-  mqttclient:
-    environment:
-    - MQTT_SERVER_ADDRESS=mqttserver
-    - INFLUX_SERVER_ADDRESS=influxdb
-    env_file: .env    
-    restart: always
-    depends_on: 
-    - mqttserver
-    - influxdb
-    image: "jakkaj/smartmetermqttclient"
+  # mqttclient:
+  #   environment:
+  #   - MQTT_SERVER_ADDRESS=mqttserver
+  #   - INFLUX_SERVER_ADDRESS=influxdb
+  #   env_file: .env    
+  #   restart: always
+  #   depends_on: 
+  #   - mqttserver
+  #   - influxdb
+  #   image: "jakkaj/smartmetermqttclient"

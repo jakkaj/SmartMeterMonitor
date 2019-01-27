@@ -16,4 +16,8 @@
     <PackageReference Include="MQTTnet" Version="2.8.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OpenWeatherMap\OpenWeatherMap.csproj" />
+  </ItemGroup>
+
 </Project>

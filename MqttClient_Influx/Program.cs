@@ -27,7 +27,7 @@ namespace MqttTestClient
         private static string _mqttServerAddress;
         private static string _influxServerAddress;
         private static string _powerBiServerUrl;
-
+        private static string _apiKey;
         private static DateTime _lastReading;
 
         public static async Task Main(string[] args)
@@ -38,6 +38,8 @@ namespace MqttTestClient
             _mqttServerAddress = config["MQTT_SERVER_ADDRESS"];
             _influxServerAddress = config["INFLUX_SERVER_ADDRESS"];
             _powerBiServerUrl = config["POWER_BI_URL"];
+
+            _apiKey = config["OPEN_WEATHER_API_KEY"];
 
             if (string.IsNullOrWhiteSpace(_mqttServerAddress) || string.IsNullOrWhiteSpace(_influxServerAddress)
                                                              || string.IsNullOrWhiteSpace(_powerBiServerUrl))
@@ -135,18 +137,31 @@ namespace MqttTestClient
 
             await InfluxHelper.CreateDatabase(influxUrl);
 
+            var weatherApi = new OpenWeatherMap.OpenWeatherMap(_apiKey);
+            var currentWeather = await weatherApi.GetCurrent("Balmain");
             Metrics.Collector = new CollectorConfiguration()
                 .Tag.With("host", "campbellst")
                 .WriteTo.InfluxDB(influxUrl, "kwh")
                 .CreateCollector();
 
+            var counter = 0;
             while (true)
             {
+                counter++;
+                
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+                
+                if(counter % 10 == 0){
+                    currentWeather = await weatherApi.GetCurrent("Balmain");
+                }
+
+                Console.WriteLine($"Temp: {currentWeather.Main.Temp}, humidity: {currentWeather.Main.Humidity}");
+
                 if(DateTime.Now.Subtract(TimeSpan.FromSeconds(60)) > _lastReading){
                     _kwh = 0;
                     Console.WriteLine("Reading is stale");
                 }
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+
                 var resultDay = _kwh * 24;
                 if (resultDay < 0)
                 {
@@ -161,7 +176,15 @@ namespace MqttTestClient
                 Metrics.Write("kwh",
                     new Dictionary<string, object>
                     {
-                        { "reading", _kwh }
+                        { "reading", _kwh },
+                        { "temp", currentWeather.Main.Temp},
+                        { "humidity", currentWeather.Main.Humidity},
+                        { "pressure", currentWeather.Main.Pressure},
+                        { "min", currentWeather.Main.TempMin},
+                        { "max", currentWeather.Main.TempMax}
+
+
+
                     });
             }
         }
