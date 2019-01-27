@@ -12,22 +12,49 @@ using MQTTnet;
 using Smart.Helpers;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading;
+using System.Xml.Schema;
 using InfluxDB.Collector;
+using InfluxDB.LineProtocol.Client;
+using Microsoft.Extensions.Configuration;
 
 namespace MqttTestClient
 {
     class Program
     {
+        private static double _kwh = 0;
+        private static string _mqttServerAddress;
+        private static string _influxServerAddress;
+        private static string _powerBiServerUrl;
+
+        private static DateTime _lastReading;
+
         public static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            _lastReading = DateTime.Now;
+            var config = _getConfig();
+
+            _mqttServerAddress = config["MQTT_SERVER_ADDRESS"];
+            _influxServerAddress = config["INFLUX_SERVER_ADDRESS"];
+            _powerBiServerUrl = config["POWER_BI_URL"];
+
+            if (string.IsNullOrWhiteSpace(_mqttServerAddress) || string.IsNullOrWhiteSpace(_influxServerAddress)
+                                                             || string.IsNullOrWhiteSpace(_powerBiServerUrl))
+            {
+                Console.WriteLine("Missing environment: MQTT_SERVER_ADDRESS or INFLUX_SERVER_ADDRESS or POWER_BI_URL");
+                Environment.Exit(1);
+                return;
+            }
+
+
+            Console.WriteLine($"Server boots. MQTT Server: {_mqttServerAddress}, Influx: {_influxServerAddress}, PowerBi: {_powerBiServerUrl}");
 
             var factory = new MqttFactory();
             var mqttClient = factory.CreateMqttClient();
 
             var options = new MqttClientOptionsBuilder()
-            .WithTcpServer("10.0.0.220")
+            .WithTcpServer(_mqttServerAddress)
             .WithCleanSession()
             .Build();
 
@@ -61,18 +88,10 @@ namespace MqttTestClient
                     Console.WriteLine(ex.Message);
                 }
 
-
-
-
                 Console.WriteLine("### SUBSCRIBED ###");
             };
 
-            await mqttClient.ConnectAsync(options);
-
-            Metrics.Collector = new CollectorConfiguration()
-                .Tag.With("host", "campbellst")
-                .WriteTo.InfluxDB("http://localhost:8086", "kwh")
-                .CreateCollector();
+            
 
             mqttClient.ApplicationMessageReceived += async (s, e) =>
             {
@@ -82,29 +101,69 @@ namespace MqttTestClient
 
                 if (topic == "pulsePeriod")
                 {
+                    _lastReading = DateTime.Now;
                     var val = Convert.ToInt32(value);
                     var kwh = KWHelper.CalcKWH(val);
-                    Console.WriteLine($"kwh -> {kwh.ToString("0.##")}");
-                    //var c = new HttpClient();
-                    Metrics.Write("kwh",
-                    new Dictionary<string, object>
-                    {
-                        { "reading", kwh }
-                    });
-                    //var result = await c.GetAsync($"http://apiserver:5000/impress/kwh?kwh={kwh}");
-                    //Console.WriteLine(result.Content.ReadAsStringAsync());
+
+                    _kwh = kwh;
+
+                    Console.WriteLine($"reading kwh -> {_kwh.ToString("0.##")}");
                 }
 
-
-
-                // Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                // Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                // Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                // Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                // Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
-                // Console.WriteLine();
             };
-            System.Threading.Thread.Sleep(Timeout.Infinite);
+
+            await mqttClient.ConnectAsync(options);
+
+
+            await _loop();
+
+            //System.Threading.Thread.Sleep(Timeout.Infinite);
+        }
+
+        static IConfiguration _getConfig()
+        {
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile($"appsettings.json", true, true)
+                .AddEnvironmentVariables();
+            return builder.Build();
+        }
+
+        static async Task _loop()
+        {
+            
+            var influxUrl = $"http://{_influxServerAddress}:8086";
+
+            await InfluxHelper.CreateDatabase(influxUrl);
+
+            Metrics.Collector = new CollectorConfiguration()
+                .Tag.With("host", "campbellst")
+                .WriteTo.InfluxDB(influxUrl, "kwh")
+                .CreateCollector();
+
+            while (true)
+            {
+                if(DateTime.Now.Subtract(TimeSpan.FromSeconds(60)) > _lastReading){
+                    _kwh = 0;
+                    Console.WriteLine("Reading is stale");
+                }
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+                var resultDay = _kwh * 24;
+                if (resultDay < 0)
+                {
+                    resultDay = 0;
+                }
+
+                var resultDollars = ((decimal)resultDay * 28.52M) / 100M;
+
+                await PowerBIHelper.Push(_kwh, resultDollars, _powerBiServerUrl);
+                Console.WriteLine("Sending");
+                //var c = new HttpClient();
+                Metrics.Write("kwh",
+                    new Dictionary<string, object>
+                    {
+                        { "reading", _kwh }
+                    });
+            }
         }
     }
 }

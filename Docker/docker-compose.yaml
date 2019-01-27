@@ -1,12 +1,5 @@
 version: '3'
 services:
-  apiserver:
-    image: "jakkaj/smartmeterapi"
-    restart: always
-    ports:
-     - "5000:5000"
-    env_file:
-    - /Users/jak/Scripts/.env
   mqttserver:
     image: "eclipse-mosquitto"
     restart: always
@@ -19,9 +12,27 @@ services:
       - "9001:9001"
     volumes:
     - eclipse-mosquitto
+  influxdb:
+    image: "influxdb"
+    ports:
+    - "8086:8086"
+    volumes:
+    - /data/influx:/var/lib/influxdb 
+  grafana:
+    image: "grafana/grafana"
+    ports:
+    - "3000:3000"
+    depends_on: 
+    - influxdb
+    volumes:
+    - /data/grafana:/var/lib/grafana 
   mqttclient:
+    environment:
+    - MQTT_SERVER_ADDRESS=mqttserver
+    - INFLUX_SERVER_ADDRESS=influxdb
+    env_file: .env    
     restart: always
     depends_on: 
     - mqttserver
-    - apiserver
+    - influxdb
     image: "jakkaj/smartmetermqttclient"
