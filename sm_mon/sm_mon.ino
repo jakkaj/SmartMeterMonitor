@@ -84,17 +84,22 @@ void loop()
     log("pop_stdev", stats.pop_stdev());
     log("unbiased_stdev", stats.unbiased_stdev());
     log("average", stats.average());
+    float lowCutoff2 = (stats.maximum() - stats.minimum())/2;
+    log("cutoff", lowCutoff2);
   }
   
   float avg = stats.average();
   float stddev = stats.pop_stdev();
-  
+  float variance = stats.variance();
+  float minimum=stats.minimum();
+  float maximum=stats.maximum();
 
+  float lowCutoff = (maximum - minimum)/2;
   //when we don't know the blink level yet
   //blink event will lower the val by some margin we don't yet know
   boolean isLow = false;
 
-  float tooLow = avg - (stddev * 2);
+  float tooLow = avg - lowCutoff;
 
  // float avgPercent = avg * 20 / 100;
  // float avgPercentTen = avg * 10 / 100;
@@ -115,6 +120,7 @@ void loop()
   {
     log("start with val", val);
     log("Current average", avg);
+    log("Current stddev", stddev);
     //this is a new pulse
     pulseStart();
   }
