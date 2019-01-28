@@ -153,6 +153,7 @@ namespace MqttTestClient
                 
                 if(counter % 10 == 0){
                     currentWeather = await weatherApi.GetCurrent("Balmain");
+                    Console.WriteLine("Refreshed weather");
                 }
 
                 Console.WriteLine($"Temp: {currentWeather.Main.Temp}, humidity: {currentWeather.Main.Humidity}");
@@ -181,7 +182,9 @@ namespace MqttTestClient
                         { "humidity", currentWeather.Main.Humidity},
                         { "pressure", currentWeather.Main.Pressure},
                         { "min", currentWeather.Main.TempMin},
-                        { "max", currentWeather.Main.TempMax}
+                        { "max", currentWeather.Main.TempMax},
+                        { "windSpeed", currentWeather.Wind.Speed},
+                        { "icon", currentWeather.WeatherWeather[0].Icon}
 
 
 
