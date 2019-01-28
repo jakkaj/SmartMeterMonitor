@@ -3,14 +3,16 @@ WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 
-COPY *.csproj ./
+COPY ./MqttClient_Influx/MqttTestClient.csproj ./MqttClient_Influx/
+COPY ./OpenWeatherMap/OpenWeatherMap.csproj ./OpenWeatherMap/
 
-RUN dotnet restore
+RUN dotnet restore ./MqttClient_Influx/
+RUN dotnet restore ./OpenWeatherMap/
 
 # Copy everything else and build
 COPY . ./
 
-RUN dotnet publish -c Debug -o /app/out
+RUN dotnet publish -c Debug -o /app/out ./MqttClient_Influx/
 
 # Build runtime image
 FROM microsoft/dotnet:aspnetcore-runtime
