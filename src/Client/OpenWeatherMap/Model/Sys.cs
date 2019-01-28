@@ -21,5 +21,9 @@ namespace OpenWeatherMap.Model
 
         [JsonProperty("sunset")]
         public long Sunset { get; set; }
+
+        [JsonProperty("pod")]
+        public Pod Pod { get; set; }
+
     }
 }

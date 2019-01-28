@@ -23,6 +23,7 @@ namespace MqttTestClient
 {
     class Program
     {
+        private const string CITY = "Balmain";
         private static double _kwh = 0;
         private static string _mqttServerAddress;
         private static string _influxServerAddress;
@@ -138,7 +139,11 @@ namespace MqttTestClient
             await InfluxHelper.CreateDatabase(influxUrl);
 
             var weatherApi = new OpenWeatherMap.OpenWeatherMap(_apiKey);
-            var currentWeather = await weatherApi.GetCurrent("Balmain");
+            var currentWeather = await weatherApi.GetCurrent(CITY);
+
+            var maxMax = await weatherApi.GetMaximums(CITY);
+            var minMin = await weatherApi.GetMinimums(CITY);
+
             Metrics.Collector = new CollectorConfiguration()
                 .Tag.With("host", "campbellst")
                 .WriteTo.InfluxDB(influxUrl, "kwh")
@@ -152,7 +157,13 @@ namespace MqttTestClient
                 Thread.Sleep(TimeSpan.FromSeconds(5));
                 
                 if(counter % 10 == 0){
-                    currentWeather = await weatherApi.GetCurrent("Balmain");
+                    currentWeather = await weatherApi.GetCurrent(CITY);
+                }
+
+                if (counter % 100 == 0)
+                {
+                    maxMax = await weatherApi.GetMaximums(CITY);
+                    minMin = await weatherApi.GetMinimums(CITY);
                 }
 
                 Console.WriteLine($"Temp: {currentWeather.Main.Temp}, humidity: {currentWeather.Main.Humidity}");
@@ -180,8 +191,10 @@ namespace MqttTestClient
                         { "temp", currentWeather.Main.Temp},
                         { "humidity", currentWeather.Main.Humidity},
                         { "pressure", currentWeather.Main.Pressure},
-                        { "min", currentWeather.Main.TempMin},
-                        { "max", currentWeather.Main.TempMax}
+                        { "min", minMin.today},
+                        { "max", maxMax.today},
+                        { "minTomorrow", minMin.tomorrow},
+                        { "maxTomorrow", maxMax.tomorrow}
 
 
 
