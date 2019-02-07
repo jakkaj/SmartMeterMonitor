@@ -25,8 +25,11 @@ namespace OpenWeatherMap.Model
                     return Description.OvercastClouds;
                 case "scattered clouds":
                     return Description.ScatteredClouds;
+                case "moderate rain":
+                    return Description.ModerateRain;
+                default:
+                    return Description.Other;
             }
-            throw new Exception("Cannot unmarshal type Description");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
