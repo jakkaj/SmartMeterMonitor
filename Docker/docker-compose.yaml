@@ -20,6 +20,8 @@ services:
     - /data/influx:/var/lib/influxdb 
   grafana:
     image: "grafana/grafana"
+    environment: 
+    - GF_INSTALL_PLUGINS=fetzerch-sunandmoon-datasource
     ports:
     - "3000:3000"
     depends_on: 
