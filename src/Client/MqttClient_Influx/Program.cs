@@ -44,7 +44,7 @@ namespace MqttTestClient
             _influxServerAddress = config["INFLUX_SERVER_ADDRESS"];
             _powerBiServerUrl = config["POWER_BI_URL"];
 
-            _apiKey = config["_apiEnvVar"];
+            _apiKey = config[_apiEnvVar];
 
             if (string.IsNullOrWhiteSpace(_mqttServerAddress) || string.IsNullOrWhiteSpace(_influxServerAddress)
                                                              || string.IsNullOrWhiteSpace(_powerBiServerUrl))
