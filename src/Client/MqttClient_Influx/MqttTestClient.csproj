@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DarkSkyCore" Version="5.1.13" />
     <PackageReference Include="InfluxDB.Collector" Version="1.1.0" />
     <PackageReference Include="InfluxDB.LineProtocol" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
