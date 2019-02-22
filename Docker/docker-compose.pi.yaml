@@ -1,0 +1,40 @@
+version: '2'
+services:
+  mqttserver:
+    image: "eclipse-mosquitto"
+    restart: always
+    hostname: mqttserver
+    expose:
+      - "1883"
+      - "9001"
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+    - eclipse-mosquitto
+  influxdb:
+    image: "hypriot/rpi-influxdb"
+    ports:
+    - "8086:8086"
+    volumes:
+    - /data/influx2:/var/lib/influxdb 
+  grafana:
+    image: "fg2it/grafana-armhf:v4.1.2"
+    environment: 
+    - GF_INSTALL_PLUGINS=fetzerch-sunandmoon-datasource
+    ports:
+    - "3000:3000"
+    depends_on: 
+    - influxdb
+    volumes:
+    - /data/grafana:/var/lib/grafana 
+  mqttclient:
+    environment:
+    - MQTT_SERVER_ADDRESS=mqttserver
+    - INFLUX_SERVER_ADDRESS=influxdb
+    env_file: .env    
+    restart: always
+    depends_on: 
+    - mqttserver
+    - influxdb
+    image: "jakkaj/smartmetermqttclient"
