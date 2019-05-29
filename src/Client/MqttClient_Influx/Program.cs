@@ -25,6 +25,7 @@ namespace MqttTestClient
     class Program
     {
         private static string _apiEnvVar = "DARK_SKY_API_KEY";
+        private static string _amberEnvVar = "AMBER_API_URL";
         private static double _latitude = -33.86;
         private static double _longitude = 151.18;
 
@@ -33,6 +34,7 @@ namespace MqttTestClient
         private static string _influxServerAddress;
         private static string _powerBiServerUrl;
         private static string _apiKey;
+        private static string _amberUrl;
         private static DateTime _lastReading;
 
         public static async Task Main(string[] args)
@@ -45,6 +47,7 @@ namespace MqttTestClient
             _powerBiServerUrl = config["POWER_BI_URL"];
 
             _apiKey = config[_apiEnvVar];
+            _amberUrl = config[_amberEnvVar];
 
             if (string.IsNullOrWhiteSpace(_mqttServerAddress) || string.IsNullOrWhiteSpace(_influxServerAddress)
                                                              || string.IsNullOrWhiteSpace(_powerBiServerUrl))

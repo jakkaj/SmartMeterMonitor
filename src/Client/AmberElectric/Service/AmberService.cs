@@ -11,16 +11,22 @@ namespace AmberElectric.Service
 {
     public class AmberService
     {
+
+        private string _amberUrl;
+        public AmberService(string url)
+        {
+            this._amberUrl = url;
+        }
         public double InPrice(AmberData data, VariablePricesAndRenewable variables)
         {
-            var price = (data.data.staticPrices.E1.totalfixedKWHPrice + data.data.staticPrices.E1.lossFactor * data.data.variablePricesAndRenewables[0].wholesaleKWHPrice) / 1.1;
+            var price = (data.data.staticPrices.E1.totalfixedKWHPrice + data.data.staticPrices.E1.lossFactor * variables.wholesaleKWHPrice) / 1.1;
 
             return price;
         }
 
         public double OutPrice(AmberData data, VariablePricesAndRenewable variables)
         {
-            var price = (data.data.staticPrices.B1.totalfixedKWHPrice + data.data.staticPrices.B1.lossFactor * data.data.variablePricesAndRenewables[0].wholesaleKWHPrice) / 1.1;
+            var price = (data.data.staticPrices.B1.totalfixedKWHPrice + data.data.staticPrices.B1.lossFactor * variables.wholesaleKWHPrice) / 1.1;
 
             return price;
         }
@@ -29,7 +35,7 @@ namespace AmberElectric.Service
         {
             var data = $"{{ \"postcode\": \"{postCode}\" }}";
 
-            var url = "";
+            var url = _amberUrl;
 
             using (var client = new HttpClient())
             {
@@ -45,8 +51,6 @@ namespace AmberElectric.Service
                 var deSerialise = JsonConvert.DeserializeObject<AmberData>(stringResult);
                
                 
-                var outPrice = (deSerialise.data.staticPrices.B1.totalfixedKWHPrice + deSerialise.data.staticPrices.B1.lossFactor * deSerialise.data.variablePricesAndRenewables[0].wholesaleKWHPrice) / 1.1;
-
                 return deSerialise;
                 
                 

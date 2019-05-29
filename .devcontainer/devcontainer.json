@@ -8,5 +8,8 @@
     "extensions": [
         "peterjausovec.vscode-docker",
         "ms-vscode.csharp"
-    ]
+    ],
+    "settings": {
+        "terminal.integrated.shell.linux": "zsh",
+    }
 }
