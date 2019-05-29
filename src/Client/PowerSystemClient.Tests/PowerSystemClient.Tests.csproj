@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AmberElectric\AmberElectric.csproj" />
     <ProjectReference Include="..\OpenWeatherMap\OpenWeatherMap.csproj" />
   </ItemGroup>
 
