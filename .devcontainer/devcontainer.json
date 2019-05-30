@@ -11,5 +11,6 @@
     ],
     "settings": {
         "terminal.integrated.shell.linux": "zsh",
+        "terminal.integrated.cwd": "./src/Client/EnergyHost.App"
     }
 }

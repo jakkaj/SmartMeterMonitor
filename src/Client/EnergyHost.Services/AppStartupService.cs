@@ -13,15 +13,18 @@ namespace EnergyHost.Services
         private readonly ILogService _logService;
 
         public AppStartupService(
-            IOptions<EnergyHostSettings> options
+            IOptions<EnergyHostSettings> options,
+            ILogService logService
            )
         {
             _options = options;
+            _logService = logService;
            
         }
 
         public string RunApp()
         {
+            
             if (!_validate())
             {
                 return "2";
