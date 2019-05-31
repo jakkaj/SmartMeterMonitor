@@ -79,8 +79,8 @@ namespace EnergyHost.Services.Services
 
                 foreach (var varPrice in amberData.data.variablePricesAndRenewables)
                 {
-                    varPrice.InPriceNormal = 100 * (varPrice.InPrice - minIn) / rangeIn;
-                    varPrice.OutPriceNormal = 100 * (varPrice.OutPrice - minOut) / rangeOut;
+                    varPrice.InPriceNormal = (100 * (varPrice.InPrice - minIn) / rangeIn) / 100;
+                    varPrice.OutPriceNormal = (100 * (varPrice.OutPrice - minOut) / rangeOut) / 100;
                 }
 
             

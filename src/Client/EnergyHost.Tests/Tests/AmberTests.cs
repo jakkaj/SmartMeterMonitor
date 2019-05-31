@@ -32,7 +32,7 @@ namespace EnergyHost.Tests.Tests
             foreach (var i in amberData.data.variablePricesAndRenewables)
             {
                 var s = "";
-                for (var icount = 0; icount < i.InPriceNormal; icount++)
+                for (var icount = 0.0; icount < i.InPriceNormal; icount+= 0.01)
                 {
                     s += "-";
                 }
