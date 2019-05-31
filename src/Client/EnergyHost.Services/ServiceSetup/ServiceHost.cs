@@ -20,6 +20,7 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddTransient<IAppStartupService, AppStartupService>();
             services.AddTransient<IAmberService, AmberService>();
             services.AddTransient<IDarkSkyService, DarkSkyService>();
+            services.AddTransient<IEnergyFuturesService, EnergyFuturesService>();
             services.AddSingleton<ILogService, LogService>();
          
             return this;
