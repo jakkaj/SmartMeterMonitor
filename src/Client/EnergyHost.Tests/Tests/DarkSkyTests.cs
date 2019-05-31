@@ -24,7 +24,7 @@ namespace EnergyHost.Tests.Tests
                 {
                     s += "-";
                 }
-                Debug.WriteLine($"{i.DateTime.ToString()} : {s}");
+                Debug.WriteLine($"{i.DateTime.ToString()} : {i.UvIndex} {s}");
             }
 
         }
