@@ -21,6 +21,7 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddTransient<IAmberService, AmberService>();
             services.AddTransient<IDarkSkyService, DarkSkyService>();
             services.AddTransient<IEnergyFuturesService, EnergyFuturesService>();
+            services.AddTransient<IMQTTService, MQTTService>();
             services.AddSingleton<ILogService, LogService>();
          
             return this;
