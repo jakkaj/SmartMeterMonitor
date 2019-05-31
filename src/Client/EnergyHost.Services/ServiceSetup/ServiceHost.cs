@@ -18,6 +18,7 @@ namespace EnergyHost.Services.ServiceSetup
         {
             services.Configure<EnergyHostSettings>(configuration.GetSection(nameof(EnergyHostSettings)));
             services.AddTransient<IAppStartupService, AppStartupService>();
+            services.AddTransient<IAmberService, AmberService>();
             services.AddSingleton<ILogService, LogService>();
          
             return this;
