@@ -9,6 +9,7 @@ using MQTTnet.Exceptions;
 using MQTTnet.Packets;
 using MQTTnet.Server;
 using MQTTnet;
+using Smart.Helpers;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
