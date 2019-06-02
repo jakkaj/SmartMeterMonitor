@@ -34,6 +34,9 @@ namespace EnergyHost.Services.Services
             var amberData = await _amberService.Get(_options.Value.PostCode);
             var darkData = await _darkSkyService.Get();
 
+            var sunrise = darkData.Daily.Data[0].SunriseDateTime.Value.DateTime;
+            var sunset = darkData.Daily.Data[0].SunsetDateTime.Value.DateTime;
+
             var futures = new EnergryFutures()
             {
                 Futures = new List<EnergyFuture>()
@@ -43,19 +46,19 @@ namespace EnergyHost.Services.Services
             var currentAd = amberData.data.variablePricesAndRenewables.Last(_ => _.periodType == "ACTUAL");
             var currentDp = darkData.Currently;
 
-            futures.Futures.Add(_getEnergyFuture(currentAd, currentDp));
+            futures.Futures.Add(_getEnergyFuture(currentAd, currentDp, sunrise, sunset));
 
 
             foreach (var ad in amberData.data.variablePricesAndRenewables.Where(_=>_.periodType == "FORECAST"))
             {
                 var ds = _pair(ad, darkData);
-                futures.Futures.Add(_getEnergyFuture(ad, ds));
+                futures.Futures.Add(_getEnergyFuture(ad, ds, sunrise, sunset));
             }
 
             return futures;
         }
 
-        EnergyFuture _getEnergyFuture(VariablePricesAndRenewable amberVars, DataPoint dp)
+        EnergyFuture _getEnergyFuture(VariablePricesAndRenewable amberVars, DataPoint dp, DateTime sunrise, DateTime sunset)
         {
             var obj = new EnergyFuture()
             {
@@ -69,7 +72,9 @@ namespace EnergyHost.Services.Services
                 PriceOutNormalised = amberVars.OutPriceNormal
             };
 
-            obj.SolarBad = dp.UvIndex != 0 ? obj.Cloudiness : 1;
+            var isLight = amberVars.period.AddHours(1).Hour > sunrise.Hour && amberVars.period.AddHours(-1).Hour < sunset.Hour;
+
+            obj.SolarBad = isLight ? obj.Cloudiness : 1;
 
             obj.Value = (2 - obj.SolarBad - obj.PriceInNormalised) / 2;
 
