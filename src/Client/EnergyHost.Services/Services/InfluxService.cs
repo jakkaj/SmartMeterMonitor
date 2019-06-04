@@ -31,6 +31,7 @@ namespace EnergyHost.Services.Services
 
 
             Metrics.Collector = new CollectorConfiguration()
+                
                 .Tag.With("host", "campbellst")
                 .WriteTo.InfluxDB(influxUrl, db)
                 .CreateCollector();

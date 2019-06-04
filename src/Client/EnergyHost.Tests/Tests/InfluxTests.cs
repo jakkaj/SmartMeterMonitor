@@ -17,7 +17,9 @@ namespace EnergyHost.Tests.Tests
 
             var data = new Dictionary<string, object>
             {
-                {"reading", "1232"}
+                {"time", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString() },
+                {"reading", "1234"}
+                
             };
 
             await s.Write("test", "jktest", data);
