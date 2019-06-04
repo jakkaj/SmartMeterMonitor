@@ -34,8 +34,8 @@ namespace EnergyHost.Services.Services
             var amberData = await _amberService.Get(_options.Value.PostCode);
             var darkData = await _darkSkyService.Get();
 
-            var sunrise = darkData.Daily.Data[0].SunriseDateTime.Value.DateTime;
-            var sunset = darkData.Daily.Data[0].SunsetDateTime.Value.DateTime;
+            var sunrise = darkData.Daily.Data[0].SunriseDateTime.Value.DateTime.AddHours(.5);
+            var sunset = darkData.Daily.Data[0].SunsetDateTime.Value.DateTime.AddHours(.5);
 
             var futures = new EnergryFutures()
             {
@@ -72,7 +72,7 @@ namespace EnergyHost.Services.Services
                 PriceOutNormalised = amberVars.OutPriceNormal
             };
 
-            var isLight = amberVars.period.AddHours(1).Hour > sunrise.Hour && amberVars.period.AddHours(-1).Hour < sunset.Hour;
+            var isLight = amberVars.period.Hour > sunrise.Hour && amberVars.period.Hour < sunset.Hour;
 
             obj.SolarBad = isLight ? obj.Cloudiness : 1;
 

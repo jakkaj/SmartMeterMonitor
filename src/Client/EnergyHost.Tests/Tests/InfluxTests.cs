@@ -21,6 +21,7 @@ namespace EnergyHost.Tests.Tests
             };
 
             await s.Write("test", "jktest", data);
+            Console.WriteLine("testing 123");
         }
     }
 }
