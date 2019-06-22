@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using EnergyHost.Contract;
 using EnergyHost.Model.Settings;
 using InfluxDB.Collector;
+using InfluxDB.LineProtocol.Client;
+using InfluxDB.LineProtocol.Payload;
 using Microsoft.Extensions.Options;
 
 namespace EnergyHost.Services.Services
@@ -23,17 +25,47 @@ namespace EnergyHost.Services.Services
             _logService = logService;
             _settings = settings;
         }
+
+        private string InfluxServerUrl => $"http://{_settings.Value.INFLUX_SERVER_ADDRESS}:8086";
+
+        public async Task<bool> Write(string db, string measurement, IReadOnlyDictionary<string, object> data, IReadOnlyDictionary<string, string> tags = null, DateTime? utcTimeStamp = null)
+        {
+            await _createDatabase(InfluxServerUrl, db);
+
+            if (utcTimeStamp == null)
+            {
+                utcTimeStamp = DateTime.UtcNow;
+            }
+
+            var writer = new LineProtocolPoint(
+                measurement,
+               data,
+                tags,
+                utcTimeStamp);
+
+            var payload = new LineProtocolPayload();
+            payload.Add(writer);
+
+            var client = new LineProtocolClient(new Uri(InfluxServerUrl), db);
+            var influxResult = await client.WriteAsync(payload);
+
+        
+
+            if (!influxResult.Success)
+                _logService.WriteError(influxResult.ErrorMessage);
+
+            return influxResult.Success;
+        }
         public async Task Write(string db, string measurement, Dictionary<string, object> data)
         {
-            var influxUrl = $"http://{_settings.Value.INFLUX_SERVER_ADDRESS}:8086";
 
-            await _createDatabase(influxUrl, db);
+            await _createDatabase(InfluxServerUrl, db);
 
 
             Metrics.Collector = new CollectorConfiguration()
                 
                 .Tag.With("host", "campbellst")
-                .WriteTo.InfluxDB(influxUrl, db)
+                .WriteTo.InfluxDB(InfluxServerUrl, db)
                 .CreateCollector();
 
 

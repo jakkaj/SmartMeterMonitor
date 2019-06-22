@@ -11,6 +11,22 @@ namespace EnergyHost.Tests.Tests
     public class InfluxTests : TestBase
     {
         [TestMethod]
+        public async Task TestWriteLineProtocol()
+        {
+            var s = Resolve<IInfluxService>();
+
+            var data = new Dictionary<string, object>
+            {
+                {"reading", "1234"}
+
+            };
+
+            var result = await s.Write("test", "jktest",data, null, DateTime.UtcNow.AddMinutes(-3600));
+            Assert.IsTrue(result);
+            //Console.WriteLine("testing 123");
+        }
+
+        [TestMethod]
         public async Task TestWrite()
         {
             var s = Resolve<IInfluxService>();
