@@ -22,6 +22,21 @@ namespace EnergyHost.Services.Services
             _logService = logService;
             _settings = settings;
         }
+
+        public async Task<NameValueCollection> GetStatus()
+        {
+            var data = await _getDaikin("get_control_info");
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            var qs = HttpUtility.ParseQueryString(data.Replace(",", "&"));
+
+            return qs;
+        }
+
         public async Task<NameValueCollection> GetSensors()
         {
             var data = await _getDaikin("get_sensor_info");
@@ -39,18 +54,28 @@ namespace EnergyHost.Services.Services
         async Task<string> _getDaikin(string service)
         {
             var url = $"{_settings.Value.DAIKIN_URL}/{service}?lpw={_settings.Value.DAIKIN_AUTH}";
-
-            using (var client = new HttpClient())
-            {
-                var result = await client.GetAsync(url);
-
-                if (!result.IsSuccessStatusCode)
+            
+                using (var client = new HttpClient())
                 {
-                    _logService.WriteError($"Could not contact Daikin at {url}");
-                    return null;
-                }
+                    try
+                    {
 
-                return await result.Content.ReadAsStringAsync();
+
+                        var result = await client.GetAsync(url);
+
+                        if (!result.IsSuccessStatusCode)
+                        {
+                            _logService.WriteError($"Could not contact Daikin at {url}");
+                            return null;
+                        }
+
+                        return await result.Content.ReadAsStringAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logService.WriteError(ex.ToString());
+                        return null;
+                    }
             }
         }
     }

@@ -6,5 +6,6 @@ namespace EnergyHost.Contract
     public interface IDaikinService
     {
         Task<NameValueCollection> GetSensors();
+        Task<NameValueCollection> GetStatus();
     }
 }

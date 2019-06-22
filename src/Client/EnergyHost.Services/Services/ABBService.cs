@@ -26,6 +26,7 @@ namespace EnergyHost.Services.Services
 
         public async Task<ABBDevice> Get()
         {
+            
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -33,16 +34,25 @@ namespace EnergyHost.Services.Services
                     new AuthenticationHeaderValue("X-Digest", _settings.Value.ABB_AUTH);
 
                 var url = _settings.Value.ABB_URL;
-                var result = await client.GetAsync(new Uri(url));
-
-                if (!result.IsSuccessStatusCode)
+                try
                 {
+                    var result = await client.GetAsync(new Uri(url));
+
+                    if (!result.IsSuccessStatusCode)
+                    {
+                        return null;
+                    }
+
+                    var stringResult = await result.Content.ReadAsStringAsync();
+                    var abbData = JsonConvert.DeserializeObject<ABBDevice>(stringResult);
+                    return abbData;
+                }
+                catch (Exception ex)
+                {
+                    _logService.WriteError(ex.ToString());
                     return null;
                 }
-
-                var stringResult = await result.Content.ReadAsStringAsync();
-                var abbData = JsonConvert.DeserializeObject<ABBDevice>(stringResult);
-                return abbData;
+                
             }
         }
     }
