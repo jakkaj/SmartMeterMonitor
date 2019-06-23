@@ -20,6 +20,28 @@ namespace EnergyHost.Services.Services
             _settings = settings;
         }
 
+        public async Task<(double temp, double humid, double pressure,
+            double wind, double minToday, double maxToday,
+            double minTomorrow, double maxTomorrow)> GetDetail()
+        {
+            var forecast = await Get();
+            var humid = forecast.Currently.Humidity ?? 0;
+
+            var temp = forecast.Currently.Temperature ?? 0;
+
+            var pressure = forecast.Currently.Pressure ?? 0;
+
+            var wind = forecast.Currently.WindSpeed ?? 0;
+
+            var minToday = forecast.Daily.Data[0].TemperatureLow ?? 0;
+            var maxToday = forecast.Daily.Data[0].TemperatureHigh ?? 0;
+
+            var minTomorrow = forecast.Daily.Data[1].TemperatureLow ?? 0;
+            var maxTomorrow = forecast.Daily.Data[1].TemperatureHigh ?? 0;
+
+            return (temp, humid, pressure, wind, minToday, maxToday, minTomorrow, maxTomorrow);
+        }
+
         public async Task<Forecast> Get()
         {
             var weather = new DarkSky.Services.DarkSkyService(_settings.Value.DARK_SKY_API_KEY);
@@ -28,21 +50,7 @@ namespace EnergyHost.Services.Services
             {
                 MeasurementUnits = "si",
             });
-
-            var humid = forecast.Response.Currently.Humidity ?? 0;
-
-            var temp = forecast.Response.Currently.Temperature ?? 0;
-
-            var pressure = forecast.Response.Currently.Pressure ?? 0;
-
-            var wind = forecast.Response.Currently.WindSpeed ?? 0;
-
-            var minToday = forecast.Response.Daily.Data[0].TemperatureLow ?? 0;
-            var maxToday = forecast.Response.Daily.Data[0].TemperatureHigh ?? 0;
-
-            var minTomorrow = forecast.Response.Daily.Data[1].TemperatureLow ?? 0;
-            var maxTomorrow = forecast.Response.Daily.Data[1].TemperatureHigh ?? 0;
-
+            
             return forecast.Response;
         }
     }

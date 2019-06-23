@@ -52,7 +52,7 @@ namespace EnergyHost.Services.Services
         
 
             if (!influxResult.Success)
-                _logService.WriteError(influxResult.ErrorMessage);
+                    _logService.WriteError(influxResult.ErrorMessage);
 
             return influxResult.Success;
         }
