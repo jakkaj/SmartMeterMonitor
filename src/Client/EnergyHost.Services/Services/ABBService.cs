@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -26,34 +27,48 @@ namespace EnergyHost.Services.Services
 
         public async Task<ABBDevice> Get()
         {
-            
-            using (var client = new HttpClient())
+            var retryCount = 0;
+
+            while (retryCount < 3)
             {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("X-Digest", _settings.Value.ABB_AUTH);
 
-                var url = _settings.Value.ABB_URL;
-                try
+                using (var client = new HttpClient())
                 {
-                    var result = await client.GetAsync(new Uri(url));
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("X-Digest", _settings.Value.ABB_AUTH);
 
-                    if (!result.IsSuccessStatusCode)
+                    var url = _settings.Value.ABB_URL;
+                    try
                     {
-                        return null;
+                        var result = await client.GetAsync(new Uri(url));
+
+                        if (!result.IsSuccessStatusCode)
+                        {
+                            return null;
+                        }
+
+                        var stringResult = await result.Content.ReadAsStringAsync();
+                        var abbData = JsonConvert.DeserializeObject<ABBDevice>(stringResult);
+                        return abbData;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logService.WriteError(ex.ToString());
+                        
                     }
 
-                    var stringResult = await result.Content.ReadAsStringAsync();
-                    var abbData = JsonConvert.DeserializeObject<ABBDevice>(stringResult);
-                    return abbData;
+                    retryCount++;
+                    Debug.WriteLine($"ABB Retry: {retryCount}");
+
+                    
                 }
-                catch (Exception ex)
-                {
-                    _logService.WriteError(ex.ToString());
-                    return null;
-                }
-                
+
             }
+
+            return null;
+
+
         }
     }
 }

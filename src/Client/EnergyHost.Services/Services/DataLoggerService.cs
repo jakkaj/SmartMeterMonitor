@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
+using EnergyHost.Model.EnergyModels;
 
 namespace EnergyHost.Services.Services
 {
@@ -13,6 +15,7 @@ namespace EnergyHost.Services.Services
         private readonly IABBService _abbService;
         private readonly IDarkSkyService _darkSkyService;
         private readonly IInfluxService _influxService;
+        private readonly IAmberService _amberService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -22,19 +25,26 @@ namespace EnergyHost.Services.Services
         public bool DaikinPoweredOn { get; set; }
         public (double temp, double humid, double pressure,
             double wind, double minToday, double maxToday,
-            double minTomorrow, double maxTomorrow) CurrentWeather { get; set; }
+            double minTomorrow, double maxTomorrow) CurrentWeather
+        { get; set; }
+
+        public AmberData AmberData { get; set; }
+        public double CurrentPriceIn { get; set; }
+        public double CurrentPriceOut { get; set; }
 
         public DataLoggerService(ILogService logService,
             IDaikinService daikinService,
             IABBService abbService,
             IDarkSkyService darkSkyService,
-            IInfluxService influxService
+            IInfluxService influxService,
+            IAmberService amberService
             )
         {
             _logService = logService;
             _abbService = abbService;
             _darkSkyService = darkSkyService;
             _influxService = influxService;
+            _amberService = amberService;
             _daikinService = daikinService;
         }
 
@@ -44,6 +54,8 @@ namespace EnergyHost.Services.Services
             _deviceUpdates1Mins();
 
             _deviceUpdates5Mins();
+
+            _abbPoller();
 
             await Task.Delay(TimeSpan.FromSeconds(10));
 
@@ -69,7 +81,9 @@ namespace EnergyHost.Services.Services
                     { "DaikinInsideTemperature", DaikinInsideTemperature },
                     { "DaikinMode", DaikinMode },
                     { "DaikinPoweredOn", DaikinPoweredOn },
-                    { "SolarOutput", SolarOutput }
+                    { "SolarOutput", SolarOutput },
+                    { "CurrentPriceIn", CurrentPriceIn },
+                    { "CurrentPriceOut", CurrentPriceOut }
                 };
 
                 var result = await _influxService.Write("house", "currentStatus", data, null, DateTime.UtcNow);
@@ -77,21 +91,22 @@ namespace EnergyHost.Services.Services
                 {
                     Debug.WriteLine($"Influx: {result}");
                 }
-                
+
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
         }
 
-        async void _deviceUpdates5Mins()
+        async void _abbPoller()
         {
             var lastSolar = DateTime.Now;
+           
 
             while (true)
             {
                 var tAbbStatus = _abbService.Get();
-                var tDsStatus = _darkSkyService.GetDetail();
-                await Task.WhenAll(tDsStatus, tAbbStatus);
-                CurrentWeather = await tDsStatus;
+                
+                await Task.WhenAll(tAbbStatus);
+                
                 var abb = await tAbbStatus;
 
                 if (abb != null)
@@ -100,14 +115,49 @@ namespace EnergyHost.Services.Services
                     SolarOutput = abb.feeds.Feed.datastreams.m101_1_W.data[0].value;
                 }
 
-                if (DateTime.Now.Subtract(lastSolar) > TimeSpan.FromMinutes(10))
+                if (DateTime.Now.Subtract(lastSolar) > TimeSpan.FromMinutes(20))
                 {
                     //solar is stale
                     SolarOutput = 0;
                     Debug.WriteLine("Solar is stale");
                 }
 
-                Debug.WriteLine($"[{DateTime.Now.ToString()}] Power: {string.Format("{0:0.00}", SolarOutput)}, Current outside temp: {CurrentWeather.temp}");
+                Debug.WriteLine($"[{DateTime.Now.ToString()}] Power: {string.Format("{0:0.00}", SolarOutput)}");
+                await Task.Delay(TimeSpan.FromMinutes(5));
+            }
+        }
+
+        async void _deviceUpdates5Mins()
+        {
+            var lastSolar = DateTime.Now;
+            var lastAmber = DateTime.Now;
+
+            while (true)
+            {
+                
+                var tDsStatus = _darkSkyService.GetDetail();
+                var tAmberStats = _amberService.Get("2047");
+                await Task.WhenAll(tDsStatus, tAmberStats);
+                CurrentWeather = await tDsStatus;
+                
+
+                AmberData = await tAmberStats;
+
+                if (AmberData != null)
+                {
+                    lastAmber = DateTime.Now;
+                    CurrentPriceIn = AmberData.data.variablePricesAndRenewables[0].InPrice;
+                    CurrentPriceOut = AmberData.data.variablePricesAndRenewables[0].OutPrice;
+                }
+
+                if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
+                {
+                    _logService.WriteLog("Amber Data Stale");
+                    CurrentPriceIn = 0;
+                    CurrentPriceOut = 0;
+                }
+
+                Debug.WriteLine($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
                 await Task.Delay(TimeSpan.FromMinutes(5));
             }
         }
@@ -116,32 +166,32 @@ namespace EnergyHost.Services.Services
         /// </summary>
         async void _deviceUpdates1Mins()
         {
-            
+
             var lastDaikinSensors = DateTime.Now;
             var lastDaikinStatus = DateTime.Now;
 
             while (true)
             {
                 var tDaikinSensors = _daikinService.GetSensors();
-                
-                
+
+
 
                 var tDaikinStatus = _daikinService.GetStatus();
 
                 await Task.WhenAll(tDaikinSensors, tDaikinStatus);
 
-               
+
                 var daikinStatus = await tDaikinStatus;
                 var daikinSensors = await tDaikinSensors;
 
-                
-                
+
+
 
                 if (daikinSensors != null)
                 {
                     lastDaikinSensors = DateTime.Now;
                     DaikinInsideTemperature = Convert.ToDouble(daikinSensors["htemp"]);
-                    
+
                 }
 
                 if (DateTime.Now.Subtract(lastDaikinSensors) > TimeSpan.FromMinutes(5))
