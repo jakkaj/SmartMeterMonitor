@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Threading.Tasks;
 using EnergyHost.Contract;
 
 namespace EnergyHost.App
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var appHost = new AppHostBase();
 
             var appStartup = appHost.Resolve<IAppStartupService>();
 
-            var result = appStartup.RunApp();
+            var result = await appStartup.RunApp();
 
             int n;
 

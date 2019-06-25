@@ -16,6 +16,7 @@ namespace EnergyHost.Services.Services
         private readonly IDarkSkyService _darkSkyService;
         private readonly IInfluxService _influxService;
         private readonly IAmberService _amberService;
+        private readonly IEnergyFuturesService _energyFuturesService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -28,7 +29,7 @@ namespace EnergyHost.Services.Services
             double minTomorrow, double maxTomorrow) CurrentWeather
         { get; set; }
 
-        public AmberData AmberData { get; set; }
+        public EnergryFutures EnergyFutures { get; set; }
         public double CurrentPriceIn { get; set; }
         public double CurrentPriceOut { get; set; }
 
@@ -37,7 +38,8 @@ namespace EnergyHost.Services.Services
             IABBService abbService,
             IDarkSkyService darkSkyService,
             IInfluxService influxService,
-            IAmberService amberService
+            IAmberService amberService,
+            IEnergyFuturesService energyFuturesService
             )
         {
             _logService = logService;
@@ -45,6 +47,7 @@ namespace EnergyHost.Services.Services
             _darkSkyService = darkSkyService;
             _influxService = influxService;
             _amberService = amberService;
+            _energyFuturesService = energyFuturesService;
             _daikinService = daikinService;
         }
 
@@ -119,10 +122,10 @@ namespace EnergyHost.Services.Services
                 {
                     //solar is stale
                     SolarOutput = 0;
-                    Debug.WriteLine("Solar is stale");
+                    _logService.WriteLog("Solar is stale");
                 }
 
-                Debug.WriteLine($"[{DateTime.Now.ToString()}] Power: {string.Format("{0:0.00}", SolarOutput)}");
+                _logService.WriteLog($"[{DateTime.Now.ToString()}] Power: {string.Format("{0:0.00}", SolarOutput)}");
                 await Task.Delay(TimeSpan.FromMinutes(5));
             }
         }
@@ -136,18 +139,19 @@ namespace EnergyHost.Services.Services
             {
                 
                 var tDsStatus = _darkSkyService.GetDetail();
-                var tAmberStats = _amberService.Get("2047");
-                await Task.WhenAll(tDsStatus, tAmberStats);
+                var tEnergyFutures = _energyFuturesService.Get();
+                await Task.WhenAll(tDsStatus, tEnergyFutures);
                 CurrentWeather = await tDsStatus;
                 
 
-                AmberData = await tAmberStats;
+                EnergyFutures = await tEnergyFutures;
 
-                if (AmberData != null)
+                if (EnergyFutures != null)
                 {
                     lastAmber = DateTime.Now;
-                    CurrentPriceIn = AmberData.data.variablePricesAndRenewables[0].InPrice;
-                    CurrentPriceOut = AmberData.data.variablePricesAndRenewables[0].OutPrice;
+                    CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
+
+                    CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
                 }
 
                 if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
@@ -157,7 +161,7 @@ namespace EnergyHost.Services.Services
                     CurrentPriceOut = 0;
                 }
 
-                Debug.WriteLine($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
+                _logService.WriteLog($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
                 await Task.Delay(TimeSpan.FromMinutes(5));
             }
         }
@@ -198,7 +202,7 @@ namespace EnergyHost.Services.Services
                 {
                     //Daikin is stale
                     DaikinInsideTemperature = 0;
-                    Debug.WriteLine("Daikin sensors are stale");
+                    _logService.WriteLog("Daikin sensors are stale");
                 }
 
                 if (daikinStatus != null)
@@ -213,11 +217,11 @@ namespace EnergyHost.Services.Services
                 {
                     //Daikin is stale
                     DaikinSetTemperature = 0;
-                    Debug.WriteLine("Daikin status is stale");
+                    _logService.WriteLog("Daikin status is stale");
                 }
 
 
-                Debug.WriteLine($"[{DateTime.Now.ToString()}] inside temp: {DaikinInsideTemperature}, inside set: {DaikinSetTemperature}, power: {DaikinPoweredOn}, mode: {DaikinMode}");
+                _logService.WriteLog($"[{DateTime.Now.ToString()}] inside temp: {DaikinInsideTemperature}, inside set: {DaikinSetTemperature}, power: {DaikinPoweredOn}, mode: {DaikinMode}");
 
                 await Task.Delay(TimeSpan.FromSeconds(60));
             }

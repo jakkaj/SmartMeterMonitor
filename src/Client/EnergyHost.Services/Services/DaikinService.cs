@@ -16,7 +16,7 @@ namespace EnergyHost.Services.Services
         private readonly ILogService _logService;
         private readonly IOptions<EnergyHostSettings> _settings;
 
-        public DaikinService(ILogService logService, 
+        public DaikinService(ILogService logService,
             IOptions<EnergyHostSettings> settings)
         {
             _logService = logService;
@@ -46,36 +46,34 @@ namespace EnergyHost.Services.Services
                 return null;
             }
 
-            var qs = HttpUtility.ParseQueryString(data.Replace(",","&"));
-            
+            var qs = HttpUtility.ParseQueryString(data.Replace(",", "&"));
+
             return qs;
         }
 
         async Task<string> _getDaikin(string service)
         {
             var url = $"{_settings.Value.DAIKIN_URL}/{service}?lpw={_settings.Value.DAIKIN_AUTH}";
-            
-                using (var client = new HttpClient())
+
+            using (var client = new HttpClient())
+            {
+                try
                 {
-                    try
+                    var result = await client.GetAsync(url);
+
+                    if (!result.IsSuccessStatusCode)
                     {
-
-
-                        var result = await client.GetAsync(url);
-
-                        if (!result.IsSuccessStatusCode)
-                        {
-                            _logService.WriteError($"Could not contact Daikin at {url}");
-                            return null;
-                        }
-
-                        return await result.Content.ReadAsStringAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logService.WriteError(ex.ToString());
+                        _logService.WriteError($"Could not contact Daikin at {url}");
                         return null;
                     }
+
+                    return await result.Content.ReadAsStringAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logService.WriteError(ex.ToString());
+                    return null;
+                }
             }
         }
     }

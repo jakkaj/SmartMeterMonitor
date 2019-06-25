@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using EnergyHost.Contract;
 using EnergyHost.Model.Settings;
 using Microsoft.Extensions.Options;
@@ -9,30 +10,36 @@ namespace EnergyHost.Services
     {
 
         private readonly IOptions<EnergyHostSettings> _options;
-       
+        private readonly IDataLoggerService _dataService;
+
         private readonly ILogService _logService;
 
         public AppStartupService(
             IOptions<EnergyHostSettings> options,
+            IDataLoggerService dataService,
             ILogService logService
            )
         {
             _options = options;
+            _dataService = dataService;
             _logService = logService;
            
         }
 
-        public string RunApp()
+        public async Task<string> RunApp()
         {
             
-            if (!_validate())
-            {
-                return "2";
-            }
+            //if (!_validate())
+            //{
+            //    return "2";
+            //}
 
-            var opts = _options.Value;
+            //var opts = _options.Value;
 
-           
+            await _dataService.Start();
+
+
+            await Task.Delay(-1);
 
             return "";
         }

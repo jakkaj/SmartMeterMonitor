@@ -30,6 +30,7 @@ namespace EnergyHost.Services.Services
 
         public async Task<bool> Write(string db, string measurement, IReadOnlyDictionary<string, object> data, IReadOnlyDictionary<string, string> tags = null, DateTime? utcTimeStamp = null)
         {
+            
             await _createDatabase(InfluxServerUrl, db);
 
             if (utcTimeStamp == null)
@@ -47,14 +48,24 @@ namespace EnergyHost.Services.Services
             payload.Add(writer);
 
             var client = new LineProtocolClient(new Uri(InfluxServerUrl), db);
-            var influxResult = await client.WriteAsync(payload);
 
-        
+            try
+            {
+                var influxResult = await client.WriteAsync(payload);
 
-            if (!influxResult.Success)
+
+
+                if (!influxResult.Success)
                     _logService.WriteError(influxResult.ErrorMessage);
 
-            return influxResult.Success;
+                return influxResult.Success;
+            }
+            catch (Exception ex)
+            {
+                _logService.WriteError(ex.ToString());
+                return false;
+            }
+            
         }
         public async Task Write(string db, string measurement, Dictionary<string, object> data)
         {
@@ -74,9 +85,17 @@ namespace EnergyHost.Services.Services
 
         private async Task _createDatabase(string influxDbUrl, string dbName)
         {
-            var url = new Uri($"{influxDbUrl}/query?q=CREATE DATABASE {dbName}");
-            var c = new HttpClient();
-            await c.GetAsync(url);
+            try
+            {
+                var url = new Uri($"{influxDbUrl}/query?q=CREATE DATABASE {dbName}");
+                var c = new HttpClient();
+                await c.GetAsync(url);
+            }
+            catch (Exception ex)
+            {
+                _logService.WriteError(ex.ToString());
+            }
+            
         }
     }
 }
