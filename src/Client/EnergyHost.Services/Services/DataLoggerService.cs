@@ -152,6 +152,7 @@ namespace EnergyHost.Services.Services
                     CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
 
                     CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
+                    _logService.WriteLog($"Energy in: {CurrentPriceIn}");
                 }
 
                 if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))

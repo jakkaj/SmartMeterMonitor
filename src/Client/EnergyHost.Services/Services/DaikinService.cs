@@ -57,23 +57,29 @@ namespace EnergyHost.Services.Services
 
             using (var client = new HttpClient())
             {
-                try
+                var retryCount = 0;
+                while (retryCount < 3)
                 {
-                    var result = await client.GetAsync(url);
-
-                    if (!result.IsSuccessStatusCode)
+                    try
                     {
-                        _logService.WriteError($"Could not contact Daikin at {url}");
-                        return null;
-                    }
+                        var result = await client.GetAsync(url);
 
-                    return await result.Content.ReadAsStringAsync();
+                        if (!result.IsSuccessStatusCode)
+                        {
+                            return null;
+                        }
+                        return await result.Content.ReadAsStringAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logService.WriteError(ex.ToString());
+                    }
+                    retryCount ++;
+
+                    _logService.WriteLog($"Daikin service retry: {retryCount}");
                 }
-                catch (Exception ex)
-                {
-                    _logService.WriteError(ex.ToString());
-                    return null;
-                }
+
+                return null;
             }
         }
     }
