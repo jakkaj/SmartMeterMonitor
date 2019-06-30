@@ -38,9 +38,11 @@ namespace EnergyHost.Services.Services
                 .WithCleanSession()
                 .Build();
 
+            var lastMessageIn = DateTime.Now;
+
             mqttClient.Disconnected += async (s, e) =>
             {
-                Console.WriteLine("### DISCONNECTED FROM SERVER ###");
+                _logService.WriteLog("### DISCONNECTED FROM SERVER ###");
                 await Task.Delay(TimeSpan.FromSeconds(5));
 
                 try
@@ -49,13 +51,13 @@ namespace EnergyHost.Services.Services
                 }
                 catch
                 {
-                    Console.WriteLine("### RECONNECTING FAILED ###");
+                    _logService.WriteError("### RECONNECTING FAILED ###");
                 }
             };
 
             mqttClient.Connected += async (s, e) =>
             {
-                Console.WriteLine("### CONNECTED WITH SERVER. Attempt subs ###");
+                _logService.WriteLog("### CONNECTED WITH SERVER. Attempt subs ###");
 
                 // Subscribe to a topic
                 try
@@ -66,18 +68,18 @@ namespace EnergyHost.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception");
-                    Console.WriteLine(ex.Message);
+
+                    _logService.WriteError(ex.Message);
                 }
 
-                Console.WriteLine("### SUBSCRIBED ###");
+                _logService.WriteLog("### SUBSCRIBED ###");
             };
 
             mqttClient.ApplicationMessageReceived += async (s, e) =>
             {
                 var topic = e.ApplicationMessage.Topic;
                 var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                Console.WriteLine($"Mqtt client received: ({topic}) {value}");
+                _logService.WriteDebug($"Mqtt client received: ({topic}) {value}");
 
                 if (topic == "pulsePeriod")
                 {
@@ -85,23 +87,39 @@ namespace EnergyHost.Services.Services
                     var val = Convert.ToInt32(value);
                     var kwh = _calcKWH(val);
 
+                    _logService.WriteDebug($"KWH: {kwh}");
+
                     KWH = kwh;
 
                     MessageReceived?.Invoke(this, EventArgs.Empty);
+                    lastMessageIn = DateTime.Now;
                 }
 
             };
 
             await mqttClient.ConnectAsync(options);
+#pragma warning disable 4014
+            Task.Run(async () =>
+#pragma warning restore 4014
+            {
+                while (true)
+                {
+                    if (DateTime.Now.Subtract(lastMessageIn) > TimeSpan.FromSeconds(12))
+                    {
+                        KWH = 0;
+                    }
+
+                    await Task.Delay(2000);
+                }
+            });
+
 
         }
 
-        private const int impKwh = 800;
+        private const int impKwh = 1000;
 
         public double _calcKWH(int val)
         {
-
-            Console.WriteLine(val);
             double msToKwh = val * impKwh;
             double secToKwh = msToKwh / 1000;
             return 3600 / secToKwh;

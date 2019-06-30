@@ -9,5 +9,6 @@ namespace EnergyHost.Contract
         void WriteError(string error);
         void WriteWarning(string warning);
         void WriteLog(string log);
+        void WriteDebug(string message);
     }
 }

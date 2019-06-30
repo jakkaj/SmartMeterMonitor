@@ -17,6 +17,7 @@ namespace EnergyHost.Services.Services
         private readonly IInfluxService _influxService;
         private readonly IAmberService _amberService;
         private readonly IEnergyFuturesService _energyFuturesService;
+        private readonly IMQTTService _mqttService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -39,7 +40,8 @@ namespace EnergyHost.Services.Services
             IDarkSkyService darkSkyService,
             IInfluxService influxService,
             IAmberService amberService,
-            IEnergyFuturesService energyFuturesService
+            IEnergyFuturesService energyFuturesService,
+            IMQTTService mqttService
             )
         {
             _logService = logService;
@@ -48,6 +50,7 @@ namespace EnergyHost.Services.Services
             _influxService = influxService;
             _amberService = amberService;
             _energyFuturesService = energyFuturesService;
+            _mqttService = mqttService;
             _daikinService = daikinService;
         }
 
@@ -60,6 +63,8 @@ namespace EnergyHost.Services.Services
 
             _abbPoller();
 
+            await _mqttService.Setup();
+
             await Task.Delay(TimeSpan.FromSeconds(10));
 
             _dbWriter();
@@ -71,7 +76,7 @@ namespace EnergyHost.Services.Services
             {
                 var data = new Dictionary<string, object>
                 {
-                    { "reading", 0 },
+                    { "kwh", _mqttService.KWH },
                     { "temp", CurrentWeather.temp},
                     { "humidity", CurrentWeather.humid},
                     { "pressure", CurrentWeather.pressure},

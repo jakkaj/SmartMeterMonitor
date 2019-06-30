@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using EnergyHost.Contract;
 using EnergyHost.Model.Settings;
 using Microsoft.Extensions.Options;
@@ -13,6 +14,11 @@ namespace EnergyHost.Services.Services
         {
             var opts = options.Value;
             _supress = opts.SuppressWarning;
+        }
+
+        public void WriteDebug(string message)
+        {
+            Debug.WriteLine(message);
         }
 
         public void WriteError(string error)
@@ -39,6 +45,7 @@ namespace EnergyHost.Services.Services
             Console.Write(type);
             Console.ResetColor();
             Console.Write($" [{timestamp}]: {message}");
+            Debug.WriteLine($" [{timestamp}]: {message}");
             Console.WriteLine();
         }
     }
