@@ -9,6 +9,7 @@ using EnergyHost.Model.EnergyModels;
 using EnergyHost.Model.Settings;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace EnergyHost.Services.Services
 {
@@ -16,7 +17,7 @@ namespace EnergyHost.Services.Services
     {
         private readonly IOptions<EnergyHostSettings> _settings;
         private ILogService _logService;
-        
+
 
         private string _amberUrl;
 
@@ -57,9 +58,12 @@ namespace EnergyHost.Services.Services
                 }
 
                 var stringResult = await result.Content.ReadAsStringAsync();
-                var amberData = JsonConvert.DeserializeObject<AmberData>(stringResult);
+                var amberData = JsonConvert.DeserializeObject<AmberData>(stringResult, new JsonSerializerSettings
+                {
+                    Error = HandleDeserializationError
+                });
 
-                
+
 
 
                 foreach (var varPrice in amberData.data.variablePricesAndRenewables)
@@ -83,12 +87,19 @@ namespace EnergyHost.Services.Services
                     varPrice.OutPriceNormal = (100 * (varPrice.OutPrice - minOut) / rangeOut) / 100;
                 }
 
-            
+
 
                 return amberData;
 
 
             }
+        }
+
+        public void HandleDeserializationError(object sender, ErrorEventArgs errorArgs)
+        {
+            var currentError = errorArgs.ErrorContext.Error.Message;
+            errorArgs.ErrorContext.Handled = true;
+            _logService.WriteError(currentError);
         }
     }
 }
