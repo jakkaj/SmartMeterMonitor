@@ -104,7 +104,7 @@ namespace EnergyHost.Services.Services
             {
                 while (true)
                 {
-                    if (DateTime.Now.Subtract(lastMessageIn) > TimeSpan.FromSeconds(12))
+                    if (DateTime.Now.Subtract(lastMessageIn) > TimeSpan.FromSeconds(20))
                     {
                         KWH = 0;
                     }

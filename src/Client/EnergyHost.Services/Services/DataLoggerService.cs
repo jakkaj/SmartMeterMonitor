@@ -21,6 +21,7 @@ namespace EnergyHost.Services.Services
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
+        public double SolarToday{get;set;} = 0;
         public double DaikinInsideTemperature { get; set; }
         public double DaikinSetTemperature { get; set; }
         public string DaikinMode { get; set; }
@@ -90,6 +91,7 @@ namespace EnergyHost.Services.Services
                     { "DaikinMode", DaikinMode },
                     { "DaikinPoweredOn", DaikinPoweredOn },
                     { "SolarOutput", SolarOutput },
+                    { "SolarToday", SolarToday},
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut }
                 };
@@ -121,6 +123,7 @@ namespace EnergyHost.Services.Services
                 {
                     lastSolar = DateTime.Now;
                     SolarOutput = abb.feeds.Feed.datastreams.m101_1_W.data[0].value;
+                    SolarToday = abb.feeds.Feed.datastreams.m64061_1_DayWH.data[0].value;
                 }
 
                 if (DateTime.Now.Subtract(lastSolar) > TimeSpan.FromMinutes(20))
