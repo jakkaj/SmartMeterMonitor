@@ -7,11 +7,6 @@ namespace EnergyHost.Model.EnergyModels.Status
 {
     public class TimeStatus : StatusBase
     {
-        public TimeStatus():base(nameof(TimeStatus))
-        {
-            
-        }
-
         public DateTime CurrentDateTime { get; set; } = DateTime.UtcNow;
 
         public int CurrentMinute { get; set; } = DateTime.UtcNow.Minute;

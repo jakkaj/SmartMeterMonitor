@@ -5,23 +5,8 @@ namespace EnergyHost.Model.EnergyModels.Status.Base
 {
     public class StatusBase
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public StatusBase(string name)
-        {
-            this.Name = name;
-        }
-        public bool IsReady { get; set; }
-
-        [JsonIgnore]
-        public EventHandler StatusUpdated;
-
-        public void UpdateStatus(object sender)
-        {
-            StatusUpdated?.Invoke(sender, EventArgs.Empty);
-        }
-
+        public Guid StatusId { get; } = Guid.NewGuid();
     }
-
-    
 }

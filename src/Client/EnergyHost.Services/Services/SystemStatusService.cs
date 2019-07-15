@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
@@ -16,6 +17,8 @@ namespace EnergyHost.Services.Services
         private readonly IMQTTService _mqttService;
 
         private Dictionary<string, object> _statuses { get; } = new Dictionary<string, object>();
+
+        private List<KeyValuePair<string, object>> _history { get; } = new List<KeyValuePair<string, object>>();
 
         public SystemStatusService(ILogService logService, IMQTTService mqttService)
         {
@@ -38,9 +41,10 @@ namespace EnergyHost.Services.Services
                 var type = $"EnergyHost.Model.EnergyModels.Status.{evt.EventName}, EnergyHost.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 var tActual = Type.GetType(type);
 
-                var decodedTYpe = JsonConvert.DeserializeObject(evt.Data, tActual);
+                var decodedType = JsonConvert.DeserializeObject(evt.Data, tActual);
 
-                _statuses[evt.EventName] = decodedTYpe;
+                _statuses[evt.EventName] = decodedType;
+                _history.Add(new KeyValuePair<string, object>(evt.EventName, decodedType));
             }
             catch (Exception ex)
             {
@@ -49,22 +53,29 @@ namespace EnergyHost.Services.Services
             
         }
 
-        public T GetStatus<T>()
+        public (T, List<T>) GetStatus<T>()
         where T:StatusBase
         {
             var type = typeof(T);
 
             if (!_statuses.ContainsKey(type.Name))
             {
-                return null;
+                return (null, null);
             }
 
-            return _statuses[type.Name] as T;
+            var l = _history.Where(_ => _.Key == type.Name).Reverse().Take(10).Select(_=>_.Value as T).ToList();
+
+            l.RemoveAt(0);
+
+
+            return (_statuses[type.Name] as T, l);
         }
 
         public async Task SendStatus(StatusBase status)
         {
             var t = status.GetType();
+
+            status.Name = t.Name;
 
             var ser = JsonConvert.SerializeObject(status);
 

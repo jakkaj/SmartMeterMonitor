@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using EnergyHost.Model.EnergyModels.Status.Base;
 
 namespace EnergyHost.Contract
@@ -7,7 +8,7 @@ namespace EnergyHost.Contract
     {
         Task SendStatus(StatusBase status);
 
-        T GetStatus<T>()
+        (T latest, List<T> history) GetStatus<T>()
             where T:StatusBase;
     }
 }

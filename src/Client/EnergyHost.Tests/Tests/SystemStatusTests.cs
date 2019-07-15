@@ -25,7 +25,27 @@ namespace EnergyHost.Tests.Tests
 
             await service.SendStatus(t);
 
-            while (service.GetStatus<TimeStatus>() == null)
+            await Task.Delay(1500);
+
+            t = new TimeStatus();
+
+            await service.SendStatus(t);
+
+            await Task.Delay(1500);
+
+            t = new TimeStatus();
+
+            await service.SendStatus(t);
+
+            await Task.Delay(1500);
+
+            t = new TimeStatus();
+
+            await service.SendStatus(t);
+
+            await Task.Delay(1500);
+
+            while (service.GetStatus<TimeStatus>().latest == null)
             {
                 await Task.Delay(500);
 ;            }
@@ -34,7 +54,20 @@ namespace EnergyHost.Tests.Tests
 
             Assert.IsNotNull(status);
 
-            Debug.WriteLine(status.CurrentDateTime);
+            Debug.WriteLine(status.latest.CurrentDateTime);
+
+            DateTime current = DateTime.Now.Add(TimeSpan.FromSeconds(15));
+
+            //test history is reversed properly. 
+            Debug.WriteLine($"Id: {status.latest.StatusId} DateTime: {status.latest.CurrentDateTime}.{status.latest.CurrentDateTime.Millisecond}");
+
+            foreach (var i in status.history)
+            {
+                Debug.WriteLine($"Id: {i.StatusId} DateTime: {i.CurrentDateTime}.{i.CurrentDateTime.Millisecond}");
+                Assert.IsTrue(i.CurrentDateTime < current);
+
+                current = i.CurrentDateTime;
+            }
 
 
         }
