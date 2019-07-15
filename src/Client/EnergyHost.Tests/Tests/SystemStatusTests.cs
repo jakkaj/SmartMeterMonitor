@@ -22,6 +22,8 @@ namespace EnergyHost.Tests.Tests
             var t = new TimeStatus();
 
             await service.SendStatus(t);
+
+            await Task.Delay(10000);
         }
     }
 }

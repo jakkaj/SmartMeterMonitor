@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
+using EnergyHost.Model.EnergyModels.Status.Base;
 using EnergyHost.Model.Settings;
 using Microsoft.Extensions.Options;
 using MQTTnet;
@@ -17,7 +18,7 @@ namespace EnergyHost.Services.Services
         private readonly ILogService _logService;
         private readonly IOptions<EnergyHostSettings> _settings;
 
-        public event EventHandler MessageReceived;
+        public event EventHandler<StatusEventArgs> EventReceived;
         private static DateTime _lastReading;
         public double KWH { get; set; }
 
@@ -127,7 +128,7 @@ namespace EnergyHost.Services.Services
 
                 if (topic == "events")
                 {
-                    Debugger.Break();
+                    EventReceived?.Invoke(this, new StatusEventArgs() {Data = value});
                 }
 
                 if (topic == "pulsePeriod")
@@ -139,8 +140,7 @@ namespace EnergyHost.Services.Services
                     _logService.WriteDebug($"KWH: {kwh}");
 
                     KWH = kwh;
-
-                    MessageReceived?.Invoke(this, EventArgs.Empty);
+                    
                     lastMessageIn = DateTime.Now;
                 }
 
