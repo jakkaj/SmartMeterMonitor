@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
+using EnergyHost.Model.EnergyModels.Status;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace EnergyHost.Tests.Tests
 {
     [TestClass]
-    public class TestMQTT : TestBase
+    public class SystemStatusTests : TestBase
     {
         [TestMethod]
-        public async Task TestConnection()
+        public async Task TestSystemStatusSer()
         {
-            var s = Resolve<IMQTTService>();
+            var service = Resolve<ISystemStatusService>();
 
-            await s.Setup();
+            var t = new TimeStatus();
 
-            await Task.Delay(TimeSpan.FromSeconds(30));
+            await service.SendStatus(t);
         }
     }
 }

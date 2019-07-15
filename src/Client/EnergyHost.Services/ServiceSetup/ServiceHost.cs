@@ -27,6 +27,7 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddTransient<IDaikinService, DaikinService>();
             services.AddTransient<IABBService, ABBService>();
             services.AddSingleton<ILogService, LogService>();
+            services.AddSingleton<ISystemStatusService, SystemStatusService>();
          
             return this;
         }
