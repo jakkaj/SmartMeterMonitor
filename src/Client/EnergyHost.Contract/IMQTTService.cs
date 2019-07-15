@@ -8,5 +8,6 @@ namespace EnergyHost.Contract
         event EventHandler MessageReceived;
         double KWH { get; set; }
         Task Setup();
+        Task Send(string topic = "events", string payload = null);
     }
 }

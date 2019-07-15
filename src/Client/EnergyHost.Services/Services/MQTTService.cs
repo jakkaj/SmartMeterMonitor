@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
 using EnergyHost.Model.Settings;
@@ -19,6 +21,9 @@ namespace EnergyHost.Services.Services
         private static DateTime _lastReading;
         public double KWH { get; set; }
 
+        private IMqttClient _mqttClient = null;
+        private IMqttClientOptions _options;
+
         public MQTTService(
             ILogService logService,
             IOptions<EnergyHostSettings> settings)
@@ -27,27 +32,65 @@ namespace EnergyHost.Services.Services
             _settings = settings;
         }
 
+      
+
+        public async Task Send(string topic = "events", string payload = null)
+        {
+            var count = 0;
+
+            while (_mqttClient == null || !_mqttClient.IsConnected)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                count++;
+                if(count > 10)
+                {
+                    _logService.WriteError($"Could not send queue message with payload: {payload}");
+                    return;
+                }
+            }
+
+            var messagePayload = new MqttApplicationMessageBuilder()
+                .WithTopic(topic)
+                .WithPayload(payload)
+                .Build();
+
+            try
+            {
+                await _mqttClient.PublishAsync(messagePayload);
+            }
+            catch (Exception ex)
+            {
+                _logService.WriteError(ex.ToString());
+            }
+        }
 
         public async Task Setup()
         {
-            var factory = new MqttFactory();
-            var mqttClient = factory.CreateMqttClient();
+            if (_mqttClient != null)
+            {
+                return;
+            }
 
-            var options = new MqttClientOptionsBuilder()
+            var factory = new MqttFactory();
+
+            _mqttClient = factory.CreateMqttClient();
+
+            _options = new MqttClientOptionsBuilder()
                 .WithTcpServer(_settings.Value.MQTT_SERVER_ADDRESS)
                 .WithCleanSession()
                 .Build();
 
+
             var lastMessageIn = DateTime.Now;
 
-            mqttClient.Disconnected += async (s, e) =>
+            _mqttClient.Disconnected += async (s, e) =>
             {
                 _logService.WriteLog("### DISCONNECTED FROM SERVER ###");
                 await Task.Delay(TimeSpan.FromSeconds(5));
 
                 try
                 {
-                    await mqttClient.ConnectAsync(options);
+                    await _mqttClient.ConnectAsync(_options);
                 }
                 catch
                 {
@@ -55,16 +98,17 @@ namespace EnergyHost.Services.Services
                 }
             };
 
-            mqttClient.Connected += async (s, e) =>
+            _mqttClient.Connected += async (s, e) =>
             {
                 _logService.WriteLog("### CONNECTED WITH SERVER. Attempt subs ###");
 
                 // Subscribe to a topic
                 try
                 {
-                    await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("pulsePeriod").Build());
-                    await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("impressions").Build());
-                    await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("log").Build());
+                    await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("pulsePeriod").Build());
+                    await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("impressions").Build());
+                    await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("log").Build());
+                    await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("events").Build());
                 }
                 catch (Exception ex)
                 {
@@ -75,11 +119,16 @@ namespace EnergyHost.Services.Services
                 _logService.WriteLog("### SUBSCRIBED ###");
             };
 
-            mqttClient.ApplicationMessageReceived += async (s, e) =>
+            _mqttClient.ApplicationMessageReceived += async (s, e) =>
             {
                 var topic = e.ApplicationMessage.Topic;
                 var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                 _logService.WriteDebug($"Mqtt client received: ({topic}) {value}");
+
+                if (topic == "events")
+                {
+                    Debugger.Break();
+                }
 
                 if (topic == "pulsePeriod")
                 {
@@ -97,7 +146,7 @@ namespace EnergyHost.Services.Services
 
             };
 
-            await mqttClient.ConnectAsync(options);
+            await _mqttClient.ConnectAsync(_options);
 #pragma warning disable 4014
             Task.Run(async () =>
 #pragma warning restore 4014

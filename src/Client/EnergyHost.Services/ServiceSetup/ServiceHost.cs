@@ -22,7 +22,7 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddTransient<IDarkSkyService, DarkSkyService>();
             services.AddTransient<IEnergyFuturesService, EnergyFuturesService>();
             services.AddTransient<IInfluxService, InfluxService>();
-            services.AddTransient<IMQTTService, MQTTService>();
+            services.AddSingleton<IMQTTService, MQTTService>();
             services.AddTransient<IDataLoggerService, DataLoggerService>();
             services.AddTransient<IDaikinService, DaikinService>();
             services.AddTransient<IABBService, ABBService>();

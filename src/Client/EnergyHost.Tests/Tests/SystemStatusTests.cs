@@ -11,9 +11,12 @@ namespace EnergyHost.Tests.Tests
     [TestClass]
     public class SystemStatusTests : TestBase
     {
+        
         [TestMethod]
         public async Task TestSystemStatusSer()
         {
+            var m = Resolve<IMQTTService>();
+            await m.Setup();
             var service = Resolve<ISystemStatusService>();
 
             var t = new TimeStatus();
