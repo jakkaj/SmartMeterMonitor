@@ -15,6 +15,8 @@ namespace EnergyHost.Services.Services
         private readonly ILogService _logService;
         private readonly IMQTTService _mqttService;
 
+        private Dictionary<string, object> _statuses { get; } = new Dictionary<string, object>();
+
         public SystemStatusService(ILogService logService, IMQTTService mqttService)
         {
             _logService = logService;
@@ -24,12 +26,40 @@ namespace EnergyHost.Services.Services
 
         private void _mqttService_EventReceived(object sender, StatusEventArgs e)
         {
-            _logService.WriteLog($"Event: {e.Data}");
+            _storeStatus(e.Data);
         }
 
-        private void _storeStatus()
+        private void _storeStatus(string statusData)
         {
+            try
+            {
+                var evt = JsonConvert.DeserializeObject<EventWrapper>(statusData);
 
+                var type = $"EnergyHost.Model.EnergyModels.Status.{evt.EventName}, EnergyHost.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+                var tActual = Type.GetType(type);
+
+                var decodedTYpe = JsonConvert.DeserializeObject(evt.Data, tActual);
+
+                _statuses[evt.EventName] = decodedTYpe;
+            }
+            catch (Exception ex)
+            {
+                _logService.WriteError(ex);
+            }
+            
+        }
+
+        public T GetStatus<T>()
+        where T:StatusBase
+        {
+            var type = typeof(T);
+
+            if (!_statuses.ContainsKey(type.Name))
+            {
+                return null;
+            }
+
+            return _statuses[type.Name] as T;
         }
 
         public async Task SendStatus(StatusBase status)

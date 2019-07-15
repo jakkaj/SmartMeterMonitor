@@ -21,6 +21,11 @@ namespace EnergyHost.Services.Services
             Debug.WriteLine(message);
         }
 
+        public void WriteError(Exception ex)
+        {
+            _print("ERROR", ex.ToString(), ConsoleColor.Red);
+        }
+
         public void WriteError(string error)
         {
             _print("ERROR", error, ConsoleColor.Red);

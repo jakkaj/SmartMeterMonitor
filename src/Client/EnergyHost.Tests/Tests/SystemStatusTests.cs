@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
@@ -17,13 +18,25 @@ namespace EnergyHost.Tests.Tests
         {
             var m = Resolve<IMQTTService>();
             await m.Setup();
+            await Task.Delay(2000);
             var service = Resolve<ISystemStatusService>();
 
             var t = new TimeStatus();
 
             await service.SendStatus(t);
 
-            await Task.Delay(10000);
+            while (service.GetStatus<TimeStatus>() == null)
+            {
+                await Task.Delay(500);
+;            }
+
+            var status = service.GetStatus<TimeStatus>();
+
+            Assert.IsNotNull(status);
+
+            Debug.WriteLine(status.CurrentDateTime);
+
+
         }
     }
 }
