@@ -45,6 +45,11 @@ namespace EnergyHost.Services.Services
 
                 _statuses[evt.EventName] = decodedType;
                 _history.Add(new KeyValuePair<string, object>(evt.EventName, decodedType));
+
+                while (_history.Count > 5000)
+                {
+                    _history.RemoveAt(_history.Count - 1);
+                }
             }
             catch (Exception ex)
             {

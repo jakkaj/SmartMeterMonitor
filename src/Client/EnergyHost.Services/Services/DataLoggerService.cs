@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
 using EnergyHost.Model.EnergyModels;
+using EnergyHost.Model.EnergyModels.Status;
 
 namespace EnergyHost.Services.Services
 {
@@ -18,6 +19,7 @@ namespace EnergyHost.Services.Services
         private readonly IAmberService _amberService;
         private readonly IEnergyFuturesService _energyFuturesService;
         private readonly IMQTTService _mqttService;
+        private readonly ISystemStatusService _statusService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -42,7 +44,8 @@ namespace EnergyHost.Services.Services
             IInfluxService influxService,
             IAmberService amberService,
             IEnergyFuturesService energyFuturesService,
-            IMQTTService mqttService
+            IMQTTService mqttService,
+            ISystemStatusService statusService
             )
         {
             _logService = logService;
@@ -52,6 +55,7 @@ namespace EnergyHost.Services.Services
             _amberService = amberService;
             _energyFuturesService = energyFuturesService;
             _mqttService = mqttService;
+            _statusService = statusService;
             _daikinService = daikinService;
         }
 
@@ -96,11 +100,24 @@ namespace EnergyHost.Services.Services
                     { "CurrentPriceOut", CurrentPriceOut }
                 };
 
-                var result = await _influxService.Write("house", "currentStatus", data, null, DateTime.UtcNow);
-                if (!result)
+                if (!Debugger.IsAttached)
                 {
-                    Debug.WriteLine($"Influx: {result}");
+                    var result = await _influxService.Write("house", "currentStatus", data, null, DateTime.UtcNow);
+                    if (!result)
+                    {
+                        _logService.WriteError($"Influx fail save");
+                        Debug.WriteLine($"Influx: {result}");
+                    }
                 }
+
+                await _statusService.SendStatus(new PowerStatus
+                {
+                    KWHIn = _mqttService.KWH, 
+                    KWHSolar = SolarOutput, 
+                    KWHSolarToday = SolarToday
+                });
+
+                await _statusService.SendStatus(new TimeStatus());//time pump
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
