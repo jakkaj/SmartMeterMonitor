@@ -110,6 +110,34 @@ namespace EnergyHost.Services.Services
                     }
                 }
 
+                await _statusService.SendStatus(new EnergyPriceStatus
+                {
+                    CurrentPriceIn = CurrentPriceIn,
+                    CurrentPriceOut = CurrentPriceOut
+
+                });
+
+                await _statusService.SendStatus(new DaikinStatus
+                {
+                    DaikinSetTemperature = DaikinSetTemperature,
+                    DaikinInsideTemperature = DaikinInsideTemperature,
+                    DaikinMode = DaikinMode,
+                    DaikinPoweredOn = DaikinPoweredOn
+                });
+
+                await _statusService.SendStatus(new WeatherStatus
+                {
+                    CurrentTemp = CurrentWeather.temp, 
+                    Humidity = CurrentWeather.humid, 
+                    Pressure = CurrentWeather.pressure, 
+                    WindSpeed = CurrentWeather.wind, 
+                    MinToday = CurrentWeather.minToday,
+                    MaxToday = CurrentWeather.maxToday, 
+                    MinTomorrow =  CurrentWeather.minTomorrow, 
+                    MaxTomorrow = CurrentWeather.maxTomorrow
+
+                });
+
                 await _statusService.SendStatus(new PowerStatus
                 {
                     KWHIn = _mqttService.KWH, 
@@ -118,6 +146,7 @@ namespace EnergyHost.Services.Services
                 });
 
                 await _statusService.SendStatus(new TimeStatus());//time pump
+                
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }

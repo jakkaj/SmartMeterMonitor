@@ -81,6 +81,7 @@ namespace EnergyHost.Services.Services
             var t = status.GetType();
 
             status.Name = t.Name;
+            status.DateTime = DateTime.UtcNow;
 
             var ser = JsonConvert.SerializeObject(status);
 
