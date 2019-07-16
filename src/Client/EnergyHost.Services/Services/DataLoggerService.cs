@@ -145,7 +145,7 @@ namespace EnergyHost.Services.Services
                     KWHSolarToday = SolarToday
                 });
 
-                await _statusService.SendStatus(new TimeStatus());//time pump
+                await _statusService.SendStatus(new TimeStatus(), false);//time pump
                 
 
                 await Task.Delay(TimeSpan.FromSeconds(10));

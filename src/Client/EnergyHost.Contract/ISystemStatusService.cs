@@ -7,7 +7,7 @@ namespace EnergyHost.Contract
 {
     public interface ISystemStatusService
     {
-        Task SendStatus(StatusBase status);
+        Task SendStatus(StatusBase status, bool useQueue = true);
 
         (T latest, List<T> history) GetStatus<T>()
             where T:StatusBase;

@@ -80,7 +80,7 @@ namespace EnergyHost.Services.Services
             return (_statuses[type.Name] as T, l);
         }
 
-        public async Task SendStatus(StatusBase status)
+        public async Task SendStatus(StatusBase status, bool useQueue = true)
         {
             var t = status.GetType();
 
@@ -97,9 +97,14 @@ namespace EnergyHost.Services.Services
             
             var evtSer = JsonConvert.SerializeObject(evt);
 
-            await _mqttService.Send("events", evtSer);
-
-
+            if (!useQueue)
+            {
+               _storeStatus(evtSer);
+            }
+            else
+            {
+                await _mqttService.Send("events", evtSer);
+            }
         }
 
         public void ReceiveStatus()
