@@ -20,6 +20,8 @@ namespace EnergyHost.Services.Services
 
         private List<KeyValuePair<string, object>> _history { get; } = new List<KeyValuePair<string, object>>();
 
+        public event EventHandler<StatusUpdatedEventArgs> StatusUpdatedEvent;
+
         public SystemStatusService(ILogService logService, IMQTTService mqttService)
         {
             _logService = logService;
@@ -50,6 +52,8 @@ namespace EnergyHost.Services.Services
                 {
                     _history.RemoveAt(_history.Count - 1);
                 }
+
+                StatusUpdatedEvent?.Invoke(this, new StatusUpdatedEventArgs{ StatusName = evt.EventName});
             }
             catch (Exception ex)
             {

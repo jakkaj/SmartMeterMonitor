@@ -8,4 +8,9 @@ namespace EnergyHost.Model.EnergyModels.Status.Base
     {
         public string Data { get; set; }
     }
+
+    public class StatusUpdatedEventArgs : EventArgs
+    {
+        public string StatusName { get; set; }
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using EnergyHost.Model.EnergyModels.Status.Base;
 
@@ -10,5 +11,7 @@ namespace EnergyHost.Contract
 
         (T latest, List<T> history) GetStatus<T>()
             where T:StatusBase;
+
+        event EventHandler<StatusUpdatedEventArgs> StatusUpdatedEvent;
     }
 }

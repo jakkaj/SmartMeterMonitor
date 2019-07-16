@@ -3,6 +3,7 @@ using EnergyHost.Contract;
 using EnergyHost.Model.Settings;
 using EnergyHost.Services.Contract;
 using EnergyHost.Services.Services;
+using EnergyHost.Services.Services.AlertServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,7 +29,8 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddTransient<IABBService, ABBService>();
             services.AddSingleton<ILogService, LogService>();
             services.AddSingleton<ISystemStatusService, SystemStatusService>();
-         
+            services.AddSingleton<ITimeAlertService, TimeAlertService>();
+
             return this;
         }
 
