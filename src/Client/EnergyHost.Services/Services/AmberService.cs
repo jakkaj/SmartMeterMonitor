@@ -29,7 +29,7 @@ namespace EnergyHost.Services.Services
         }
         public double _inPrice(AmberData data, VariablePricesAndRenewable variables)
         {
-            var price = (data.data.staticPrices.E1.totalfixedKWHPrice + data.data.staticPrices.E1.lossFactor * variables.wholesaleKWHPrice) / 1.1;
+            var price = ((data.data.staticPrices.E1.totalfixedKWHPrice + data.data.staticPrices.E1.lossFactor * variables.wholesaleKWHPrice) / 1.1) + 4 - 1.3;
 
             return price;
         }
