@@ -55,9 +55,9 @@ void send();
 void pulseStart();
 #line 201 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void pulseEnd();
-#line 235 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 237 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void log(char *message, float value);
-#line 243 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 245 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void log(char *message);
 #line 45 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void setup()
@@ -231,7 +231,8 @@ void pulseEnd()
     {
       //ensure that really short periods are not logged... 
       //possible bug here in the pulsing detection when too short. 
-      if(pulsePeriod / 1000 < .02){
+      
+      if(pulsePeriod  < 400){
         log("Too short! ");
       }else{
           actualPeriod = pulsePeriod;
@@ -248,6 +249,7 @@ void pulseEnd()
   pulsePeriod = 0;
 
   isCounting = true;
+  delay(10);
 }
 
 void log(char *message, float value)

@@ -215,7 +215,8 @@ void pulseEnd()
     {
       //ensure that really short periods are not logged... 
       //possible bug here in the pulsing detection when too short. 
-      if(pulsePeriod / 1000 < .02){
+
+      if(pulsePeriod < 400){
         log("Too short! ");
       }else{
           actualPeriod = pulsePeriod;
@@ -232,6 +233,7 @@ void pulseEnd()
   pulsePeriod = 0;
 
   isCounting = true;
+  delay(10);
 }
 
 void log(char *message, float value)
