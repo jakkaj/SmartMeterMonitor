@@ -26,7 +26,6 @@ elapsedMillis thisPulse;
 elapsedMillis pulsePeriod;
 elapsedMillis pulseSimulate;
 
-
 Statistic stats;
 
 int impressionsCounted = 0;
@@ -37,7 +36,7 @@ int resetCounter = 0;
 char msg[50];
 
 bool wasLow = false;
-bool simulate = true;
+bool simulate = false;
 
 bool isCounting = false;
 
@@ -100,7 +99,6 @@ void loop()
     log("average", stats.average());
     float lowCutoff2 = (stats.maximum() - stats.minimum()) / 2;
     log("cutoff", lowCutoff2);
-
   }
 
   float avg = stats.average();
@@ -116,37 +114,39 @@ void loop()
 
   float tooLow = avg - lowCutoff;
 
-  if (val < tooLow)
+  if (!simulate)
   {
-    isLow = true;
-  }
+    if (val < tooLow)
+    {
+      isLow = true;
+    }
 
-  if (isLow && !wasLow)
-  {
-    //log("start with val", val);
-    //log("Current average", avg);
-    //log("Current stddev", stddev);
-    //this is a new pulse
-    pulseStart();
-  }
-  else if (isLow && wasLow)
-  {
-    //still low
-    wasLow = true;
-  }
-  else if (!isLow && wasLow)
-  {
-    //log("end with val", val);
-    //a finishing pulse
-    pulseEnd();
-    //delay(400); //we can delay a bit to save power as there is no chance of action just now
+    if (isLow && !wasLow)
+    {
+      //log("start with val", val);
+      //log("Current average", avg);
+      //log("Current stddev", stddev);
+      //this is a new pulse
+      pulseStart();
+    }
+    else if (isLow && wasLow)
+    {
+      //still low
+      wasLow = true;
+    }
+    else if (!isLow && wasLow)
+    {
+      //log("end with val", val);
+      //a finishing pulse
+      pulseEnd();
+      //delay(400); //we can delay a bit to save power as there is no chance of action just now
+    }
+    else
+    {
+      //nothing
+    }
   }
   else
-  {
-    //nothing
-  }
-
-  if (simulate)
   {
     if (pulseSimulate / 1000 > 5)
     {
@@ -156,7 +156,7 @@ void loop()
       delay(60);
       pulseEnd();
     }
-  }
+  }  
 
   //log("Jordan");
   if (sendElapsed / 1000 > 8)
@@ -178,7 +178,7 @@ void loop()
 }
 
 void send()
-{ 
+{
 
   if (pulseSinceLastSend)
   {
@@ -192,7 +192,6 @@ void send()
 
 void pulseStart()
 {
-  
 
   wasLow = true;
   thisPulse = 0;
@@ -210,12 +209,18 @@ void pulseEnd()
 
   if (thisPulse < 80)
   {
-    if(isCounting){
-      actualPeriod = pulsePeriod;
-      pulseSinceLastSend = true;
+    if (isCounting)
+    {
+      //ensure that really short periods are not logged... 
+      //possible bug here in the pulsing detection when too short. 
+      if(pulsePeriod / 1000 < .02){
+        log("Too short! ");
+      }else{
+          actualPeriod = pulsePeriod;
+          pulseSinceLastSend = true;
+      }
+     
     }
-    
-    
   }
   else
   {

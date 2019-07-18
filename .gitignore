@@ -1,3 +1,5 @@
+src/Arduino/ArduinoOutput/
+
 .env
 .ds_store
 # Prerequisites

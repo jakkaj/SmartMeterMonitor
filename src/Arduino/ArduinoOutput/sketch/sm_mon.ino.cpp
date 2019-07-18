@@ -29,7 +29,6 @@ elapsedMillis thisPulse;
 elapsedMillis pulsePeriod;
 elapsedMillis pulseSimulate;
 
-
 Statistic stats;
 
 int impressionsCounted = 0;
@@ -40,27 +39,27 @@ int resetCounter = 0;
 char msg[50];
 
 bool wasLow = false;
-bool simulate = true;
+bool simulate = false;
 
 bool isCounting = false;
 
 bool pulseSinceLastSend = false;
 
-#line 46 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 45 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void setup();
-#line 73 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 72 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void loop();
 #line 180 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void send();
 #line 193 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void pulseStart();
-#line 202 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 201 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void pulseEnd();
-#line 230 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 235 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void log(char *message, float value);
-#line 238 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 243 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void log(char *message);
-#line 46 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 45 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void setup()
 {
 
@@ -118,7 +117,6 @@ void loop()
     log("average", stats.average());
     float lowCutoff2 = (stats.maximum() - stats.minimum()) / 2;
     log("cutoff", lowCutoff2);
-
   }
 
   float avg = stats.average();
@@ -134,37 +132,39 @@ void loop()
 
   float tooLow = avg - lowCutoff;
 
-  if (val < tooLow)
+  if (!simulate)
   {
-    isLow = true;
-  }
+    if (val < tooLow)
+    {
+      isLow = true;
+    }
 
-  if (isLow && !wasLow)
-  {
-    //log("start with val", val);
-    //log("Current average", avg);
-    //log("Current stddev", stddev);
-    //this is a new pulse
-    pulseStart();
-  }
-  else if (isLow && wasLow)
-  {
-    //still low
-    wasLow = true;
-  }
-  else if (!isLow && wasLow)
-  {
-    //log("end with val", val);
-    //a finishing pulse
-    pulseEnd();
-    //delay(400); //we can delay a bit to save power as there is no chance of action just now
+    if (isLow && !wasLow)
+    {
+      //log("start with val", val);
+      //log("Current average", avg);
+      //log("Current stddev", stddev);
+      //this is a new pulse
+      pulseStart();
+    }
+    else if (isLow && wasLow)
+    {
+      //still low
+      wasLow = true;
+    }
+    else if (!isLow && wasLow)
+    {
+      //log("end with val", val);
+      //a finishing pulse
+      pulseEnd();
+      //delay(400); //we can delay a bit to save power as there is no chance of action just now
+    }
+    else
+    {
+      //nothing
+    }
   }
   else
-  {
-    //nothing
-  }
-
-  if (simulate)
   {
     if (pulseSimulate / 1000 > 5)
     {
@@ -174,7 +174,7 @@ void loop()
       delay(60);
       pulseEnd();
     }
-  }
+  }  
 
   //log("Jordan");
   if (sendElapsed / 1000 > 8)
@@ -196,7 +196,7 @@ void loop()
 }
 
 void send()
-{ 
+{
 
   if (pulseSinceLastSend)
   {
@@ -210,7 +210,6 @@ void send()
 
 void pulseStart()
 {
-  
 
   wasLow = true;
   thisPulse = 0;
@@ -228,12 +227,18 @@ void pulseEnd()
 
   if (thisPulse < 80)
   {
-    if(isCounting){
-      actualPeriod = pulsePeriod;
-      pulseSinceLastSend = true;
+    if (isCounting)
+    {
+      //ensure that really short periods are not logged... 
+      //possible bug here in the pulsing detection when too short. 
+      if(pulsePeriod / 1000 < .02){
+        log("Too short! ");
+      }else{
+          actualPeriod = pulsePeriod;
+          pulseSinceLastSend = true;
+      }
+     
     }
-    
-    
   }
   else
   {
