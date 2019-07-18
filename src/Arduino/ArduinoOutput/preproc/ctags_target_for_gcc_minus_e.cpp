@@ -23,15 +23,17 @@ HttpClient httpClient(ssid, password, wifiAlwaysOn);
 QueueClient queueClient(&httpClient, mqtt_server);
 
 elapsedMillis timeElapsed;
+elapsedMillis sendElapsed;
 elapsedMillis thisPulse;
 elapsedMillis pulsePeriod;
 elapsedMillis pulseSimulate;
-elapsedMillis actualPeriod;
+
 
 Statistic stats;
 
 int impressionsCounted = 0;
 int lastPeriod = 0;
+int actualPeriod = 0;
 int resetCounter = 0;
 
 char msg[50];
@@ -64,6 +66,10 @@ void setup()
   {
     log("Booted");
   }
+
+  queueClient.sendQueue("log", "Booted");
+
+  sendElapsed = 0;
 }
 
 void loop()
@@ -96,6 +102,7 @@ void loop()
     log("average", stats.average());
     float lowCutoff2 = (stats.maximum() - stats.minimum()) / 2;
     log("cutoff", lowCutoff2);
+
   }
 
   float avg = stats.average();
@@ -131,7 +138,7 @@ void loop()
   }
   else if (!isLow && wasLow)
   {
-    log("end with val", val);
+    //log("end with val", val);
     //a finishing pulse
     pulseEnd();
     //delay(400); //we can delay a bit to save power as there is no chance of action just now
@@ -154,9 +161,9 @@ void loop()
   }
 
   //log("Jordan");
-  if ((timeElapsed / 1000) % 10 == 0)
-  { //send every 10 seconds
-
+  if (sendElapsed / 1000 > 8)
+  { //send every 8 seconds
+    sendElapsed = 0;
     send();
   }
 
@@ -174,10 +181,12 @@ void loop()
 
 void send()
 {
+
   if (pulseSinceLastSend)
   {
     snprintf(msg, 50, "%ld", (int)actualPeriod);
-
+    log("Pulse period");
+    log(msg);
     queueClient.sendQueue("pulsePeriod", msg);
     pulseSinceLastSend = false;
   }
@@ -203,8 +212,12 @@ void pulseEnd()
 
   if (thisPulse < 80)
   {
-    actualPeriod = pulsePeriod;
-    pulseSinceLastSend = true;
+    if(isCounting){
+      actualPeriod = pulsePeriod;
+      pulseSinceLastSend = true;
+    }
+
+
   }
   else
   {

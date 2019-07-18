@@ -24,15 +24,17 @@ HttpClient httpClient(ssid, password, wifiAlwaysOn);
 QueueClient queueClient(&httpClient, mqtt_server);
 
 elapsedMillis timeElapsed;
+elapsedMillis sendElapsed;
 elapsedMillis thisPulse;
 elapsedMillis pulsePeriod;
 elapsedMillis pulseSimulate;
-elapsedMillis actualPeriod;
+
 
 Statistic stats;
 
 int impressionsCounted = 0;
 int lastPeriod = 0;
+int actualPeriod = 0;
 int resetCounter = 0;
 
 char msg[50];
@@ -44,21 +46,21 @@ bool isCounting = false;
 
 bool pulseSinceLastSend = false;
 
-#line 44 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 46 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void setup();
-#line 67 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 73 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void loop();
-#line 173 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 180 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void send();
-#line 184 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
-void pulseStart();
 #line 193 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+void pulseStart();
+#line 202 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void pulseEnd();
-#line 217 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 230 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void log(char *message, float value);
-#line 225 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 238 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void log(char *message);
-#line 44 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+#line 46 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
 void setup()
 {
 
@@ -80,6 +82,10 @@ void setup()
   {
     log("Booted");
   }
+
+  queueClient.sendQueue("log", "Booted");
+
+  sendElapsed = 0;
 }
 
 void loop()
@@ -112,6 +118,7 @@ void loop()
     log("average", stats.average());
     float lowCutoff2 = (stats.maximum() - stats.minimum()) / 2;
     log("cutoff", lowCutoff2);
+
   }
 
   float avg = stats.average();
@@ -147,7 +154,7 @@ void loop()
   }
   else if (!isLow && wasLow)
   {
-    log("end with val", val);
+    //log("end with val", val);
     //a finishing pulse
     pulseEnd();
     //delay(400); //we can delay a bit to save power as there is no chance of action just now
@@ -170,9 +177,9 @@ void loop()
   }
 
   //log("Jordan");
-  if ((timeElapsed / 1000) % 10 == 0)
-  { //send every 10 seconds
-
+  if (sendElapsed / 1000 > 8)
+  { //send every 8 seconds
+    sendElapsed = 0;
     send();
   }
 
@@ -189,11 +196,13 @@ void loop()
 }
 
 void send()
-{
+{ 
+
   if (pulseSinceLastSend)
   {
     snprintf(msg, 50, "%ld", (int)actualPeriod);
-
+    log("Pulse period");
+    log(msg);
     queueClient.sendQueue("pulsePeriod", msg);
     pulseSinceLastSend = false;
   }
@@ -219,8 +228,12 @@ void pulseEnd()
 
   if (thisPulse < 80)
   {
-    actualPeriod = pulsePeriod;
-    pulseSinceLastSend = true;
+    if(isCounting){
+      actualPeriod = pulsePeriod;
+      pulseSinceLastSend = true;
+    }
+    
+    
   }
   else
   {
