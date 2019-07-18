@@ -1,4 +1,5 @@
 ﻿using System;
+using EnergyHost.Contract;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -39,6 +40,13 @@ namespace EnergyHost.Services.ServiceSetup
 
 
             ServiceProvider = ServiceCollection.BuildServiceProvider();
+
+            _bootAlerts();
+        }
+
+        void _bootAlerts()
+        {
+            var time = Resolve<ITimeAlertService>(); //just resolve and IOC container will hold on to it. 
         }
 
         public T Resolve<T>()

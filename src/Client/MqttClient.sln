@@ -13,17 +13,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmberElectric", "AmberElect
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Host", "Host", "{79ED1BD1-F276-404D-9C52-B3115D9448A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyHost.App", "EnergyHost.App\EnergyHost.App.csproj", "{55601AEA-E1C2-48F1-B405-9C6736780E4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyHost.App", "EnergyHost.App\EnergyHost.App.csproj", "{55601AEA-E1C2-48F1-B405-9C6736780E4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyHost.Services", "EnergyHost.Services\EnergyHost.Services.csproj", "{38BCC435-ECB9-40C0-B55C-0C43A48AAE14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyHost.Services", "EnergyHost.Services\EnergyHost.Services.csproj", "{38BCC435-ECB9-40C0-B55C-0C43A48AAE14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyHost.Model", "EnergyHost.Model\EnergyHost.Model.csproj", "{6E077A82-BD4B-4130-B4C1-C4A2120B751C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyHost.Model", "EnergyHost.Model\EnergyHost.Model.csproj", "{6E077A82-BD4B-4130-B4C1-C4A2120B751C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyHost.Contract", "EnergyHost.Contract\EnergyHost.Contract.csproj", "{5729AB8C-B978-4C97-BCD3-ECA6AEEBAB20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyHost.Contract", "EnergyHost.Contract\EnergyHost.Contract.csproj", "{5729AB8C-B978-4C97-BCD3-ECA6AEEBAB20}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Old", "Old", "{78D15F7E-86BE-48BB-A990-8B27AED0F13B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyHost.Tests", "EnergyHost.Tests\EnergyHost.Tests.csproj", "{08847052-DC49-43B1-834C-3CCB46E7D0FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyHost.Tests", "EnergyHost.Tests\EnergyHost.Tests.csproj", "{08847052-DC49-43B1-834C-3CCB46E7D0FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyHost.Devices", "EnergyHost.Devices\EnergyHost.Devices.csproj", "{57C86FD9-DF26-4907-BADE-5D4D7FAF2089}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,10 @@ Global
 		{08847052-DC49-43B1-834C-3CCB46E7D0FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08847052-DC49-43B1-834C-3CCB46E7D0FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08847052-DC49-43B1-834C-3CCB46E7D0FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57C86FD9-DF26-4907-BADE-5D4D7FAF2089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C86FD9-DF26-4907-BADE-5D4D7FAF2089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C86FD9-DF26-4907-BADE-5D4D7FAF2089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C86FD9-DF26-4907-BADE-5D4D7FAF2089}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{6E077A82-BD4B-4130-B4C1-C4A2120B751C} = {79ED1BD1-F276-404D-9C52-B3115D9448A6}
 		{5729AB8C-B978-4C97-BCD3-ECA6AEEBAB20} = {79ED1BD1-F276-404D-9C52-B3115D9448A6}
 		{08847052-DC49-43B1-834C-3CCB46E7D0FF} = {79ED1BD1-F276-404D-9C52-B3115D9448A6}
+		{57C86FD9-DF26-4907-BADE-5D4D7FAF2089} = {79ED1BD1-F276-404D-9C52-B3115D9448A6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {230F2564-BB45-4C4E-8182-008F47506F7E}

@@ -3,6 +3,7 @@ using EnergyHost.Contract;
 using EnergyHost.Model.Settings;
 using EnergyHost.Services.Contract;
 using EnergyHost.Services.Services;
+using EnergyHost.Services.Services.AlertServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,13 +23,14 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddTransient<IDarkSkyService, DarkSkyService>();
             services.AddTransient<IEnergyFuturesService, EnergyFuturesService>();
             services.AddTransient<IInfluxService, InfluxService>();
-            services.AddTransient<IMQTTService, MQTTService>();
+            services.AddSingleton<IMQTTService, MQTTService>();
             services.AddTransient<IDataLoggerService, DataLoggerService>();
             services.AddTransient<IDaikinService, DaikinService>();
             services.AddTransient<IABBService, ABBService>();
             services.AddSingleton<ILogService, LogService>();
             services.AddSingleton<ISystemStatusService, SystemStatusService>();
-         
+            services.AddSingleton<ITimeAlertService, TimeAlertService>();
+
             return this;
         }
 

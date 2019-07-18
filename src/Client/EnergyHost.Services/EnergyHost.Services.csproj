@@ -25,4 +25,8 @@
     <ProjectReference Include="..\EnergyHost.Model\EnergyHost.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\ActionServices\" />
+  </ItemGroup>
+
 </Project>
