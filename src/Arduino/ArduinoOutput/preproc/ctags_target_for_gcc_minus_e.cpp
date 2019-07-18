@@ -1,18 +1,20 @@
-#include <elapsedMillis.h>
-#include "Statistic.h"
+# 1 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+# 1 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino"
+# 2 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino" 2
+# 3 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino" 2
 
-#include "HttpClient.h"
-#include "QueueClient.h"
+# 5 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino" 2
+# 6 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino" 2
 
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+# 8 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino" 2
+# 9 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino" 2
 
-#include <PubSubClient.h>
+# 11 "/Users/jak/GitHub/SmartMeterMonitor/src/Arduino/sm_mon/sm_mon.ino" 2
 //const char* ssid = "CMO2";
 //const char* password = "HellaAwesome2";
 
-const char *ssid = "";
-const char *password = "";
+const char *ssid = "TelstraCAC61A";
+const char *password = "mm2mdkbfrn";
 const char *mqtt_server = "192.168.0.220";
 
 const boolean wifiAlwaysOn = true;
@@ -172,10 +174,6 @@ void loop()
 
 void send()
 {
-  if(!pulseSinceLastSend){
-
-  }
-
   if (pulseSinceLastSend)
   {
     snprintf(msg, 50, "%ld", (int)actualPeriod);
@@ -187,7 +185,7 @@ void send()
 
 void pulseStart()
 {
-  
+
 
   wasLow = true;
   thisPulse = 0;
