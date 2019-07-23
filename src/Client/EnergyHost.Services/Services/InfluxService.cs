@@ -49,7 +49,7 @@ namespace EnergyHost.Services.Services
 
             if (utcTimeStamp != null)
             {
-                ts.Add("time", utcTimeStamp?.ToString("o"));
+                ts.Add("timestamp", utcTimeStamp?.ToString("o"));
             }
 
             if (tags != null)
@@ -59,6 +59,8 @@ namespace EnergyHost.Services.Services
                     ts.Add(key, tags[key]);
                 }
             }
+
+            utcTimeStamp = DateTime.UtcNow;
 
             var writer = new LineProtocolPoint(
                 measurement,
