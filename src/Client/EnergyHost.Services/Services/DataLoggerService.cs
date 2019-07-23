@@ -23,7 +23,7 @@ namespace EnergyHost.Services.Services
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
-        public double SolarToday{get;set;} = 0;
+        public double SolarToday { get; set; } = 0;
         public double DaikinInsideTemperature { get; set; }
         public double DaikinSetTemperature { get; set; }
         public string DaikinMode { get; set; }
@@ -72,14 +72,17 @@ namespace EnergyHost.Services.Services
 
             await Task.Delay(TimeSpan.FromSeconds(10));
 
-            _dbWriter();
+            _ = Task.Run(async () =>
+              {
+                  _dbWriter();
+                  await Task.Delay(10000);
+              });
         }
 
         async void _dbWriter()
         {
-            while (true)
-            {
-                var data = new Dictionary<string, object>
+
+            var data = new Dictionary<string, object>
                 {
                     { "kwh", _mqttService.KWH },
                     { "temp", CurrentWeather.temp},
@@ -101,60 +104,58 @@ namespace EnergyHost.Services.Services
                 };
 
 
-                if (!Debugger.IsAttached)
+            if (!Debugger.IsAttached)
+            {
+                var result = await _influxService.Write("house", "currentStatus", data, null, DateTime.UtcNow);
+                if (!result)
                 {
-                    var result = await _influxService.Write("house", "currentStatus", data, null, DateTime.UtcNow);
-                    if (!result)
-                    {
-                        _logService.WriteError($"Influx fail save");
-                        Debug.WriteLine($"Influx: {result}");
-                    }
-                    
+                    _logService.WriteError($"Influx fail save");
+                    Debug.WriteLine($"Influx: {result}");
                 }
 
-                await _writeFutures();
-
-                
-
-                await _statusService.SendStatus(new EnergyPriceStatus
-                {
-                    CurrentPriceIn = CurrentPriceIn,
-                    CurrentPriceOut = CurrentPriceOut
-
-                });
-
-                await _statusService.SendStatus(new DaikinStatus
-                {
-                    DaikinSetTemperature = DaikinSetTemperature,
-                    DaikinInsideTemperature = DaikinInsideTemperature,
-                    DaikinMode = DaikinMode,
-                    DaikinPoweredOn = DaikinPoweredOn
-                });
-
-                await _statusService.SendStatus(new WeatherStatus
-                {
-                    CurrentTemp = CurrentWeather.temp, 
-                    Humidity = CurrentWeather.humid, 
-                    Pressure = CurrentWeather.pressure, 
-                    WindSpeed = CurrentWeather.wind, 
-                    MinToday = CurrentWeather.minToday,
-                    MaxToday = CurrentWeather.maxToday, 
-                    MinTomorrow =  CurrentWeather.minTomorrow, 
-                    MaxTomorrow = CurrentWeather.maxTomorrow
-
-                });
-
-                await _statusService.SendStatus(new PowerStatus
-                {
-                    KWHIn = _mqttService.KWH, 
-                    KWHSolar = SolarOutput, 
-                    KWHSolarToday = SolarToday
-                });
-
-                await _statusService.SendStatus(new TimeStatus(), false);//time pump
-
-                await Task.Delay(TimeSpan.FromSeconds(10));
             }
+
+            await _writeFutures();
+
+
+
+            await _statusService.SendStatus(new EnergyPriceStatus
+            {
+                CurrentPriceIn = CurrentPriceIn,
+                CurrentPriceOut = CurrentPriceOut
+
+            });
+
+            await _statusService.SendStatus(new DaikinStatus
+            {
+                DaikinSetTemperature = DaikinSetTemperature,
+                DaikinInsideTemperature = DaikinInsideTemperature,
+                DaikinMode = DaikinMode,
+                DaikinPoweredOn = DaikinPoweredOn
+            });
+
+            await _statusService.SendStatus(new WeatherStatus
+            {
+                CurrentTemp = CurrentWeather.temp,
+                Humidity = CurrentWeather.humid,
+                Pressure = CurrentWeather.pressure,
+                WindSpeed = CurrentWeather.wind,
+                MinToday = CurrentWeather.minToday,
+                MaxToday = CurrentWeather.maxToday,
+                MinTomorrow = CurrentWeather.minTomorrow,
+                MaxTomorrow = CurrentWeather.maxTomorrow
+
+            });
+
+            await _statusService.SendStatus(new PowerStatus
+            {
+                KWHIn = _mqttService.KWH,
+                KWHSolar = SolarOutput,
+                KWHSolarToday = SolarToday
+            });
+
+            await _statusService.SendStatus(new TimeStatus(), false);//time pump
+
         }
 
         public async Task _writeFutures()
@@ -175,14 +176,14 @@ namespace EnergyHost.Services.Services
         async void _abbPoller()
         {
             var lastSolar = DateTime.Now;
-           
+
 
             while (true)
             {
                 var tAbbStatus = _abbService.Get();
-                
+
                 await Task.WhenAll(tAbbStatus);
-                
+
                 var abb = await tAbbStatus;
 
                 if (abb != null)
@@ -211,12 +212,12 @@ namespace EnergyHost.Services.Services
 
             while (true)
             {
-                
+
                 var tDsStatus = _darkSkyService.GetDetail();
                 var tEnergyFutures = _energyFuturesService.Get();
                 await Task.WhenAll(tDsStatus, tEnergyFutures);
                 CurrentWeather = await tDsStatus;
-                
+
 
                 EnergyFutures = await tEnergyFutures;
 
