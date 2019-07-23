@@ -45,14 +45,12 @@ namespace EnergyHost.Services.Services
             
             await _createDatabase(InfluxServerUrl, db);
 
-            if (utcTimeStamp == null)
-            {
-                utcTimeStamp = DateTime.UtcNow;
-            }
-
-            
             var ts = new Dictionary<string, string>();
-            ts.Add("timestamp", utcTimeStamp.ToString());
+
+            if (utcTimeStamp != null)
+            {
+                ts.Add("timestamp", utcTimeStamp.ToString());
+            }
 
             if (tags != null)
             {

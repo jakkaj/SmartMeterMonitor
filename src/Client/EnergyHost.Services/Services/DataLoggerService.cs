@@ -74,9 +74,12 @@ namespace EnergyHost.Services.Services
 
             _ = Task.Run(async () =>
               {
-                  _dbWriter();
-                  await Task.Delay(10000);
-              });
+                  while (true)
+                  {
+                      _dbWriter();
+                      await Task.Delay(TimeSpan.FromSeconds(10));
+                  }
+              });            
         }
 
         async void _dbWriter()
@@ -106,7 +109,7 @@ namespace EnergyHost.Services.Services
 
             if (!Debugger.IsAttached)
             {
-                var result = await _influxService.Write("house", "currentStatus", data, null, DateTime.UtcNow);
+                var result = await _influxService.Write("house", "currentStatus", data, null, null);
                 if (!result)
                 {
                     _logService.WriteError($"Influx fail save");
