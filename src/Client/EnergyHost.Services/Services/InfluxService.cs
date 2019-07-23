@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Net.Http;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
 using EnergyHost.Model.Settings;
+using EnergyHost.Services.Utils;
 using InfluxDB.Collector;
 using InfluxDB.LineProtocol.Client;
 using InfluxDB.LineProtocol.Payload;
@@ -28,6 +33,13 @@ namespace EnergyHost.Services.Services
 
         private string InfluxServerUrl => $"http://{_settings.Value.INFLUX_SERVER_ADDRESS}:8086";
 
+        public async Task<bool> WriteObject(string db, string measurement, object data,
+            IReadOnlyDictionary<string, string> tags = null, DateTime? utcTimeStamp = null)
+        {
+            var dict = data.ConvertToDictionary();
+            return await Write(db, measurement, dict, tags, utcTimeStamp);
+        }
+
         public async Task<bool> Write(string db, string measurement, IReadOnlyDictionary<string, object> data, IReadOnlyDictionary<string, string> tags = null, DateTime? utcTimeStamp = null)
         {
             
@@ -38,10 +50,22 @@ namespace EnergyHost.Services.Services
                 utcTimeStamp = DateTime.UtcNow;
             }
 
+            
+            var ts = new Dictionary<string, string>();
+            ts.Add("timestamp", utcTimeStamp.ToString());
+
+            if (tags != null)
+            {
+                foreach (var key in tags.Keys)
+                {
+                    ts.Add(key, tags[key]);
+                }
+            }
+
             var writer = new LineProtocolPoint(
                 measurement,
                data,
-                tags,
+                ts,
                 utcTimeStamp);
 
             var payload = new LineProtocolPayload();

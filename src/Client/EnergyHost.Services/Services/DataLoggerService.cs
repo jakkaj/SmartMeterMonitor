@@ -100,6 +100,7 @@ namespace EnergyHost.Services.Services
                     { "CurrentPriceOut", CurrentPriceOut }
                 };
 
+
                 if (!Debugger.IsAttached)
                 {
                     var result = await _influxService.Write("house", "currentStatus", data, null, DateTime.UtcNow);
@@ -108,7 +109,12 @@ namespace EnergyHost.Services.Services
                         _logService.WriteError($"Influx fail save");
                         Debug.WriteLine($"Influx: {result}");
                     }
+                    
                 }
+
+                await _writeFutures();
+
+                
 
                 await _statusService.SendStatus(new EnergyPriceStatus
                 {
@@ -146,9 +152,23 @@ namespace EnergyHost.Services.Services
                 });
 
                 await _statusService.SendStatus(new TimeStatus(), false);//time pump
-                
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+        }
+
+        public async Task _writeFutures()
+        {
+            if (EnergyFutures == null)
+            {
+                return;
+            }
+
+            foreach (var i in EnergyFutures.Futures)
+            {
+                //var utcNow = DateTime.UtcNow;
+                var t = i.IsForecast ? i.Period.ToUniversalTime() : DateTime.Now.ToUniversalTime();
+                await _influxService.WriteObject("house", "energyFutures", i, null, t);
             }
         }
 

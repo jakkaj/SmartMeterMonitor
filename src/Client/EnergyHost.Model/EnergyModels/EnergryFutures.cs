@@ -24,6 +24,9 @@ namespace EnergyHost.Model.EnergyModels
         public double PriceOutNormalised { get; set; }
         public DataPoint DarkSkyDataPoint { get; set; }
         public VariablePricesAndRenewable AmberPrices { get; set; }
+        public bool IsForecast { get; set; }
+        public double UsageSuggestion { get; set; } //higher is better
+        public double CostSuggestion { get; set; } //higher is better
 
     }
 }

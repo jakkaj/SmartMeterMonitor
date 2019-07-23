@@ -30,7 +30,9 @@ namespace EnergyHost.Tests.Tests
                 {
                     s += "=";
                 }
-                Debug.WriteLine($"{energryFuture.Period} : {energryFuture.PriceIn.ToString("F")} : {energryFuture.PriceOut.ToString("F")} : {s}");
+
+                
+                Debug.WriteLine($"{energryFuture.Period} : {energryFuture.PriceIn.ToString("F")} : {energryFuture.PriceOut.ToString("F")} : {s} ({energryFuture.UsageSuggestion})");
                 
             }
         }

@@ -8,5 +8,8 @@ namespace EnergyHost.Contract
     {
         Task Write(string db, string measurement, Dictionary<string, object> data);
         Task<bool> Write(string db, string measurement, IReadOnlyDictionary<string, object> data, IReadOnlyDictionary<string, string> tags = null, DateTime? utcTimeStamp = null);
+
+        Task<bool> WriteObject(string db, string measurement, object data,
+            IReadOnlyDictionary<string, string> tags = null, DateTime? utcTimeStamp = null);
     }
 }
