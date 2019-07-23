@@ -51,6 +51,10 @@ namespace EnergyHost.Services.Services
             {
                 ts.Add("timestamp", utcTimeStamp?.ToString("o"));
             }
+            else
+            {
+                utcTimeStamp = DateTime.UtcNow;
+            }
 
             if (tags != null)
             {
@@ -59,8 +63,6 @@ namespace EnergyHost.Services.Services
                     ts.Add(key, tags[key]);
                 }
             }
-
-            utcTimeStamp = DateTime.UtcNow;
 
             var writer = new LineProtocolPoint(
                 measurement,
