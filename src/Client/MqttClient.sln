@@ -25,7 +25,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Old", "Old", "{78D15F7E-86B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyHost.Tests", "EnergyHost.Tests\EnergyHost.Tests.csproj", "{08847052-DC49-43B1-834C-3CCB46E7D0FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyHost.Devices", "EnergyHost.Devices\EnergyHost.Devices.csproj", "{57C86FD9-DF26-4907-BADE-5D4D7FAF2089}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyHost.Devices", "EnergyHost.Devices\EnergyHost.Devices.csproj", "{57C86FD9-DF26-4907-BADE-5D4D7FAF2089}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graphana", "Graphana", "{2B96DD75-E045-4A77-8F8F-4C4F9B97A1DE}"
+	ProjectSection(SolutionItems) = preProject
+		GraphanaConfig.json = GraphanaConfig.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
