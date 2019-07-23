@@ -48,6 +48,7 @@ namespace EnergyHost.Services.Services
 
             var ts = new Dictionary<string, string>();
 
+//remember to check the container is runnings in the right timzone!
             if (utcTimeStamp != null)
             {                
                 ts.Add("timestamp", utcTimeStamp?.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
