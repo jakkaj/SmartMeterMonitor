@@ -49,7 +49,7 @@ namespace EnergyHost.Services.Services
 
             if (utcTimeStamp != null)
             {
-                ts.Add("timestamp", utcTimeStamp.ToString());
+                ts.Add("time", utcTimeStamp?.ToString("o"));
             }
 
             if (tags != null)
