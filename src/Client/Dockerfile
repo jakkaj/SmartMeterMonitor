@@ -19,6 +19,8 @@ RUN dotnet publish -c Debug -o /app/out ./EnergyHost.App/
 
 # Build runtime image
 FROM microsoft/dotnet:aspnetcore-runtime
+ENV TZ=Australia/Sydney
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /app
 COPY --from=build-env /app/out .
 EXPOSE 5000

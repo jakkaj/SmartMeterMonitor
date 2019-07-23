@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Security;
@@ -48,8 +49,8 @@ namespace EnergyHost.Services.Services
             var ts = new Dictionary<string, string>();
 
             if (utcTimeStamp != null)
-            {
-                ts.Add("timestamp", utcTimeStamp?.ToString("o"));
+            {                
+                ts.Add("timestamp", utcTimeStamp?.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
             }
             else
             {
