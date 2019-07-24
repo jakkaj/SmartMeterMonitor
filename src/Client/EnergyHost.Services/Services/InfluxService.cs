@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using DarkSky.Services;
 using EnergyHost.Contract;
 using EnergyHost.Model.Settings;
 using EnergyHost.Services.Utils;
@@ -22,14 +23,30 @@ namespace EnergyHost.Services.Services
     {
         private readonly ILogService _logService;
         private readonly IOptions<EnergyHostSettings> _settings;
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        Dictionary<string, ILineProtocolClient> _lineProtocolClients = new Dictionary<string, ILineProtocolClient>();
 
         public InfluxService(
             ILogService logService,
-            IOptions<EnergyHostSettings> settings
+            IOptions<EnergyHostSettings> settings,
+            IHttpClientFactory httpClientFactory
             )
         {
             _logService = logService;
             _settings = settings;
+            _httpClientFactory = httpClientFactory;
+        }
+
+
+        ILineProtocolClient _getLineProtocolClient(string db)
+        {
+            if (!_lineProtocolClients.ContainsKey(db))
+            {
+                _lineProtocolClients.Add(db, new LineProtocolClient(new Uri(InfluxServerUrl), db));
+            }
+
+            return _lineProtocolClients[db];
         }
 
         private string InfluxServerUrl => $"http://{_settings.Value.INFLUX_SERVER_ADDRESS}:8086";
@@ -75,7 +92,7 @@ namespace EnergyHost.Services.Services
             var payload = new LineProtocolPayload();
             payload.Add(writer);
 
-            var client = new LineProtocolClient(new Uri(InfluxServerUrl), db);
+            var client = _getLineProtocolClient(db);
 
             try
             {
@@ -100,15 +117,7 @@ namespace EnergyHost.Services.Services
 
             await _createDatabase(InfluxServerUrl, db);
 
-
-            Metrics.Collector = new CollectorConfiguration()
-                
-                .Tag.With("host", "campbellst")
-                .WriteTo.InfluxDB(InfluxServerUrl, db)
-                .CreateCollector();
-
-
-            Metrics.Write(measurement, data);
+            await Write(db, measurement, data, null, null);
         }
 
         private async Task _createDatabase(string influxDbUrl, string dbName)
@@ -116,8 +125,8 @@ namespace EnergyHost.Services.Services
             try
             {
                 var url = new Uri($"{influxDbUrl}/query?q=CREATE DATABASE {dbName}");
-                var c = new HttpClient();
-                await c.GetAsync(url);
+                var client = _httpClientFactory.CreateClient();
+                await client.GetAsync(url);
             }
             catch (Exception ex)
             {
