@@ -80,25 +80,28 @@ namespace EnergyHost.Services.Services
             var timeFromSunrise = amberVars.period.Hour - sunrise.Hour;
             var timeFromSunset = sunset.Hour - amberVars.period.Hour;
 
-            var solarHigh = 1d;
+            var solarHigh = 0d;
 
             if(isLight){
-                var nowTicks = DateTime.Now.Ticks;
-            
-                var halfTicks = nowTicks / 2;
+                var nowTicks = amberVars.period.Ticks;
+                var halfTicks = sunset.Ticks - (sunset.Ticks - sunrise.Ticks) / 2;
+
                 //find if time is closer to sunset or sunrise
-                if(nowTicks > sunset.Ticks - (sunset.Ticks - sunrise.Ticks) / 2){
+                if (nowTicks > halfTicks)
+                {
                     //closer to sunset so normal from here
-                    solarHigh = solarHigh - _normalise(nowTicks, halfTicks, sunset.Ticks);                
-                }else{
-                    //closer to sunrise
-                    solarHigh = solarHigh - _normalise(nowTicks, sunrise.Ticks, halfTicks);
+                    solarHigh = _normalise(nowTicks, halfTicks, sunset.Ticks);
+                    solarHigh = 1 - solarHigh;
                 }
-                solarHigh = 1 - solarHigh;
+                else{
+                    //closer to sunrise
+                    solarHigh = _normalise(nowTicks, sunrise.Ticks, halfTicks);
+                    
+                }
             }
 
             obj.SolarBad = isLight ? obj.Cloudiness : 1;
-            obj.SolarBad = obj.SolarBad - solarHigh;
+            obj.SolarBad = isLight ? obj.SolarBad - solarHigh : 1;
             obj.Value = (2 - obj.SolarBad - obj.PriceInNormalised) / 2;
 
             obj.SolarValue = (1 - obj.SolarBad);
