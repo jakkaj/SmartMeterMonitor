@@ -10,6 +10,7 @@ using EnergyHost.Model.Settings;
 using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Client.Options;
 
 namespace EnergyHost.Services.Services
 {
@@ -84,7 +85,7 @@ namespace EnergyHost.Services.Services
 
             var lastMessageIn = DateTime.Now;
 
-            _mqttClient.Disconnected += async (s, e) =>
+            _mqttClient.UseDisconnectedHandler(async e =>
             {
                 _logService.WriteLog("### DISCONNECTED FROM SERVER ###");
                 await Task.Delay(TimeSpan.FromSeconds(5));
@@ -97,9 +98,9 @@ namespace EnergyHost.Services.Services
                 {
                     _logService.WriteError("### RECONNECTING FAILED ###");
                 }
-            };
+            });
 
-            _mqttClient.Connected += async (s, e) =>
+            _mqttClient.UseConnectedHandler(async e =>
             {
                 _logService.WriteLog("### CONNECTED WITH SERVER. Attempt subs ###");
 
@@ -118,9 +119,9 @@ namespace EnergyHost.Services.Services
                 }
 
                 _logService.WriteLog("### SUBSCRIBED ###");
-            };
+            });
 
-            _mqttClient.ApplicationMessageReceived += async (s, e) =>
+            _mqttClient.UseApplicationMessageReceivedHandler(async e =>
             {
                 var topic = e.ApplicationMessage.Topic;
                 var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
@@ -140,11 +141,11 @@ namespace EnergyHost.Services.Services
                     _logService.WriteDebug($"KWH: {kwh}");
 
                     KWH = kwh;
-                    
+
                     lastMessageIn = DateTime.Now;
                 }
 
-            };
+            });
 
             await _mqttClient.ConnectAsync(_options);
 #pragma warning disable 4014

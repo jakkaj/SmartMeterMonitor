@@ -6,18 +6,18 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.0.0-preview7.19362.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.0.0-preview7.19362.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview7.19362.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-preview7.19362.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview7.19362.4" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.0-preview7.19362.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="YamlDotNet" Version="6.0.0" />
-    <PackageReference Include="DarkSkyCore" Version="5.1.13" />
-    <PackageReference Include="InfluxDB.Collector" Version="1.1.0" />
-    <PackageReference Include="InfluxDB.LineProtocol" Version="1.1.0" />
-    <PackageReference Include="MQTTnet" Version="2.8.5" />
+    <PackageReference Include="YamlDotNet" Version="6.1.2" />
+    <PackageReference Include="DarkSkyCore" Version="5.1.16" />
+    <PackageReference Include="InfluxDB.Collector" Version="1.1.1-dev-10109" />
+    <PackageReference Include="InfluxDB.LineProtocol" Version="1.1.1-dev-10109" />
+    <PackageReference Include="MQTTnet" Version="3.0.6-beta1" />
   </ItemGroup>
 
   <ItemGroup>

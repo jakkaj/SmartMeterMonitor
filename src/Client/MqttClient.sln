@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MqttTestClient", "MqttClient_Influx\MqttTestClient.csproj", "{089DFBC0-20EB-44E4-AD5B-209B57A1999A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenWeatherMap", "OpenWeatherMap\OpenWeatherMap.csproj", "{6DE31341-C387-4B6B-B964-3C5D26CD709E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerSystemClient.Tests", "PowerSystemClient.Tests\PowerSystemClient.Tests.csproj", "{8DF13EBE-6A74-4C83-A303-6620CC90C2CC}"
@@ -38,10 +36,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{089DFBC0-20EB-44E4-AD5B-209B57A1999A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{089DFBC0-20EB-44E4-AD5B-209B57A1999A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{089DFBC0-20EB-44E4-AD5B-209B57A1999A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{089DFBC0-20EB-44E4-AD5B-209B57A1999A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6DE31341-C387-4B6B-B964-3C5D26CD709E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6DE31341-C387-4B6B-B964-3C5D26CD709E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DE31341-C387-4B6B-B964-3C5D26CD709E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -83,7 +77,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{089DFBC0-20EB-44E4-AD5B-209B57A1999A} = {78D15F7E-86BE-48BB-A990-8B27AED0F13B}
 		{6DE31341-C387-4B6B-B964-3C5D26CD709E} = {78D15F7E-86BE-48BB-A990-8B27AED0F13B}
 		{8DF13EBE-6A74-4C83-A303-6620CC90C2CC} = {78D15F7E-86BE-48BB-A990-8B27AED0F13B}
 		{7BD46A35-EC59-41CC-AE8E-E75A7B498DDA} = {78D15F7E-86BE-48BB-A990-8B27AED0F13B}
