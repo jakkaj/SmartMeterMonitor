@@ -121,7 +121,7 @@ namespace EnergyHost.Services.Services
                 _logService.WriteLog("### SUBSCRIBED ###");
             });
 
-            _mqttClient.UseApplicationMessageReceivedHandler(async e =>
+            _mqttClient.UseApplicationMessageReceivedHandler(e =>
             {
                 var topic = e.ApplicationMessage.Topic;
                 var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
