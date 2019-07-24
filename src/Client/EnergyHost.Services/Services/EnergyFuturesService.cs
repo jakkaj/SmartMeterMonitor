@@ -34,8 +34,8 @@ namespace EnergyHost.Services.Services
             var amberData = await _amberService.Get(_options.Value.PostCode);
             var darkData = await _darkSkyService.Get();
 
-            var sunrise = darkData.Daily.Data[0].SunriseDateTime.Value.DateTime.AddHours(.5);
-            var sunset = darkData.Daily.Data[0].SunsetDateTime.Value.DateTime.AddHours(.5);
+            var sunrise = darkData.Daily.Data[0].SunriseDateTime.Value.DateTime.AddHours(0);
+            var sunset = darkData.Daily.Data[0].SunsetDateTime.Value.DateTime.AddHours(0);
 
             var futures = new EnergryFutures()
             {
@@ -60,6 +60,7 @@ namespace EnergyHost.Services.Services
 
         EnergyFuture _getEnergyFuture(VariablePricesAndRenewable amberVars, DataPoint dp, DateTime sunrise, DateTime sunset, bool isForecast)
         {
+            
             var obj = new EnergyFuture()
             {
                 AmberPrices = amberVars,
@@ -76,8 +77,28 @@ namespace EnergyHost.Services.Services
 
             var isLight = amberVars.period.Hour > sunrise.Hour && amberVars.period.Hour < sunset.Hour;
 
-            obj.SolarBad = isLight ? obj.Cloudiness : 1;
+            var timeFromSunrise = amberVars.period.Hour - sunrise.Hour;
+            var timeFromSunset = sunset.Hour - amberVars.period.Hour;
 
+            var solarHigh = 1d;
+
+            if(isLight){
+                var nowTicks = DateTime.Now.Ticks;
+            
+                var halfTicks = nowTicks / 2;
+                //find if time is closer to sunset or sunrise
+                if(nowTicks > sunset.Ticks - (sunset.Ticks - sunrise.Ticks) / 2){
+                    //closer to sunset so normal from here
+                    solarHigh = solarHigh - _normalise(nowTicks, halfTicks, sunset.Ticks);                
+                }else{
+                    //closer to sunrise
+                    solarHigh = solarHigh - _normalise(nowTicks, sunrise.Ticks, halfTicks);
+                }
+                solarHigh = 1 - solarHigh;
+            }
+
+            obj.SolarBad = isLight ? obj.Cloudiness : 1;
+            obj.SolarBad = obj.SolarBad - solarHigh;
             obj.Value = (2 - obj.SolarBad - obj.PriceInNormalised) / 2;
 
             obj.SolarValue = (1 - obj.SolarBad);
@@ -88,6 +109,11 @@ namespace EnergyHost.Services.Services
 
             return obj;
 
+        }
+
+        private double _normalise(double value, double min, double max) {
+	            var normalised = (value - min) / (max - min);
+	            return normalised;
         }
 
         DataPoint _pair(VariablePricesAndRenewable amberVars, Forecast dp)
