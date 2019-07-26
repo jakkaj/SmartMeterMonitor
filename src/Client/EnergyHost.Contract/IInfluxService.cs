@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EnergyHost.Model.DataModels;
 
 namespace EnergyHost.Contract
 {
@@ -11,5 +12,7 @@ namespace EnergyHost.Contract
 
         Task<bool> WriteObject(string db, string measurement, object data,
             IReadOnlyDictionary<string, string> tags = null, DateTime? utcTimeStamp = null);
+
+        Task<InfluxResult> Query(string db, string query);
     }
 }

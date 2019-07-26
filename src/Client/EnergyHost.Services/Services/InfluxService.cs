@@ -10,12 +10,14 @@ using System.Text;
 using System.Threading.Tasks;
 using DarkSky.Services;
 using EnergyHost.Contract;
+using EnergyHost.Model.DataModels;
 using EnergyHost.Model.Settings;
 using EnergyHost.Services.Utils;
 using InfluxDB.Collector;
 using InfluxDB.LineProtocol.Client;
 using InfluxDB.LineProtocol.Payload;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace EnergyHost.Services.Services
 {
@@ -49,6 +51,33 @@ namespace EnergyHost.Services.Services
             return _lineProtocolClients[db];
         }
 
+        public async Task<InfluxResult> Query(string db, string query)
+        {
+            var url = $"{InfluxServerUrl}/query?db={db}&q={query}";
+            using (var client = _httpClientFactory.CreateClient())
+            {
+                var result = await client.GetAsync(new Uri(url));
+                if (!result.IsSuccessStatusCode)
+                {
+                    _logService.WriteError($"{result.StatusCode}, {result.ReasonPhrase}");
+                    return null;
+                }
+
+                try
+                {
+                    var des = JsonConvert.DeserializeObject<InfluxResult>(await result.Content.ReadAsStringAsync());
+                    return des;
+                }
+                catch (Exception ex)
+                {
+                    _logService.WriteError(ex);
+                }
+            }
+
+            return null;
+
+        }
+
         private string InfluxServerUrl => $"http://{_settings.Value.INFLUX_SERVER_ADDRESS}:8086";
 
         public async Task<bool> WriteObject(string db, string measurement, object data,
@@ -68,7 +97,7 @@ namespace EnergyHost.Services.Services
 //remember to check the container is runnings in the right timzone!
             if (utcTimeStamp != null)
             {                
-                ts.Add("timestamp", utcTimeStamp?.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
+                ts.Add("timestamp", utcTimeStamp?.ConvertToISO());
             }
             else
             {

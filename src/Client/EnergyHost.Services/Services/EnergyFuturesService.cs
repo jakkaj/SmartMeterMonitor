@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using DarkSky.Models;
 using EnergyHost.Contract;
+using EnergyHost.Model.DataModels;
 using EnergyHost.Model.EnergyModels;
 using EnergyHost.Model.Settings;
+using EnergyHost.Services.Utils;
 using Microsoft.Extensions.Options;
 
 namespace EnergyHost.Services.Services
@@ -16,17 +18,20 @@ namespace EnergyHost.Services.Services
         private readonly ILogService _logService;
         private readonly IAmberService _amberService;
         private readonly IDarkSkyService _darkSkyService;
+        private readonly IInfluxService _influxService;
         private readonly IOptions<EnergyHostSettings> _options;
 
         public EnergyFuturesService(
             ILogService logService, 
             IAmberService amberService, 
             IDarkSkyService darkSkyService,
+            IInfluxService influxService,
             IOptions<EnergyHostSettings> options)
         {
             _logService = logService;
             _amberService = amberService;
             _darkSkyService = darkSkyService;
+            _influxService = influxService;
             _options = options;
         }
         public async Task<EnergryFutures> Get()
@@ -46,19 +51,34 @@ namespace EnergyHost.Services.Services
             var currentAd = amberData.data.variablePricesAndRenewables.Last(_ => _.periodType == "ACTUAL");
             var currentDp = darkData.Currently;
 
-            futures.Futures.Add(_getEnergyFuture(currentAd, currentDp, sunrise, sunset, false));
+            var startTime = currentAd.period.Subtract(TimeSpan.FromDays(14)).ToUniversalTime().ConvertToISO();
+            var endTime = DateTime.Now.ToUniversalTime().ConvertToISO();
+
+
+
+            var history = await _influxService.Query("house",
+                $"SELECT mean(\"SolarOutput\") FROM \"currentStatus\" WHERE time >= '{startTime}' AND time <= '{endTime}' GROUP BY time(30m)");
+
+            var historyPairs = new List<DateDouble>();
+
+            foreach (var i in history.Results[0].Series[0].Values)
+            {
+                historyPairs.Add(new DateDouble {Interval = (DateTime)i[0], Value = Convert.ToDouble(i[1])});
+            }
+
+            futures.Futures.Add(_getEnergyFuture(currentAd, currentDp, sunrise, sunset, false, historyPairs));
 
 
             foreach (var ad in amberData.data.variablePricesAndRenewables.Where(_=>_.periodType == "FORECAST"))
             {
                 var ds = _pair(ad, darkData);
-                futures.Futures.Add(_getEnergyFuture(ad, ds, sunrise, sunset, true));
+                futures.Futures.Add(_getEnergyFuture(ad, ds, sunrise, sunset, true, historyPairs));
             }
 
             return futures;
         }
 
-        EnergyFuture _getEnergyFuture(VariablePricesAndRenewable amberVars, DataPoint dp, DateTime sunrise, DateTime sunset, bool isForecast)
+        EnergyFuture _getEnergyFuture(VariablePricesAndRenewable amberVars, DataPoint dp, DateTime sunrise, DateTime sunset, bool isForecast, List<DateDouble> history)
         {
             
             var obj = new EnergyFuture()
@@ -74,37 +94,16 @@ namespace EnergyHost.Services.Services
                 IsForecast = isForecast,
                 
             };
+            
+            var historyRange = history.Where(e => e.Interval.Hour == amberVars.period.ToUniversalTime().Hour && e.Interval.Minute == amberVars.period.ToUniversalTime().Minute).Select(e=>e.Value).ToList();
 
-            var isLight = amberVars.period.Hour > sunrise.Hour && amberVars.period.Hour < sunset.Hour;
+            var aggregate = historyRange.Average();
 
-            var timeFromSunrise = amberVars.period.Hour - sunrise.Hour;
-            var timeFromSunset = sunset.Hour - amberVars.period.Hour;
+            var solarNormalised = _normalise(aggregate, 0, 3);
 
-            var solarHigh = 0d;
+            obj.Value = _normalise(solarNormalised - obj.Cloudiness - obj.PriceInNormalised, 0, 3);
 
-            if(isLight){
-                var nowTicks = amberVars.period.Ticks;
-                var halfTicks = sunset.Ticks - (sunset.Ticks - sunrise.Ticks) / 2;
-
-                //find if time is closer to sunset or sunrise
-                if (nowTicks > halfTicks)
-                {
-                    //closer to sunset so normal from here
-                    solarHigh = _normalise(nowTicks, halfTicks, sunset.Ticks);
-                    solarHigh = 1 - solarHigh;
-                }
-                else{
-                    //closer to sunrise
-                    solarHigh = _normalise(nowTicks, sunrise.Ticks, halfTicks);
-                    
-                }
-            }
-
-            obj.SolarBad = isLight ? obj.Cloudiness : 1;
-            obj.SolarBad = isLight ? obj.SolarBad - solarHigh : 1;
-            obj.Value = (2 - obj.SolarBad - obj.PriceInNormalised) / 2;
-
-            obj.SolarValue = (1 - obj.SolarBad);
+            obj.SolarValue = solarNormalised;
             obj.GridValue = (1 - obj.PriceInNormalised);
 
             obj.UsageSuggestion = obj.GridValue + obj.SolarValue;
