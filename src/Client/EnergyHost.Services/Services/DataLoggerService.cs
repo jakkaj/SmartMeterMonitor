@@ -30,7 +30,7 @@ namespace EnergyHost.Services.Services
         public bool DaikinPoweredOn { get; set; }
         public (double temp, double humid, double pressure,
             double wind, double minToday, double maxToday,
-            double minTomorrow, double maxTomorrow) CurrentWeather
+            double minTomorrow, double maxTomorrow, double cloudiness) CurrentWeather
         { get; set; }
 
         public EnergryFutures EnergyFutures { get; set; }
@@ -92,6 +92,7 @@ namespace EnergyHost.Services.Services
                     { "humidity", CurrentWeather.humid},
                     { "pressure", CurrentWeather.pressure},
                     { "windSpeed", CurrentWeather.wind},
+                    { "cloudiness", CurrentWeather.cloudiness},
                     { "min", CurrentWeather.minToday},
                     { "max", CurrentWeather.maxToday},
                     { "minTomorrow", CurrentWeather.minTomorrow},
