@@ -84,26 +84,35 @@ namespace EnergyHost.Services.Services
             var obj = new EnergyFuture()
             {
                 AmberPrices = amberVars,
-                Cloudiness = dp.CloudCover ?? 1,
-                DarkSkyDataPoint = dp,
+                Cloudiness = dp.CloudCover ?? 1,                
+                Temperature = dp.Temperature ?? 0,
+                DarkSkyDataPoint = dp,                
+                PrecipIntensity = dp.PrecipIntensity ?? 0,
+                PrecipProbability = dp.PrecipProbability ?? 0,
                 Period = amberVars.period,
                 PriceIn = amberVars.InPrice,
                 PriceInNormalised = amberVars.InPriceNormal,
                 PriceOut = amberVars.OutPrice,
                 PriceOutNormalised = amberVars.OutPriceNormal,
-                IsForecast = isForecast,
-                
-            };
-            
+                IsForecast = isForecast,                
+            };           
+           
             var historyRange = history.Where(e => e.Interval.Hour == amberVars.period.ToUniversalTime().Hour && e.Interval.Minute == amberVars.period.ToUniversalTime().Minute).Select(e=>e.Value).ToList();
 
             var aggregate = historyRange.Average();
 
-            var solarNormalised = _normalise(aggregate, 0, 3);
+            obj.SolarHistory = aggregate;
+            System.Diagnostics.Debug.WriteLine($"agg: {aggregate}");
+            System.Diagnostics.Debug.WriteLine($"cloud: {obj.Cloudiness}");
+            var solarNormalised = _normalise(aggregate, 0, 2);
 
             obj.Value = _normalise(solarNormalised - obj.Cloudiness - obj.PriceInNormalised, 0, 3);
 
-            obj.SolarValue = solarNormalised;
+            obj.SolarValue = solarNormalised - obj.Cloudiness;
+            System.Diagnostics.Debug.WriteLine($"SolarValue: {obj.SolarValue}");
+            if(obj.SolarValue < 0)
+                obj.SolarValue = 0;
+                
             obj.GridValue = (1 - obj.PriceInNormalised);
 
             obj.UsageSuggestion = obj.GridValue + obj.SolarValue;
