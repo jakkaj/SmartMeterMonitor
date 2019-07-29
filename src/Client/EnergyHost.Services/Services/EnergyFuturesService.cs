@@ -102,14 +102,13 @@ namespace EnergyHost.Services.Services
             var aggregate = historyRange.Average();
 
             obj.SolarHistory = aggregate;
-            System.Diagnostics.Debug.WriteLine($"agg: {aggregate}");
-            System.Diagnostics.Debug.WriteLine($"cloud: {obj.Cloudiness}");
-            var solarNormalised = _normalise(aggregate, 0, 2);
-
+   
+            var solarNormalised = _normalise(aggregate, 0, 3);
+            
             obj.Value = _normalise(solarNormalised - obj.Cloudiness - obj.PriceInNormalised, 0, 3);
 
-            obj.SolarValue = solarNormalised - obj.Cloudiness;
-            System.Diagnostics.Debug.WriteLine($"SolarValue: {obj.SolarValue}");
+            obj.SolarValue = solarNormalised - (obj.Cloudiness / 4);
+           
             if(obj.SolarValue < 0)
                 obj.SolarValue = 0;
                 
