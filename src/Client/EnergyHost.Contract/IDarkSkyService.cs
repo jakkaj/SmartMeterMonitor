@@ -9,6 +9,6 @@ namespace EnergyHost.Contract
 
         Task<(double temp, double humid, double pressure,
             double wind, double minToday, double maxToday,
-            double minTomorrow, double maxTomorrow)> GetDetail();
+            double minTomorrow, double maxTomorrow, double cloudiness)> GetDetail();
     }
 }

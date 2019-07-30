@@ -30,12 +30,14 @@ namespace EnergyHost.Services.Services
         public bool DaikinPoweredOn { get; set; }
         public (double temp, double humid, double pressure,
             double wind, double minToday, double maxToday,
-            double minTomorrow, double maxTomorrow) CurrentWeather
+            double minTomorrow, double maxTomorrow, double cloudiness) CurrentWeather
         { get; set; }
 
         public EnergryFutures EnergyFutures { get; set; }
         public double CurrentPriceIn { get; set; }
+        public double NextPriceIn { get; set; }
         public double CurrentPriceOut { get; set; }
+        public double NextPriceOut { get; set; }
 
         public DataLoggerService(ILogService logService,
             IDaikinService daikinService,
@@ -79,7 +81,7 @@ namespace EnergyHost.Services.Services
                       _dbWriter();
                       await Task.Delay(TimeSpan.FromSeconds(10));
                   }
-              });            
+              });
         }
 
         async void _dbWriter()
@@ -92,6 +94,7 @@ namespace EnergyHost.Services.Services
                     { "humidity", CurrentWeather.humid},
                     { "pressure", CurrentWeather.pressure},
                     { "windSpeed", CurrentWeather.wind},
+                    { "cloudiness", CurrentWeather.cloudiness},
                     { "min", CurrentWeather.minToday},
                     { "max", CurrentWeather.maxToday},
                     { "minTomorrow", CurrentWeather.minTomorrow},
@@ -102,8 +105,11 @@ namespace EnergyHost.Services.Services
                     { "DaikinPoweredOn", DaikinPoweredOn },
                     { "SolarOutput", SolarOutput },
                     { "SolarToday", SolarToday},
+                    { "SolarHistory", EnergyFutures.Futures[0].SolarHistory },
                     { "CurrentPriceIn", CurrentPriceIn },
-                    { "CurrentPriceOut", CurrentPriceOut }
+                    { "CurrentPriceOut", CurrentPriceOut },
+                    { "NextPriceIn", NextPriceIn },
+                    {"NextPriceOut", NextPriceOut }
                 };
 
 
@@ -228,8 +234,10 @@ namespace EnergyHost.Services.Services
                 {
                     lastAmber = DateTime.Now;
                     CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
+                    NextPriceIn = EnergyFutures.Futures[1].PriceIn;
 
                     CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
+                    NextPriceOut = EnergyFutures.Futures[1].PriceOut;
                     _logService.WriteLog($"Energy in: {CurrentPriceIn}");
                 }
 
@@ -238,6 +246,8 @@ namespace EnergyHost.Services.Services
                     _logService.WriteLog("Amber Data Stale");
                     CurrentPriceIn = 0;
                     CurrentPriceOut = 0;
+                    NextPriceIn = 0;
+                    NextPriceOut = 0;
                 }
 
                 _logService.WriteLog($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");

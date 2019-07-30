@@ -22,7 +22,7 @@ namespace EnergyHost.Services.Services
 
         public async Task<(double temp, double humid, double pressure,
             double wind, double minToday, double maxToday,
-            double minTomorrow, double maxTomorrow)> GetDetail()
+            double minTomorrow, double maxTomorrow, double cloudiness)> GetDetail()
         {
             var forecast = await Get();
             var humid = forecast.Currently.Humidity ?? 0;
@@ -36,10 +36,13 @@ namespace EnergyHost.Services.Services
             var minToday = forecast.Daily.Data[0].TemperatureLow ?? 0;
             var maxToday = forecast.Daily.Data[0].TemperatureHigh ?? 0;
 
+            var cloudiness = forecast.Daily.Data[0].CloudCover ?? 0;
+
             var minTomorrow = forecast.Daily.Data[1].TemperatureLow ?? 0;
             var maxTomorrow = forecast.Daily.Data[1].TemperatureHigh ?? 0;
 
-            return (temp, humid, pressure, wind, minToday, maxToday, minTomorrow, maxTomorrow);
+
+            return (temp, humid, pressure, wind, minToday, maxToday, minTomorrow, maxTomorrow, cloudiness);
         }
 
         public async Task<Forecast> Get()
