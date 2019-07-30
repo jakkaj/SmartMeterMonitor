@@ -19,7 +19,7 @@ namespace EnergyHost.Tests.Tests
 
             await s.Setup();
 
-            await Task.Delay(TimeSpan.FromSeconds(30));
+            await Task.Delay(TimeSpan.FromSeconds(60));
         }
     }
 }

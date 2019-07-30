@@ -52,6 +52,7 @@ void setup()
     Serial.println();
 
     snprintf(msg, 50, "%ld", (int)dht12.cTemp);
+    Serial.println(msg);
     queueClient.sendQueue("temp1", msg);
 
     snprintf(msg, 50, "%ld", (int)dht12.humidity);
