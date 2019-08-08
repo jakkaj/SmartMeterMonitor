@@ -1,5 +1,11 @@
 version: '3'
 services:
+  modbus:
+    build: 
+      context: ../src/Modbus
+      dockerfile: Dockerfile
+    ports:
+    - 5060:5000
   mqttserver:
     image: "eclipse-mosquitto"
     restart: always

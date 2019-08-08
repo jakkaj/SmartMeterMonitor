@@ -38,3 +38,4 @@ RUN pip install pyserial
  #   && apt-get clean -y \
  #   && rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND=dialog
+
