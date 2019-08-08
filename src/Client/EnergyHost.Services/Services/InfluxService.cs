@@ -97,7 +97,7 @@ namespace EnergyHost.Services.Services
 //remember to check the container is runnings in the right timzone!
             if (utcTimeStamp != null)
             {                
-                ts.Add("timestamp", utcTimeStamp?.ConvertToISO());
+                //ts.Add("timestamp", utcTimeStamp?.ConvertToISO());
             }
             else
             {

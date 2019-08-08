@@ -26,12 +26,17 @@ namespace EnergyHost.Services.Services
         private IMqttClient _mqttClient = null;
         private IMqttClientOptions _options;
 
+        public Dictionary<string,object> Values{get;set;} = new Dictionary<string, object>();
+
         public MQTTService(
             ILogService logService,
             IOptions<EnergyHostSettings> settings)
         {
             _logService = logService;
             _settings = settings;
+
+            Values.Add("temp1", 0);
+            Values.Add("humid1", 0);
         }
 
       
@@ -107,6 +112,8 @@ namespace EnergyHost.Services.Services
                 // Subscribe to a topic
                 try
                 {
+                    await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("temp1").Build());
+                    await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("humid1").Build());
                     await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("pulsePeriod").Build());
                     await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("impressions").Build());
                     await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("log").Build());
@@ -126,6 +133,12 @@ namespace EnergyHost.Services.Services
                 var topic = e.ApplicationMessage.Topic;
                 var value = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                 _logService.WriteDebug($"Mqtt client received: ({topic}) {value}");
+
+                if (topic == "temp1" || topic == "humid1")
+                {
+                    Values[topic] = Convert.ToDouble(value);
+                    _logService.WriteDebug($"{topic}: {value}");
+                }
 
                 if (topic == "events")
                 {

@@ -91,6 +91,8 @@ namespace EnergyHost.Services.Services
                 {
                     { "kwh", _mqttService.KWH },
                     { "temp", CurrentWeather.temp},
+                    { "temp3", Convert.ToDouble(_mqttService.Values["temp1"])},
+                    { "humid3", Convert.ToDouble(_mqttService.Values["humid1"])},
                     { "humidity", CurrentWeather.humid},
                     { "pressure", CurrentWeather.pressure},
                     { "windSpeed", CurrentWeather.wind},
