@@ -31,7 +31,7 @@ RUN apt-get install -y apt-transport-https ca-certificates curl gnupg-agent soft
 RUN curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 RUN chmod +x /usr/local/bin/docker-compose
 
-RUN pip install pyserial
+RUN pip install pyserial flask
 
 # Clean up
 #RUN apt-get autoremove -y \
