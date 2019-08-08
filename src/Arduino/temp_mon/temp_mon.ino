@@ -21,7 +21,7 @@ QueueClient queueClient(&httpClient, mqtt_server);
 
 
 
-const int sleepSeconds = 10;
+const int sleepSeconds = 60;
 
 void setup()
 {
@@ -51,12 +51,15 @@ void setup()
     Serial.println(dht12.humidity);
     Serial.println();
 
-    snprintf(msg, 50, "%ld", (int)dht12.cTemp);
+    snprintf(msg, 50, "%.2f", dht12.cTemp);
     queueClient.sendQueue("temp1", msg);
-
-    snprintf(msg, 50, "%ld", (int)dht12.humidity);
+    Serial.println(msg);
+    snprintf(msg, 50, "%.2f", dht12.humidity);
     queueClient.sendQueue("humid1", msg);
+    Serial.println(msg);
   }
+
+  delay(1000);
 
   ESP.deepSleep(sleepSeconds * 1000000);
 
@@ -65,5 +68,7 @@ void setup()
 void loop()
 {
 
+
+  
   
 }
