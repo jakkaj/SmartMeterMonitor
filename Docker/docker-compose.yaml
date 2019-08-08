@@ -3,7 +3,7 @@ services:
   modbus:
     build: 
       context: ../src/Modbus
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile    
     ports:
     - 5060:5000
   mqttserver:

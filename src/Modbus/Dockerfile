@@ -1,10 +1,10 @@
 FROM python:2.7-stretch
 
 
-RUN pip install pyserial
+RUN pip install pyserial flask
 
 WORKDIR /src
 
 COPY ./ ./
 
-RUN python server.py
+CMD ["python", "server.py"]

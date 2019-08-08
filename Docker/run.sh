@@ -6,6 +6,7 @@ set -o allexport
 source .env
 set +o allexport
 
+docker-compose build
 docker-compose up -d
 #dotnet watch --project ../MqttClient_Influx run 
 
