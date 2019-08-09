@@ -57,14 +57,17 @@ namespace EnergyHost.Services.Services
 
 
             var history = await _influxService.Query("house",
-                $"SELECT mean(\"SolarOutput\") FROM \"currentStatus\" WHERE time >= '{startTime}' AND time <= '{endTime}' GROUP BY time(30m)");
+                $"SELECT mean(\"SolarOutput\") FROM \"currentStatus\" WHERE time >= '{startTime}' AND time <= '{endTime}' AND 'SolarOutput' < 10 GROUP BY time(30m)");
 
             var historyPairs = new List<DateDouble>();
-
-            foreach (var i in history.Results[0].Series[0].Values)
+            if(history.Results[0].Series != null)
             {
-                historyPairs.Add(new DateDouble {Interval = (DateTime)i[0], Value = Convert.ToDouble(i[1])});
+                foreach (var i in history.Results[0].Series[0].Values)
+                {
+                    historyPairs.Add(new DateDouble { Interval = (DateTime)i[0], Value = Convert.ToDouble(i[1]) });
+                }
             }
+            
 
             futures.Futures.Add(_getEnergyFuture(currentAd, currentDp, sunrise, sunset, false, historyPairs));
 
@@ -99,7 +102,7 @@ namespace EnergyHost.Services.Services
            
             var historyRange = history.Where(e => e.Interval.Hour == amberVars.period.ToUniversalTime().Hour && e.Interval.Minute == amberVars.period.ToUniversalTime().Minute).Select(e=>e.Value).ToList();
 
-            var aggregate = historyRange.Average();
+            var aggregate = historyRange.Count > 0 ? historyRange.Average() : 0;
 
             obj.SolarHistory = aggregate;
    
