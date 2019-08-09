@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,7 +58,7 @@ namespace EnergyHost.Services.Services
 
 
             var history = await _influxService.Query("house",
-                $"SELECT mean(\"SolarOutput\") FROM \"currentStatus\" WHERE time >= '{startTime}' AND time <= '{endTime}' AND 'SolarOutput' < 10 GROUP BY time(30m)");
+                $"SELECT mean(\"SolarOutput\") FROM \"currentStatus\" WHERE time >= '{startTime}' AND time <= '{endTime}' GROUP BY time(30m)");
 
             var historyPairs = new List<DateDouble>();
             if(history.Results[0].Series != null)
@@ -100,9 +101,11 @@ namespace EnergyHost.Services.Services
                 IsForecast = isForecast,                
             };           
            
-            var historyRange = history.Where(e => e.Interval.Hour == amberVars.period.ToUniversalTime().Hour && e.Interval.Minute == amberVars.period.ToUniversalTime().Minute).Select(e=>e.Value).ToList();
+            var historyRange = history.Where(e => e.Interval.Hour == amberVars.period.ToUniversalTime().Hour && e.Interval.Minute == amberVars.period.ToUniversalTime().Minute).Where(e=>e.Value < 10).Select(e=>e.Value).ToList();
 
             var aggregate = historyRange.Count > 0 ? historyRange.Average() : 0;
+            
+            //Debug.WriteLine(aggregate);
 
             obj.SolarHistory = aggregate;
    
