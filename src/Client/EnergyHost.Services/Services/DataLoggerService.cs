@@ -286,7 +286,7 @@ namespace EnergyHost.Services.Services
 
                 if (abbModbus != null)
                 {
-                    SolarOutput = abbModbus.W;
+                    SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
                     SystemVoltage = abbModbus.PhVphA;
                 }
 
