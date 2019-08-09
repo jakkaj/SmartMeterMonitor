@@ -73,6 +73,8 @@ namespace EnergyHost.Services.Services
 
             _deviceUpdate10s();
 
+            _halfHourPoller();
+
             await _mqttService.Setup();
 
             await Task.Delay(TimeSpan.FromSeconds(10));
@@ -188,6 +190,45 @@ namespace EnergyHost.Services.Services
             }
         }
 
+        async void _halfHourPoller()
+        {
+            var lastAmber = DateTime.Now;
+
+            while (true)
+            {
+                var tEnergyFutures = _energyFuturesService.Get();
+                await Task.WhenAll(tEnergyFutures);
+                EnergyFutures = await tEnergyFutures;
+                if (EnergyFutures != null)
+                {
+                    lastAmber = DateTime.Now;
+                    CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
+                    NextPriceIn = EnergyFutures.Futures[1].PriceIn;
+
+                    CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
+                    NextPriceOut = EnergyFutures.Futures[1].PriceOut;
+                    _logService.WriteLog($"Energy in: {CurrentPriceIn}");
+                }
+
+                while (DateTime.Now.Minute != 30 && DateTime.Now.Minute != 00)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(20));
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(30));
+
+                if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
+                {
+                    _logService.WriteLog("Amber Data Stale");
+                    CurrentPriceIn = 0;
+                    CurrentPriceOut = 0;
+                    NextPriceIn = 0;
+                    NextPriceOut = 0;
+                }
+
+            }
+        }
+
         async void _abbPoller()
         {
             var lastSolar = DateTime.Now;
@@ -241,38 +282,22 @@ namespace EnergyHost.Services.Services
         async void _deviceUpdates5Mins()
         {
             var lastSolar = DateTime.Now;
-            var lastAmber = DateTime.Now;
+            
 
             while (true)
             {
 
                 var tDsStatus = _darkSkyService.GetDetail();
-                var tEnergyFutures = _energyFuturesService.Get();
-                await Task.WhenAll(tDsStatus, tEnergyFutures);
+                
+                await Task.WhenAll(tDsStatus);
                 CurrentWeather = await tDsStatus;
 
 
-                EnergyFutures = await tEnergyFutures;
+                
 
-                if (EnergyFutures != null)
-                {
-                    lastAmber = DateTime.Now;
-                    CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
-                    NextPriceIn = EnergyFutures.Futures[1].PriceIn;
+                
 
-                    CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
-                    NextPriceOut = EnergyFutures.Futures[1].PriceOut;
-                    _logService.WriteLog($"Energy in: {CurrentPriceIn}");
-                }
-
-                if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
-                {
-                    _logService.WriteLog("Amber Data Stale");
-                    CurrentPriceIn = 0;
-                    CurrentPriceOut = 0;
-                    NextPriceIn = 0;
-                    NextPriceOut = 0;
-                }
+                
 
                 _logService.WriteLog($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
                 await Task.Delay(TimeSpan.FromMinutes(5));
