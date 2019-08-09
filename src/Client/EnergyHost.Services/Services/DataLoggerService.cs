@@ -108,6 +108,7 @@ namespace EnergyHost.Services.Services
                     { "DaikinPoweredOn", DaikinPoweredOn },
                     { "SolarOutput", SolarOutput },
                     { "SolarToday", SolarToday},
+                    { "SystemVoltage", SystemVoltage },
                     { "SolarHistory", EnergyFutures.Futures[0].SolarHistory },
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut },
