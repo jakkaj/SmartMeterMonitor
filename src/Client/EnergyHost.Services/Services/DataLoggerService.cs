@@ -23,6 +23,7 @@ namespace EnergyHost.Services.Services
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
+        public double SystemVoltage { get; set; } = 0;
         public double SolarToday { get; set; } = 0;
         public double DaikinInsideTemperature { get; set; }
         public double DaikinSetTemperature { get; set; }
@@ -200,7 +201,7 @@ namespace EnergyHost.Services.Services
                 if (abb != null)
                 {
                     lastSolar = DateTime.Now;
-                    SolarOutput = abb.feeds.Feed.datastreams.m101_1_W.data[0].value;
+                    //
                     SolarToday = abb.feeds.Feed.datastreams.m64061_1_DayWH.data[0].value;
                 }
 
@@ -272,14 +273,21 @@ namespace EnergyHost.Services.Services
 
 
                 var tDaikinStatus = _daikinService.GetStatus();
+                var tAbbModbus = _abbService.GetModbus();
 
-                await Task.WhenAll(tDaikinSensors, tDaikinStatus);
+                await Task.WhenAll(tDaikinSensors, tDaikinStatus, tAbbModbus);
 
 
                 var daikinStatus = await tDaikinStatus;
                 var daikinSensors = await tDaikinSensors;
 
+                var abbModbus = await tAbbModbus;
 
+                if (abbModbus != null)
+                {
+                    SolarOutput = abbModbus.W;
+                    SystemVoltage = abbModbus.PhVphA;
+                }
 
 
                 if (daikinSensors != null)

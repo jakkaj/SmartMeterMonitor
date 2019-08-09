@@ -18,11 +18,29 @@ namespace EnergyHost.Services.Services
     {
         private readonly ILogService _logService;
         private readonly IOptions<EnergyHostSettings> _settings;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public ABBService(ILogService logService, IOptions<EnergyHostSettings> settings)
+        public ABBService(ILogService logService, IOptions<EnergyHostSettings> settings, IHttpClientFactory httpClientFactory)
         {
             _logService = logService;
             _settings = settings;
+            _httpClientFactory = httpClientFactory;
+        }
+
+        public async Task<ABBSunspec> GetModbus()
+        {
+            using (var client = _httpClientFactory.CreateClient())
+            {
+                var uri = new Uri(_settings.Value.ABB_MODBUS_URL);
+                var result = await client.GetAsync(uri);
+                if (!result.IsSuccessStatusCode)
+                {
+                    _logService.WriteError($"Error in get modbus: {result.ReasonPhrase}");
+                    return null;
+                }
+                var model = JsonConvert.DeserializeObject<ABBSunspec>(await result.Content.ReadAsStringAsync());
+                return model;
+            }
         }
 
         public async Task<ABBDevice> Get()
@@ -32,7 +50,7 @@ namespace EnergyHost.Services.Services
             while (retryCount < 3)
             {
 
-                using (var client = new HttpClient())
+                using (var client = _httpClientFactory.CreateClient())
                 {
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Authorization =

@@ -13,6 +13,13 @@ namespace EnergyHost.Tests.Tests
     public class ABBTests:TestBase
     {
         [TestMethod]
+        public async Task TestABBModbusData()
+        {
+            var service = Resolve<IABBService>();
+            var model = await service.GetModbus();
+            Assert.IsNotNull(model);
+        }
+        [TestMethod]
         public async Task TestABBGetData()
         {
             var service = Resolve<IABBService>();

@@ -15,6 +15,7 @@ namespace EnergyHost.Model.Settings
         public string DAIKIN_URL { get; set; }
         public string ABB_AUTH { get; set; }
         public string ABB_URL { get; set; }
+        public string ABB_MODBUS_URL { get; set; }
         public string PostCode { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
