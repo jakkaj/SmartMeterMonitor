@@ -71,6 +71,8 @@ namespace EnergyHost.Services.Services
 
             _abbPoller();
 
+            _deviceUpdate10s();
+
             await _mqttService.Setup();
 
             await Task.Delay(TimeSpan.FromSeconds(10));
@@ -218,6 +220,24 @@ namespace EnergyHost.Services.Services
             }
         }
 
+        async void _deviceUpdate10s(){
+            while(true){
+                var tAbbModbus = _abbService.GetModbus();
+                
+                await Task.WhenAll(tAbbModbus);
+
+                var abbModbus = await tAbbModbus;
+
+                if (abbModbus != null)
+                {
+                    SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
+                    SystemVoltage = abbModbus.PhVphA;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+        }
+
         async void _deviceUpdates5Mins()
         {
             var lastSolar = DateTime.Now;
@@ -274,21 +294,13 @@ namespace EnergyHost.Services.Services
 
 
                 var tDaikinStatus = _daikinService.GetStatus();
-                var tAbbModbus = _abbService.GetModbus();
+                
 
-                await Task.WhenAll(tDaikinSensors, tDaikinStatus, tAbbModbus);
+                await Task.WhenAll(tDaikinSensors, tDaikinStatus);
 
 
                 var daikinStatus = await tDaikinStatus;
-                var daikinSensors = await tDaikinSensors;
-
-                var abbModbus = await tAbbModbus;
-
-                if (abbModbus != null)
-                {
-                    SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
-                    SystemVoltage = abbModbus.PhVphA;
-                }
+                var daikinSensors = await tDaikinSensors;               
 
 
                 if (daikinSensors != null)

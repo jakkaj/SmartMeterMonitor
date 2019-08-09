@@ -37,6 +37,9 @@ services:
     - /data/grafana:/var/lib/grafana 
     restart: always
   mqttclient:
+    build: 
+      context: ../src/Client
+      dockerfile: Dockerfile
     environment:
     - MQTT_SERVER_ADDRESS=mqttserver
     - INFLUX_SERVER_ADDRESS=influxdb
@@ -45,4 +48,4 @@ services:
     depends_on: 
     - mqttserver
     - influxdb
-    image: "jakkaj/smartmetermqttclient"
+    

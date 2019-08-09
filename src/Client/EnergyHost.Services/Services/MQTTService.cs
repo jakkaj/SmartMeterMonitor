@@ -142,9 +142,16 @@ namespace EnergyHost.Services.Services
                     _logService.WriteDebug($"{topic}: {value}");
                 }
 
-                if(topic == "ctwatts" || topci == "ctirms"){
+                if(topic == "ctirms"){
+                    var irms = Convert.ToDouble(value);
+                    var watts = 243 * irms;
+                    var ctkwh = watts / 1000;
+                    _logService.WriteDebug($"watts: {ctkwh}");
+                }
+
+                if(topic == "ctwatts" || topic == "ctirms"){
                     Values[topic] = Convert.ToDouble(value);
-                    _logService.WriteDebug($"{topic}: {value}");
+                    //_logService.WriteDebug($"{topic}: {value}");
                 }
 
                 if (topic == "events")
