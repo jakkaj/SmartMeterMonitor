@@ -7,7 +7,7 @@ RUN pip install Flask
 RUN pip install applicationinsights
 RUN pip install paho-mqtt
 
-COPY ./src /src
+COPY ./ /src
 WORKDIR /src
 
 EXPOSE 6000

@@ -1,6 +1,10 @@
-version: '3'
+version: '2'
 services:
-  modbus:
+  i2cmeter:
     build: 
       context: ./
       dockerfile: Dockerfile
+    restart: always
+    devices:
+    - "/dev/i2c-1:/dev/i2c-1"  
+    
