@@ -56,17 +56,21 @@ void loop()
     delay(10);    
   }
 
+  //emon1.calcVI(20,2000);  
+  //emon1.serialprint();
+
   float avg  = stats.average();
   float current = avg * VOLT_CAL;
   //double Irms = emon1.calcIrms(1480);  // Calculate Irms only
-  Serial.println(current);
+  
 
-  snprintf(msg, 50, "%ld", avg);
+  snprintf(msg, 50, "%.2f", avg);
   
   queueClient.sendQueue("ctirms", msg);
 
-  snprintf(msg, 50, "%ld", current);
+  snprintf(msg, 50, "%ld", (int)current);
   queueClient.sendQueue("ctwatts", msg);
+  Serial.println(msg);
   //Serial.println(msg);
 
 
