@@ -3,20 +3,25 @@ WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 
-COPY ./MqttClient_Influx/MqttTestClient.csproj ./MqttClient_Influx/
-COPY ./OpenWeatherMap/OpenWeatherMap.csproj ./OpenWeatherMap/
+COPY ./EnergyHost.App/EnergyHost.App.csproj ./EnergyHost.App/
+COPY ./EnergyHost.Contract/EnergyHost.Contract.csproj ./EnergyHost.Contract/
+COPY ./EnergyHost.Model/EnergyHost.Model.csproj ./EnergyHost.Model/
+COPY ./EnergyHost.Services/EnergyHost.Services.csproj ./EnergyHost.Services/
+COPY ./EnergyHost.Tests/EnergyHost.Tests.csproj ./EnergyHost.Tests/
 
-RUN dotnet restore ./MqttClient_Influx/
-RUN dotnet restore ./OpenWeatherMap/
+RUN dotnet restore ./EnergyHost.App/
+
 
 # Copy everything else and build
 COPY . ./
 
-RUN dotnet publish -c Debug -o /app/out ./MqttClient_Influx/
+RUN dotnet publish -c Debug -o /app/out ./EnergyHost.App/
 
 # Build runtime image
 FROM microsoft/dotnet:aspnetcore-runtime
+ENV TZ=Australia/Sydney
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /app
 COPY --from=build-env /app/out .
 EXPOSE 5000
-ENTRYPOINT ["dotnet", "MqttTestClient.dll"]
+ENTRYPOINT ["dotnet", "EnergyHost.App.dll"]

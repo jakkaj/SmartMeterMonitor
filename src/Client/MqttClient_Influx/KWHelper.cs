@@ -1,6 +1,6 @@
 using System;
 
-namespace Smart.Helpers
+namespace MqttTestClient
 {
     public class KWHelper
     {

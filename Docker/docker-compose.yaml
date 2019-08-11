@@ -1,5 +1,11 @@
 version: '3'
 services:
+  modbus:
+    build: 
+      context: ../src/Modbus
+      dockerfile: Dockerfile    
+    ports:
+    - 5060:5000
   mqttserver:
     image: "eclipse-mosquitto"
     restart: always
@@ -18,6 +24,7 @@ services:
     - "8086:8086"
     volumes:
     - /data/influx2:/var/lib/influxdb 
+    restart: always
   grafana:
     image: "grafana/grafana"
     environment: 
@@ -28,7 +35,11 @@ services:
     - influxdb
     volumes:
     - /data/grafana:/var/lib/grafana 
+    restart: always
   mqttclient:
+    build: 
+      context: ../src/Client
+      dockerfile: Dockerfile
     environment:
     - MQTT_SERVER_ADDRESS=mqttserver
     - INFLUX_SERVER_ADDRESS=influxdb
@@ -37,4 +48,4 @@ services:
     depends_on: 
     - mqttserver
     - influxdb
-    image: "jakkaj/smartmetermqttclient"
+    
