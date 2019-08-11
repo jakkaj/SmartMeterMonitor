@@ -1,0 +1,6 @@
+version: '3'
+services:
+  modbus:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
