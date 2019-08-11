@@ -112,6 +112,7 @@ namespace EnergyHost.Services.Services
                 // Subscribe to a topic
                 try
                 {
+                    await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("f_power").Build());
                     await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("ctirms").Build());
                     await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("ctwatts").Build());
                     await _mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("temp1").Build());
@@ -149,9 +150,9 @@ namespace EnergyHost.Services.Services
                     _logService.WriteLog($"watts: {ctkwh}");
                 }
 
-                if(topic == "ctwatts" || topic == "ctirms"){
+                if(topic == "ctwatts" || topic == "ctirms" || topic == "f_power"){
                     Values[topic] = Convert.ToDouble(value);
-                    //_logService.WriteDebug($"{topic}: {value}");
+                    _logService.WriteDebug($"{topic}: {value}");
                 }
 
                 if (topic == "events")
