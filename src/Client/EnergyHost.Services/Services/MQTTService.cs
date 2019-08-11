@@ -144,9 +144,9 @@ namespace EnergyHost.Services.Services
 
                 if(topic == "ctirms"){
                     var irms = Convert.ToDouble(value);
-                    var watts = 243 * irms;
+                    var watts = 244 * irms;
                     var ctkwh = watts / 1000;
-                    _logService.WriteDebug($"watts: {ctkwh}");
+                    _logService.WriteLog($"watts: {ctkwh}");
                 }
 
                 if(topic == "ctwatts" || topic == "ctirms"){

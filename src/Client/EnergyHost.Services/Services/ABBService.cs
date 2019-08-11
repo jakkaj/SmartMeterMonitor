@@ -29,6 +29,9 @@ namespace EnergyHost.Services.Services
 
         public async Task<ABBSunspec> GetModbus()
         {
+            try{
+
+            
             using (var client = _httpClientFactory.CreateClient())
             {
                 var uri = new Uri(_settings.Value.ABB_MODBUS_URL);
@@ -40,6 +43,11 @@ namespace EnergyHost.Services.Services
                 }
                 var model = JsonConvert.DeserializeObject<ABBSunspec>(await result.Content.ReadAsStringAsync());
                 return model;
+            }
+            }catch(Exception ex)
+            {
+                _logService.WriteError(ex);
+                return null;
             }
         }
 
