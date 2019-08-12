@@ -71,7 +71,7 @@ namespace EnergyHost.Services.Services
 
             _abbPoller();
 
-            _deviceUpdate10s();
+            _deviceUpdate30s();
 
             _halfHourPoller();
 
@@ -261,7 +261,7 @@ namespace EnergyHost.Services.Services
             }
         }
 
-        async void _deviceUpdate10s(){
+        async void _deviceUpdate30s(){
             while(true){
                 var tAbbModbus = _abbService.GetModbus();
                 
@@ -275,7 +275,7 @@ namespace EnergyHost.Services.Services
                     SystemVoltage = abbModbus.PhVphA;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                await Task.Delay(TimeSpan.FromSeconds(30));
             }
         }
 

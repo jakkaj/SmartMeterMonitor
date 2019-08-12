@@ -6,7 +6,7 @@ set -o allexport
 source .env
 set +o allexport
 
-docker-compose up -d -f docker-compose.pi.yaml
+docker-compose -f docker-compose.pi.yaml up
 #dotnet watch --project ../MqttClient_Influx run 
 
 #docker run -it -d -p 1883:1883 -p 9001:9001 -v eclipse-mosquitto eclipse-mosquitto
