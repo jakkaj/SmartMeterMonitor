@@ -3,8 +3,9 @@
 #include "EmonLib.h"             // Include Emon Library
 EnergyMonitor emon1;             // Create an instance
 #include <Wire.h>
-#define VOLT_CAL 251.1
-#define CUR_CAL 63.5
+//#define VOLT_CAL 251.1
+#define VOLT_CAL 101
+#define CUR_CAL 127.5
 
 #define SLAVE_ADDRESS 0x08
 
@@ -26,8 +27,8 @@ void setup()
   Wire.onReceive(receiveData);
   Wire.onRequest(sendData);
 
-  emon1.voltage(1, VOLT_CAL, 1.7);  // Voltage: input pin, calibration, phase_shift
-  emon1.current(0, CUR_CAL);       // Current: input pin, calibration.
+  emon1.voltage(0, VOLT_CAL, 1.7);  // Voltage: input pin, calibration, phase_shift
+  emon1.current(1, CUR_CAL);       // Current: input pin, calibration.
 }
 
 void loop()
@@ -41,7 +42,7 @@ void loop()
    supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
    Irms            = emon1.Irms;             //extract Irms into Variable
 
-  Serial.println(realPower);
+  Serial.println(supplyVoltage);
   
   delay(2000);
 }
