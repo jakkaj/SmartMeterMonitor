@@ -12,5 +12,6 @@ namespace EnergyHost.Contract
         double KWH { get; set; }
         Task Setup();
         Task Send(string topic = "events", string payload = null);
+        double GetDouble(string value);
     }
 }

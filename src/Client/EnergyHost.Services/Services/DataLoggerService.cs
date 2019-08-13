@@ -95,6 +95,7 @@ namespace EnergyHost.Services.Services
             var data = new Dictionary<string, object>
                 {
                     { "kwh", _mqttService.KWH },
+                    { "ctkwh", _mqttService.GetDouble("f_power")},
                     { "temp", CurrentWeather.temp},
                     { "temp3", Convert.ToDouble(_mqttService.Values["temp1"])},
                     { "humid3", Convert.ToDouble(_mqttService.Values["humid1"])},

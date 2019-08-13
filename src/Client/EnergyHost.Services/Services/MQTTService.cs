@@ -39,7 +39,13 @@ namespace EnergyHost.Services.Services
             Values.Add("humid1", 0);
         }
 
-      
+        public double GetDouble(string value){
+            if(Values.ContainsKey(value)){
+                return (double)Values[value];
+            }
+
+            return default(double);
+        }
 
         public async Task Send(string topic = "events", string payload = null)
         {
@@ -150,10 +156,10 @@ namespace EnergyHost.Services.Services
                     _logService.WriteLog($"watts: {ctkwh}");
                 }
 
-                if(topic == "ctwatts" || topic == "ctirms" || topic == "f_power"){
-                    Values[topic] = Convert.ToDouble(value);
-                    _logService.WriteDebug($"{topic}: {value}");
-                }
+                // if(topic.StartsWith("f")){
+                //     Values[topic] = Convert.ToDouble(value);
+                //     _logService.WriteDebug($"{topic}: {value}");
+                // }
 
                 if (topic == "events")
                 {
