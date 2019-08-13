@@ -31,6 +31,7 @@ def loop():
         print("Power: " + str(power))
         print("Volts: " + str(voltage))
         client.publish("f_volts", voltage)
+        #sleep(.200)
         client.publish("f_power", power)
         
 client = mqtt.Client()

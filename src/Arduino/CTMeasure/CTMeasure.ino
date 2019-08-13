@@ -4,8 +4,9 @@
 EnergyMonitor emon1;             // Create an instance
 #include <Wire.h>
 //#define VOLT_CAL 251.1
-#define VOLT_CAL 101
-#define CUR_CAL 127.5
+#define VOLT_CAL 110.1
+//90
+#define CUR_CAL 70
 
 #define SLAVE_ADDRESS 0x08
 
@@ -21,6 +22,7 @@ float Irms = 0;
 void setup()
 {  
   Serial.begin(115200);
+  Serial.println("Begin");
   //Wire.setClock(5000);
   
   Wire.begin(SLAVE_ADDRESS);
