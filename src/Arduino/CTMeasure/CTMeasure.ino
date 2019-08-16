@@ -6,7 +6,7 @@ EnergyMonitor emon1;             // Create an instance
 //#define VOLT_CAL 251.1
 #define VOLT_CAL 110.1
 //90
-#define CUR_CAL 70
+#define CUR_CAL 99
 
 #define SLAVE_ADDRESS 0x08
 
