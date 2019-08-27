@@ -156,10 +156,10 @@ namespace EnergyHost.Services.Services
                     _logService.WriteLog($"watts: {ctkwh}");
                 }
 
-                // if(topic.StartsWith("f")){
-                //     Values[topic] = Convert.ToDouble(value);
-                //     _logService.WriteDebug($"{topic}: {value}");
-                // }
+                 if(topic.StartsWith("f")){
+                     Values[topic] = Convert.ToDouble(value) / 1000;
+                     _logService.WriteLog($"{topic}: {value}");
+                 }
 
                 if (topic == "events")
                 {
@@ -172,9 +172,13 @@ namespace EnergyHost.Services.Services
                     var val = Convert.ToInt32(value);
                     var kwh = _calcKWH(val);
 
-                    _logService.WriteDebug($"KWH: {kwh}");
-
+                   
+                    if(GetDouble("f_power") / 1000 < 0){
+                        kwh = -kwh;
+                    }
                     KWH = kwh;
+
+                    _logService.WriteDebug($"KWH: {kwh}");
 
                     lastMessageIn = DateTime.Now;
                 }
