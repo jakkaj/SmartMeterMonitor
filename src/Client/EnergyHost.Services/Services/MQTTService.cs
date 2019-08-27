@@ -157,7 +157,7 @@ namespace EnergyHost.Services.Services
                 }
 
                  if(topic.StartsWith("f")){
-                     Values[topic] = Convert.ToDouble(value) / 1000;
+                     Values[topic] = Convert.ToDouble(value);
                      _logService.WriteLog($"{topic}: {value}");
                  }
 
