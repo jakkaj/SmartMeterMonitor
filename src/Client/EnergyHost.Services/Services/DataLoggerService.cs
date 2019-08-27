@@ -203,12 +203,21 @@ namespace EnergyHost.Services.Services
                 if (EnergyFutures != null)
                 {
                     lastAmber = DateTime.Now;
-                    CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
-                    NextPriceIn = EnergyFutures.Futures[1].PriceIn;
 
-                    CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
-                    NextPriceOut = EnergyFutures.Futures[1].PriceOut;
-                    _logService.WriteLog($"Energy in: {CurrentPriceIn}");
+                    if(EnergyFutures.Futures.Count > 1)
+                    {
+                        CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
+                        NextPriceIn = EnergyFutures.Futures[1].PriceIn;
+
+                        CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
+                        NextPriceOut = EnergyFutures.Futures[1].PriceOut;
+                        _logService.WriteLog($"Energy in: {CurrentPriceIn}");
+                    }
+                    else
+                    {
+                        _logService.WriteError("No Energy Future Data!");
+                    }
+                    
                 }
 
                 while (DateTime.Now.Minute != 30 && DateTime.Now.Minute != 00)
