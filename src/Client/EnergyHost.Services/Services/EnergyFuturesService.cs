@@ -136,7 +136,7 @@ namespace EnergyHost.Services.Services
         {
             var t = amberVars.period;
 
-            var ds = dp.Hourly.Data.OrderByDescending(_ => _.DateTime).FirstOrDefault(_ => _.DateTime.ToLocalTime() <= t.AddHours(1));
+            var ds = dp.Hourly.Data.OrderByDescending(_ => _.DateTime).FirstOrDefault(_ => _.DateTime.ToLocalTime() <= t.AddMinutes(30));
             //if (ds == null)
             //{
              //   ds = dp.Hourly.Data.OrderByDescending(_ => _.DateTime).First();
