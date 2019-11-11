@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using EnergyHost.Contract;
+using EnergyHost.Model.DataModels;
+using EnergyHost.Model.EnergyModels.Status;
 using EnergyHost.Model.Settings;
+using EnergyHost.Services.Utils;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace EnergyHost.Services.Services
 {
@@ -23,7 +28,14 @@ namespace EnergyHost.Services.Services
             _settings = settings;
         }
 
-        public async Task<NameValueCollection> GetStatus()
+        public async Task SetControlInfo(DaikinSettings settings)
+        {
+            var qs = settings.GetQueryString();
+            await _setDaikin(qs);
+        }
+        
+
+        public async Task<DaikinSettings> GetControlInfo()
         {
             var data = await _getDaikin("get_control_info");
 
@@ -33,8 +45,10 @@ namespace EnergyHost.Services.Services
             }
 
             var qs = HttpUtility.ParseQueryString(data.Replace(",", "&"));
+            string json = JsonConvert.SerializeObject(qs.Cast<string>().ToDictionary(k => k, v => qs[v]));
+            var respObj = JsonConvert.DeserializeObject<DaikinSettings>(json);
 
-            return qs;
+            return respObj;
         }
 
         public async Task<NameValueCollection> GetSensors()
@@ -50,6 +64,40 @@ namespace EnergyHost.Services.Services
 
             return qs;
         }
+
+        async Task<string> _setDaikin(string qs)
+        {
+            var url = $"{_settings.Value.DAIKIN_URL}/set_control_info?lpw={_settings.Value.DAIKIN_AUTH}&{qs}";
+
+            using (var client = new HttpClient())
+            {
+                var retryCount = 0;
+                while (retryCount < 3)
+                {
+                    try
+                    {
+                        var result = await client.GetAsync(url);
+
+                        if (!result.IsSuccessStatusCode)
+                        {
+                            return null;
+                        }
+                        return await result.Content.ReadAsStringAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logService.WriteError(ex.ToString());
+                    }
+                    retryCount++;
+
+                    _logService.WriteLog($"Daikin service set retry: {retryCount}");
+                }
+
+                return null;
+            }
+        }
+
+
 
         async Task<string> _getDaikin(string service)
         {

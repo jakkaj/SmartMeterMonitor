@@ -20,5 +20,32 @@ namespace EnergyHost.Tests.Tests
             Assert.IsNotNull(data);
             var temp = data["htemp"];
         }
+
+        [TestMethod]
+        public async Task TestDaikinGetControl()
+        {
+            var service = Resolve<IDaikinService>();
+
+            var data = await service.GetControlInfo();
+            Assert.IsNotNull(data);
+            var temp = data.stemp;
+            Assert.IsNotNull(temp);
+        }
+
+        [TestMethod]
+        public async Task TestDaikinSetControl()
+        {
+            var service = Resolve<IDaikinService>();
+
+            var data = await service.GetControlInfo();
+            Assert.IsNotNull(data);
+            var temp = data.stemp;
+            Assert.IsNotNull(temp);
+
+            data.pow = "1";
+            data.stemp = "27";
+
+            await service.SetControlInfo(data);
+        }
     }
 }

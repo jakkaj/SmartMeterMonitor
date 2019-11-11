@@ -328,7 +328,7 @@ namespace EnergyHost.Services.Services
 
 
 
-                var tDaikinStatus = _daikinService.GetStatus();
+                var tDaikinStatus = _daikinService.GetControlInfo();
                 
 
                 await Task.WhenAll(tDaikinSensors, tDaikinStatus);
@@ -355,9 +355,9 @@ namespace EnergyHost.Services.Services
                 if (daikinStatus != null)
                 {
                     lastDaikinStatus = DateTime.Now;
-                    DaikinSetTemperature = Convert.ToDouble(daikinStatus?["stemp"]);
-                    DaikinPoweredOn = daikinStatus?["pow"] == "1";
-                    DaikinMode = daikinStatus?["mode"];
+                    DaikinSetTemperature = Convert.ToDouble(daikinStatus?.stemp);
+                    DaikinPoweredOn = daikinStatus?.pow == "1";
+                    DaikinMode = daikinStatus?.mode;
                 }
 
                 if (DateTime.Now.Subtract(lastDaikinStatus) > TimeSpan.FromMinutes(5))
