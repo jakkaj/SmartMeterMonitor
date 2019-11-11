@@ -28,6 +28,30 @@ namespace EnergyHost.Services.Services
             _settings = settings;
         }
 
+        public async Task PowerOff()
+        {
+            var settings = await GetControlInfo();
+
+            var settings2 = JsonConvert.DeserializeObject<DaikinSettings>(JsonConvert.SerializeObject(settings));
+
+            settings.pow = "0";
+
+            if (isSameSettings(settings, settings2))
+            {
+                return;
+            }
+
+            await SetControlInfo(settings);
+        }
+
+        private bool isSameSettings(DaikinSettings a, DaikinSettings b)
+        {
+            var qsa = a.GetQueryString();
+            var qsb = b.GetQueryString();
+
+            return qsa == qsb;
+        }
+
         public async Task SetControlInfo(DaikinSettings settings)
         {
             var qs = settings.GetQueryString();

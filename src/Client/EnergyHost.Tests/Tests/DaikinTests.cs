@@ -42,10 +42,19 @@ namespace EnergyHost.Tests.Tests
             var temp = data.stemp;
             Assert.IsNotNull(temp);
 
-            data.pow = "1";
+            //data.pow = "0";
             data.stemp = "27";
 
             await service.SetControlInfo(data);
+        }
+
+        [TestMethod]
+        public async Task TestDaikinPowerOff()
+        {
+            var service = Resolve<IDaikinService>();
+
+            await service.PowerOff();
+            await service.PowerOff();
         }
     }
 }
