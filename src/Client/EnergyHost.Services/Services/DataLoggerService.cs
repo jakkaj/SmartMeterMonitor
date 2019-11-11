@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace EnergyHost.Services.Services
         private readonly IEnergyFuturesService _energyFuturesService;
         private readonly IMQTTService _mqttService;
         private readonly ISystemStatusService _statusService;
+        private readonly IThresholdingService _thresholdingService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -48,7 +50,8 @@ namespace EnergyHost.Services.Services
             IAmberService amberService,
             IEnergyFuturesService energyFuturesService,
             IMQTTService mqttService,
-            ISystemStatusService statusService
+            ISystemStatusService statusService,
+            IThresholdingService thresholdingService
             )
         {
             _logService = logService;
@@ -59,6 +62,7 @@ namespace EnergyHost.Services.Services
             _energyFuturesService = energyFuturesService;
             _mqttService = mqttService;
             _statusService = statusService;
+            _thresholdingService = thresholdingService;
             _daikinService = daikinService;
         }
 
@@ -173,6 +177,8 @@ namespace EnergyHost.Services.Services
             });
 
             await _statusService.SendStatus(new TimeStatus(), false);//time pump
+
+            await _thresholdingService.RunChecks(data);
 
         }
 

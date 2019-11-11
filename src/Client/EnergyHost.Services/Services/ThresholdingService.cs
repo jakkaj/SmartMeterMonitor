@@ -6,17 +6,19 @@ using EnergyHost.Contract;
 
 namespace EnergyHost.Services.Services
 {
-    public class ThresholdingService
+    public class ThresholdingService : IThresholdingService
     {
         private readonly ILogService _logService;
+        private readonly IDaikinService _daikinService;
 
-        public ThresholdingService(ILogService logService)
+        public ThresholdingService(ILogService logService, IDaikinService daikinService)
         {
             _logService = logService;
+            _daikinService = daikinService;
         }
         public async Task RunChecks(Dictionary<string, object> data)
         {
-            if ((int) data["CurrentPriceIn"] > 45)
+            if ((double) data["CurrentPriceIn"] > 45)
             {
                 await _powerOffDaikin();
             }
@@ -24,7 +26,7 @@ namespace EnergyHost.Services.Services
 
         public async Task _powerOffDaikin()
         {
-            
+            await _daikinService.PowerOff();
         }
     }
 }

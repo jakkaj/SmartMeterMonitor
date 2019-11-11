@@ -42,6 +42,7 @@ namespace EnergyHost.Services.Services
             }
 
             await SetControlInfo(settings);
+            _logService.WriteLog("***** Powered off Daikin *****");
         }
 
         private bool isSameSettings(DaikinSettings a, DaikinSettings b)
