@@ -23,6 +23,10 @@ namespace EnergyHost.Services.Services
         public async Task RunChecks(Dictionary<string, object> data)
         {
             var threshold = _settings.Value.DaikinThreshold;
+            if (threshold == 0)
+            {
+                threshold = 45;
+            }
             if ((double) data["CurrentPriceIn"] > threshold)
             {
                 await _powerOffDaikin();
