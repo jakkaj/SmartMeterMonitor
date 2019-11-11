@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
+using EnergyHost.Model.Settings;
+using Microsoft.Extensions.Options;
 
 namespace EnergyHost.Services.Services
 {
@@ -10,15 +12,18 @@ namespace EnergyHost.Services.Services
     {
         private readonly ILogService _logService;
         private readonly IDaikinService _daikinService;
+        private readonly IOptions<EnergyHostSettings> _settings;
 
-        public ThresholdingService(ILogService logService, IDaikinService daikinService)
+        public ThresholdingService(ILogService logService, IDaikinService daikinService, IOptions<EnergyHostSettings> settings)
         {
             _logService = logService;
             _daikinService = daikinService;
+            _settings = settings;
         }
         public async Task RunChecks(Dictionary<string, object> data)
         {
-            if ((double) data["CurrentPriceIn"] > 45)
+            var threshold = _settings.Value.DaikinThreshold;
+            if ((double) data["CurrentPriceIn"] > threshold)
             {
                 await _powerOffDaikin();
             }

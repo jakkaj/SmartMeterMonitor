@@ -19,6 +19,7 @@ namespace EnergyHost.Model.Settings
         public string PostCode { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public double DaikinThreshold { get; set; }
         
     }
 }
