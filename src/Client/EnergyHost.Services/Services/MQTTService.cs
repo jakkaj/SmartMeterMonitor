@@ -157,8 +157,16 @@ namespace EnergyHost.Services.Services
                 }
 
                  if(topic.StartsWith("f")){
-                     Values[topic] = Convert.ToDouble(value);
-                     _logService.WriteLog($"{topic}: {value}");
+                     try
+                     {
+                         Values[topic] = Convert.ToDouble(value);
+                         _logService.WriteLog($"{topic}: {value}");
+                     }
+                     catch (Exception ex)
+                     {
+                         _logService.WriteLog($"Bad Value {topic}: {value}");
+                    }
+                     
                  }
 
                 if (topic == "events")
