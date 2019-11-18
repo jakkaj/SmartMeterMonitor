@@ -36,7 +36,7 @@ namespace EnergyHost.Services.Services
 
             settings.pow = "0";
 
-            if (isSameSettings(settings, settings2))
+            if (isSameSettings(settings, settings2) || settings.mode == "0") //don't power off if already on fan 
             {
                 return;
             }
