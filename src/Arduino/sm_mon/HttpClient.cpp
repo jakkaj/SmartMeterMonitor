@@ -2,7 +2,7 @@
 
 void HttpClient::init(){
 
-  IPAddress ip(192, 168, 0, 207);
+  IPAddress ip(192, 168, 0, 240);
   IPAddress gateway(192, 168, 0, 1);
   IPAddress subnet(255, 255, 255, 0);
   WiFi.config(ip, gateway, subnet);
