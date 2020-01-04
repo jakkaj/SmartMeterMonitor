@@ -24,5 +24,7 @@ namespace EnergyHost.Model.Settings
         public string ALEXA_NOTIFICATION_KEY { get; set; } //https://www.thomptronics.com/about/notify-me
         public string PUSHOVER_USER { get; set; } //https://pushover.net/api
         public string PUSHOVER_TOKEN { get; set; }
+
+        public bool TestMode = false;
     }
 }
