@@ -162,7 +162,7 @@ namespace EnergyHost.Services.Services
                          Values[topic] = Convert.ToDouble(value);
                          _logService.WriteLog($"{topic}: {value}");
                      }
-                     catch (Exception ex)
+                     catch
                      {
                          _logService.WriteLog($"Bad Value {topic}: {value}");
                     }

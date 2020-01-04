@@ -15,7 +15,7 @@ namespace EnergyHost.Tests.Tests
     public class AmberTests : TestBase
     {
         [TestMethod]
-        public async Task GetConfig()
+        public async void GetConfig()
         {
             var config = Resolve<IOptions<EnergyHostSettings>>();
 

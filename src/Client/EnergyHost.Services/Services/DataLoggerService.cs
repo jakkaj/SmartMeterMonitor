@@ -122,7 +122,8 @@ namespace EnergyHost.Services.Services
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut },
                     { "NextPriceIn", NextPriceIn },
-                    {"NextPriceOut", NextPriceOut }
+                    {"NextPriceOut", NextPriceOut },
+                    
                 };
 
 

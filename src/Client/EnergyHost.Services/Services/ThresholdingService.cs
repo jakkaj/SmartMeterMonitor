@@ -28,7 +28,7 @@ namespace EnergyHost.Services.Services
         {
             var threshold = _settings.Value.DaikinThreshold;
 
-            var testMode = (bool)data["TestMode"];
+            var testMode = data.ContainsKey("TestMode") && (bool)data["TestMode"];
 
             if (threshold == 0)
             {
