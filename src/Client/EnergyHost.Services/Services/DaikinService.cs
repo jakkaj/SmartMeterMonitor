@@ -28,7 +28,7 @@ namespace EnergyHost.Services.Services
             _settings = settings;
         }
 
-        public async Task PowerOff()
+        public async Task<bool> PowerOff()
         {
             var settings = await GetControlInfo();
 
@@ -38,11 +38,12 @@ namespace EnergyHost.Services.Services
 
             if (isSameSettings(settings, settings2) || settings.mode == "0") //don't power off if already on fan 
             {
-                return;
+                return false;
             }
 
             await SetControlInfo(settings);
             _logService.WriteLog("***** Powered off Daikin *****");
+            return true;
         }
 
         private bool isSameSettings(DaikinSettings a, DaikinSettings b)

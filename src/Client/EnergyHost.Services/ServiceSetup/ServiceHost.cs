@@ -32,6 +32,7 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddSingleton<ISystemStatusService, SystemStatusService>();
             services.AddSingleton<ITimeAlertService, TimeAlertService>();
             services.AddSingleton<IThresholdingService, ThresholdingService>();
+            services.AddSingleton<INotificationService, NotificationService>();
 
             services.AddHttpClient();
 

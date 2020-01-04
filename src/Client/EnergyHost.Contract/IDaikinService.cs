@@ -10,6 +10,6 @@ namespace EnergyHost.Contract
         Task<NameValueCollection> GetSensors();
         Task<DaikinSettings> GetControlInfo();
         Task SetControlInfo(DaikinSettings settings);
-        Task PowerOff();
+        Task<bool> PowerOff();
     }
 }

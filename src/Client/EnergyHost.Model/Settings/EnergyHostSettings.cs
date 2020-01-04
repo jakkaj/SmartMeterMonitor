@@ -21,5 +21,6 @@ namespace EnergyHost.Model.Settings
         public double Longitude { get; set; }
         public double DaikinThreshold { get; set; }
         
+        public string ALEXA_NOTIFICATION_KEY { get; set; } //https://www.thomptronics.com/about/notify-me
     }
 }
