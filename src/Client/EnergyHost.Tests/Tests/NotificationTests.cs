@@ -15,7 +15,44 @@ namespace EnergyHost.Tests.Tests
         {
             var service = Resolve<INotificationService>();
 
-            await service.SendNotification("Testing 123 from test thingo");
+            await service.SendNotification("Testing 123 from test thingo", "This is the title");
+        }
+
+        [TestMethod]
+        public async Task TestThresholds()
+        {
+            var service = Resolve<IThresholdingService>();
+
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+
+            dict.Add("CurrentPriceIn", 40d);
+            dict.Add("TestMode", true);
+
+            await service.RunChecks(dict);
+
+            await Task.Delay(2000);
+
+            dict.Clear();
+            dict.Add("CurrentPriceIn", 80d);
+            dict.Add("TestMode", true);
+
+            await service.RunChecks(dict);
+
+            await Task.Delay(2000);
+
+            dict.Clear();
+            dict.Add("CurrentPriceIn", 200d);
+            dict.Add("TestMode", true);
+
+            await service.RunChecks(dict);
+
+            await Task.Delay(2000);
+
+            dict.Clear();
+            dict.Add("CurrentPriceIn", 18d);
+            dict.Add("TestMode", true);
+
+            await service.RunChecks(dict);
         }
     }
 }

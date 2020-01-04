@@ -15,6 +15,8 @@ namespace EnergyHost.Services.Services
         private readonly IOptions<EnergyHostSettings> _settings;
         private readonly INotificationService _notificationService;
 
+        private double _previousPriceIn = 0;
+
         public ThresholdingService(ILogService logService, IDaikinService daikinService, IOptions<EnergyHostSettings> settings, INotificationService notificationService)
         {
             _logService = logService;
@@ -25,18 +27,48 @@ namespace EnergyHost.Services.Services
         public async Task RunChecks(Dictionary<string, object> data)
         {
             var threshold = _settings.Value.DaikinThreshold;
-            
+
+            var testMode = (bool)data["TestMode"];
+
             if (threshold == 0)
             {
-                threshold = 60;
+                threshold = 59;
             }
 
-            if ((double) data["CurrentPriceIn"] > threshold)
+            var currentPriceIn = (double)data["CurrentPriceIn"];
+
+            if ((currentPriceIn > threshold || _previousPriceIn > threshold) && currentPriceIn != _previousPriceIn)
             {
-                if (await _powerOffDaikin())
+                if (currentPriceIn > threshold)
+                {
+                    await _notificationService.SendNotification($"Price spike in progress. Current: {currentPriceIn} cents, previous: {_previousPriceIn} cents", "Jorvis - Price Spike Active");
+                }
+
+                if (currentPriceIn < threshold && _previousPriceIn > threshold)
+                {
+                    await _notificationService.SendNotification($"Price spike has ended! Current: {currentPriceIn} cents, previous: {_previousPriceIn} cents", "Jorvis - Price Spike Over!");
+                }
+
+                _previousPriceIn = currentPriceIn;
+
+            }
+
+            if ((double)data["CurrentPriceIn"] > threshold)
+            {
+                var daikinOff = false;
+                if (testMode)
+                {
+                    daikinOff = true;
+                }
+                else
+                {
+                    daikinOff = await _powerOffDaikin();
+                }
+
+                if (daikinOff)
                 {
                     await _notificationService.SendNotification(
-                        $"Daikin has been powered off as price has spiked. Price is now {data["CurrentPriceIn"]} cents");
+                        $"Daikin has been powered off as price has spiked. Price is now {currentPriceIn} cents", "Jorvis");
                 }
             }
         }
