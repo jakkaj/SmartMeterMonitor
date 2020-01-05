@@ -22,6 +22,7 @@ namespace EnergyHost.Services.Services
         private readonly IMQTTService _mqttService;
         private readonly ISystemStatusService _statusService;
         private readonly IThresholdingService _thresholdingService;
+        private readonly INotificationService _notificationService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -51,7 +52,8 @@ namespace EnergyHost.Services.Services
             IEnergyFuturesService energyFuturesService,
             IMQTTService mqttService,
             ISystemStatusService statusService,
-            IThresholdingService thresholdingService
+            IThresholdingService thresholdingService,
+            INotificationService notificationService
             )
         {
             _logService = logService;
@@ -63,6 +65,7 @@ namespace EnergyHost.Services.Services
             _mqttService = mqttService;
             _statusService = statusService;
             _thresholdingService = thresholdingService;
+            _notificationService = notificationService;
             _daikinService = daikinService;
         }
 
@@ -215,10 +218,13 @@ namespace EnergyHost.Services.Services
                     {
                         CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
                         NextPriceIn = EnergyFutures.Futures[1].PriceIn;
+                        
 
                         CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
                         NextPriceOut = EnergyFutures.Futures[1].PriceOut;
                         _logService.WriteLog($"Energy in: {CurrentPriceIn}");
+
+                        await _notificationService.SendPrice(CurrentPriceIn);
                     }
                     else
                     {

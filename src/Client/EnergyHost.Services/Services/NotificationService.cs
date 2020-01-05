@@ -28,6 +28,39 @@ namespace EnergyHost.Services.Services
             await sendPushover(text, title);
         }
 
+        public async Task SendPrice(double price)
+        {
+            var priceInt = (int)Math.Ceiling(price);
+            await sendPushover(priceInt);
+        }
+
+        private async Task sendPushover(int percent)
+        {
+            var token = _settings.Value.PUSHOVER_TOKEN;
+            var user = _settings.Value.PUSHOVER_USER;
+
+            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(user))
+            {
+                _logService.WriteLog("Could not send Pushover notification - config PUSHOVER_TOKEN and/or PUSHOVER_USER  not set. See: https://pushover.net/api");
+                return;
+            }
+
+            using (var client = new HttpClient())
+            {
+                var uri = new Uri(
+                    $"https://api.pushover.net/1/messages.json?token={token}&user={user}&percent={percent}");
+                var result = await client.PostAsync(uri, null);
+                if (result.IsSuccessStatusCode)
+                {
+                    _logService.WriteLog($"Sent notification to Pushover (percent): {percent}");
+                }
+                else
+                {
+                    _logService.WriteError($"Pushover notification failed with code: {result.StatusCode}");
+                }
+            }
+        }
+
         private async Task sendPushover(string text, string title)
         {
             var notification = HttpUtility.UrlEncode(text);
