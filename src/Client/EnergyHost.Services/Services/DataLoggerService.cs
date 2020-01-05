@@ -224,7 +224,7 @@ namespace EnergyHost.Services.Services
                         NextPriceOut = EnergyFutures.Futures[1].PriceOut;
                         _logService.WriteLog($"Energy in: {CurrentPriceIn}");
 
-                        await _notificationService.SendPrice(CurrentPriceIn);
+                        await _notificationService.SendPrice(CurrentPriceIn / 30 * 100);
                     }
                     else
                     {
