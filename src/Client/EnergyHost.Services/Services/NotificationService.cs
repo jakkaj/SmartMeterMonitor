@@ -48,7 +48,7 @@ namespace EnergyHost.Services.Services
             using (var client = new HttpClient())
             {
                 var uri = new Uri(
-                    $"https://api.pushover.net/1/messages.json?token={token}&user={user}&percent={percent}");
+                    $"https://api.pushover.net/1/glances.json?token={token}&user={user}&percent={percent}");
                 var result = await client.PostAsync(uri, null);
                 if (result.IsSuccessStatusCode)
                 {
