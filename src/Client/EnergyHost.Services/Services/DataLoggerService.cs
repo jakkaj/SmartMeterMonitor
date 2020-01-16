@@ -80,7 +80,7 @@ namespace EnergyHost.Services.Services
 
             //_abbPoller();
 
-            _deviceUpdate30s();
+            _deviceUpdate10s();
 
             _halfHourPoller();
 
@@ -105,6 +105,7 @@ namespace EnergyHost.Services.Services
                 {
                     { "kwh", EnergyUsage },
                     { "ctkwh", EnergyUsage},
+                    { "powerTotal", EnergyUsage + SolarOutput},
                     { "temp", CurrentWeather.temp},
                     { "temp3", Convert.ToDouble(_mqttService.Values["temp1"])},
                     { "humid3", Convert.ToDouble(_mqttService.Values["humid1"])},
@@ -286,7 +287,7 @@ namespace EnergyHost.Services.Services
         //    }
         //}
 
-        async void _deviceUpdate30s(){
+        async void _deviceUpdate10s(){
             while(true){
                 var tAbbModbus = _abbService.GetModbus();
                 
@@ -311,7 +312,7 @@ namespace EnergyHost.Services.Services
 
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(30));
+                await Task.Delay(TimeSpan.FromSeconds(10));
             }
         }
 

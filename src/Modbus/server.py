@@ -3,14 +3,33 @@ from flask import request
 from flask import Response
 import json
 import time
+from datetime import datetime
+from datetime import timedelta 
 app = Flask(__name__)
+
+from seapi.solaredge import Solaredge
+from dotenv import load_dotenv
+import os
+
 
 import sunspec.core.client as client
 
 
+load_dotenv()
+
+
+
+
 
 @app.route('/inverter')
-def hello_world():   
+def inverter():   
+    
+    SOLAREDGE_API_KEY = os.getenv("SOLAREDGE_API_KEY")
+    SOLAREDGE_SITE_ID = os.getenv("SOLAREDGE_SITE_ID")
+
+    se = Solaredge(SOLAREDGE_API_KEY)
+
+    site_id = SOLAREDGE_SITE_ID
     ip = request.args.get('ip')
     
     d = client.SunSpecClientDevice(client.TCP, 1,  ipaddr=ip, ipport=1502)
@@ -19,6 +38,13 @@ def hello_world():
     d.inverter.read()
     d.ac_meter.read()
     d.close()
+
+    se_energy = se.get_energy(site_id, datetime.now().strftime("%Y-%m-%d"), (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), timeUnit='DAY')
+    
+    se = Solaredge(SOLAREDGE_API_KEY)
+
+    site_id = SOLAREDGE_SITE_ID
+
     dict = {}
     for (key, value) in d.inverter.model.__dict__.items():
         #print(key)
@@ -41,7 +67,10 @@ def hello_world():
                 dictac[k] = d.ac_meter[k]
             
         #print(str(value))
+        
     dict["meter"] = dictac
+    dict["seenergy"] = se_energy
+
     dumped = json.dumps(dict)
     #print(dumped)
     return Response(dumped, mimetype="application/json")
