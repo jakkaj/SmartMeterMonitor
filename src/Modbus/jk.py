@@ -2,6 +2,7 @@
 import json
 import sunspec.core.client as client
 import time
+import sys
 
 
 d = client.SunSpecClientDevice(client.TCP, 1,  ipaddr="192.168.0.107", ipport=1502)
@@ -11,8 +12,7 @@ time.sleep(0.5)
 
 while True:
 
-
-    
+   # d = client.SunSpecClientDevice(client.TCP, 1, ipaddr="192.168.0.107", ipport=1502)
     
     d.inverter.read()
     #print(d)
