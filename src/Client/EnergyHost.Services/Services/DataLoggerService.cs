@@ -79,7 +79,7 @@ namespace EnergyHost.Services.Services
 
             //_abbPoller();
 
-            _deviceUpdate30s();
+            _deviceUpdate10s();
 
             _halfHourPoller();
 
@@ -285,7 +285,7 @@ namespace EnergyHost.Services.Services
         //    }
         //}
 
-        async void _deviceUpdate30s(){
+        async void _deviceUpdate10s(){
             while(true){
                 var tAbbModbus = _abbService.GetModbus();
                 
@@ -295,7 +295,7 @@ namespace EnergyHost.Services.Services
 
                 if (abbModbus != null)
                 {
-                    EnergyUsage = abbModbus.meter.W / 1000;
+                    EnergyUsage = -abbModbus.meter.W / 1000;
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
                     SolarToday = Convert.ToDouble(abbModbus.WH) / 1000;
                     if (abbModbus.PhVphA != null)
@@ -309,7 +309,7 @@ namespace EnergyHost.Services.Services
 
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(30));
+                await Task.Delay(TimeSpan.FromSeconds(10));
             }
         }
 
