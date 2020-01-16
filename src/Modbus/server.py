@@ -69,7 +69,7 @@ def inverter():
         #print(str(value))
         
     dict["meter"] = dictac
-    dict["seenergy"] = se_energy
+    dict.update(se_energy)
 
     dumped = json.dumps(dict)
     #print(dumped)
