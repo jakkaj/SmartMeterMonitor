@@ -102,8 +102,8 @@ namespace EnergyHost.Services.Services
 
             var data = new Dictionary<string, object>
                 {
-                    { "kwh", _mqttService.KWH },
-                    { "ctkwh", _mqttService.GetDouble("f_power") / 1000},
+                    { "kwh", EnergyUsage },
+                    { "ctkwh", EnergyUsage},
                     { "temp", CurrentWeather.temp},
                     { "temp3", Convert.ToDouble(_mqttService.Values["temp1"])},
                     { "humid3", Convert.ToDouble(_mqttService.Values["humid1"])},
@@ -295,7 +295,7 @@ namespace EnergyHost.Services.Services
 
                 if (abbModbus != null)
                 {
-                    EnergyUsage = abbModbus.meter.W;
+                    EnergyUsage = abbModbus.meter.W / 1000;
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
                     SolarToday = Convert.ToDouble(abbModbus.WH) / 1000;
                     if (abbModbus.PhVphA != null)

@@ -17,6 +17,7 @@ def hello_world():
     
     time.sleep(0.5)
     d.inverter.read()
+    d.ac_meter.read()
     d.close()
     dict = {}
     for (key, value) in d.inverter.model.__dict__.items():
@@ -29,6 +30,18 @@ def hello_world():
                 dict[k] = d.inverter[k]
             
         #print(str(value))
+    dictac = {}
+    for (key, value) in d.ac_meter.model.__dict__.items():
+        #print(key)
+        if(key == "points"):
+            
+            for(k, v) in value.items():
+                #print(k)
+                #print(v.value_base)
+                dictac[k] = d.ac_meter[k]
+            
+        #print(str(value))
+    dict["meter"] = dictac
     dumped = json.dumps(dict)
     #print(dumped)
     return Response(dumped, mimetype="application/json")

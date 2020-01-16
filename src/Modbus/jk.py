@@ -15,8 +15,8 @@ while True:
    # d = client.SunSpecClientDevice(client.TCP, 1, ipaddr="192.168.0.107", ipport=1502)
     
     d.inverter.read()
-    #print(d)
     d.ac_meter.read()
+    
     #dumped = json.dumps(d)
     #print(dumped)
     dict = {}
@@ -38,13 +38,14 @@ while True:
             for(k, v) in value.items():
                 #print(k)
                 #print(v.value_base)
-                dictac[k] = d.inverter[k]
+                dictac[k] = d.ac_meter[k]
             
         #print(str(value))
+    
     dumped = json.dumps(dictac)
     print(dumped)
     #print export
     #print d.inverter["W"]
-    print d.inverter["PhVphA"]
+    #print d.inverter["PhVphA"]
     #print d.inverter["VAr"]
     time.sleep(5)
