@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
@@ -295,9 +296,10 @@ namespace EnergyHost.Services.Services
 
                 if (abbModbus != null)
                 {
+
                     EnergyUsage = abbModbus.meter.W / 1000;
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
-                    SolarToday = Convert.ToDouble(abbModbus.WH) / 1000;
+                    SolarToday = Convert.ToDouble(abbModbus.energy.values.Last().value) / 1000;
                     if (abbModbus.PhVphA != null)
                     {
                         SystemVoltage = (double)abbModbus.PhVphA;
