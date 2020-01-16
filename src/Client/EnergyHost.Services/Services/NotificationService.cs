@@ -36,6 +36,10 @@ namespace EnergyHost.Services.Services
 
         private async Task sendPushover(int percent)
         {
+             if(percent > 100){
+                percent = 100;
+            }
+            
             var token = _settings.Value.PUSHOVER_TOKEN;
             var user = _settings.Value.PUSHOVER_USER;
 
