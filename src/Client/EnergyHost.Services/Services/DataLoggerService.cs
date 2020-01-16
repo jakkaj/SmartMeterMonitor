@@ -14,7 +14,7 @@ namespace EnergyHost.Services.Services
     public class DataLoggerService : IDataLoggerService
     {
         private readonly ILogService _logService;
-        private readonly IABBService _abbService;
+        private readonly ISunSpecService _abbService;
         private readonly IDarkSkyService _darkSkyService;
         private readonly IInfluxService _influxService;
         private readonly IAmberService _amberService;
@@ -45,7 +45,7 @@ namespace EnergyHost.Services.Services
 
         public DataLoggerService(ILogService logService,
             IDaikinService daikinService,
-            IABBService abbService,
+            ISunSpecService abbService,
             IDarkSkyService darkSkyService,
             IInfluxService influxService,
             IAmberService amberService,
@@ -295,7 +295,15 @@ namespace EnergyHost.Services.Services
                 if (abbModbus != null)
                 {
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
-                    SystemVoltage = abbModbus.PhVphA;
+                    if (abbModbus.PhVphA != null)
+                    {
+                        SystemVoltage = (double)abbModbus.PhVphA;
+                    }
+                    else
+                    {
+                        SystemVoltage = 0;
+                    }
+
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(30));

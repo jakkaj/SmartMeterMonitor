@@ -27,7 +27,7 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddSingleton<IMQTTService, MQTTService>();
             services.AddTransient<IDataLoggerService, DataLoggerService>();
             services.AddTransient<IDaikinService, DaikinService>();
-            services.AddTransient<IABBService, ABBService>();
+            services.AddTransient<ISunSpecService, SunspecService>();
             services.AddSingleton<ILogService, LogService>();
             services.AddSingleton<ISystemStatusService, SystemStatusService>();
             services.AddSingleton<ITimeAlertService, TimeAlertService>();

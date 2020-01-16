@@ -14,20 +14,20 @@ using Newtonsoft.Json;
 
 namespace EnergyHost.Services.Services
 {
-    public class ABBService : IABBService
+    public class SunspecService : ISunSpecService
     {
         private readonly ILogService _logService;
         private readonly IOptions<EnergyHostSettings> _settings;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public ABBService(ILogService logService, IOptions<EnergyHostSettings> settings, IHttpClientFactory httpClientFactory)
+        public SunspecService(ILogService logService, IOptions<EnergyHostSettings> settings, IHttpClientFactory httpClientFactory)
         {
             _logService = logService;
             _settings = settings;
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<ABBSunspec> GetModbus()
+        public async Task<SolarEdgeSunSpec> GetModbus()
         {
             try{
 
@@ -41,7 +41,9 @@ namespace EnergyHost.Services.Services
                     _logService.WriteError($"Error in get modbus: {result.ReasonPhrase}");
                     return null;
                 }
-                var model = JsonConvert.DeserializeObject<ABBSunspec>(await result.Content.ReadAsStringAsync());
+
+                var s = await result.Content.ReadAsStringAsync();
+                var model = JsonConvert.DeserializeObject<SolarEdgeSunSpec>(s);
                 return model;
             }
             }catch(Exception ex)

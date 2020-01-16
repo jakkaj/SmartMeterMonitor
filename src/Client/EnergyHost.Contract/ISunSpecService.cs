@@ -3,9 +3,9 @@ using EnergyHost.Model.EnergyModels;
 
 namespace EnergyHost.Contract
 {
-    public interface IABBService
+    public interface ISunSpecService
     {
         Task<ABBDevice> Get();
-        Task<ABBSunspec> GetModbus();
+        Task<SolarEdgeSunSpec> GetModbus();
     }
 }

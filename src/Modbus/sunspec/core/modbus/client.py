@@ -305,7 +305,7 @@ class ModbusClientRTU(object):
 
             Byte string containing register contents.
         """
-
+        
         resp = ''
         read_count = 0
         read_offset = 0
@@ -330,6 +330,7 @@ class ModbusClientRTU(object):
 
     def _write(self, slave_id, addr, data, trace_func=None):
         resp = ''
+        
         len_remaining = 5
         len_found = False
         except_code = None

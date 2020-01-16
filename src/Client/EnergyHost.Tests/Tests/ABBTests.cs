@@ -15,14 +15,14 @@ namespace EnergyHost.Tests.Tests
         [TestMethod]
         public async Task TestABBModbusData()
         {
-            var service = Resolve<IABBService>();
+            var service = Resolve<ISunSpecService>();
             var model = await service.GetModbus();
             Assert.IsNotNull(model);
         }
         [TestMethod]
         public async Task TestABBGetData()
         {
-            var service = Resolve<IABBService>();
+            var service = Resolve<ISunSpecService>();
 
             var result = await service.Get();
 
