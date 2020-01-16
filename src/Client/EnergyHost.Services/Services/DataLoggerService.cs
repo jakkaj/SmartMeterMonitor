@@ -104,6 +104,7 @@ namespace EnergyHost.Services.Services
                 {
                     { "kwh", EnergyUsage },
                     { "ctkwh", EnergyUsage},
+                    { "powerTotal", EnergyUsage + SolarOutput},
                     { "temp", CurrentWeather.temp},
                     { "temp3", Convert.ToDouble(_mqttService.Values["temp1"])},
                     { "humid3", Convert.ToDouble(_mqttService.Values["humid1"])},
