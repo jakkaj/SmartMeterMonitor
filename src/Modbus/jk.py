@@ -4,8 +4,8 @@ import sunspec.core.client as client
 import time
 
 
-d = client.SunSpecClientDevice(client.TCP, 2, ipaddr="192.168.0.201")
-
+d = client.SunSpecClientDevice(client.TCP, 1,  ipaddr="192.168.0.107", ipport=1502)
+time.sleep(0.5)
 #print (d.models)
 #print d.inverter.points
 
@@ -15,6 +15,10 @@ while True:
     
     
     d.inverter.read()
+    #print(d)
+    d.ac_meter.read()
+    #dumped = json.dumps(d)
+    #print(dumped)
     dict = {}
     for (key, value) in d.inverter.model.__dict__.items():
         #print(key)
@@ -26,7 +30,18 @@ while True:
                 dict[k] = d.inverter[k]
             
         #print(str(value))
-    dumped = json.dumps(dict)
+    dictac = {}
+    for (key, value) in d.ac_meter.model.__dict__.items():
+        #print(key)
+        if(key == "points"):
+            
+            for(k, v) in value.items():
+                #print(k)
+                #print(v.value_base)
+                dictac[k] = d.inverter[k]
+            
+        #print(str(value))
+    dumped = json.dumps(dictac)
     print(dumped)
     #print export
     #print d.inverter["W"]

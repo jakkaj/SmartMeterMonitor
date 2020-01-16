@@ -329,8 +329,9 @@ class ClientModel(device.Model):
         if self.model_type is not None:
             # read current model
             try:
-                end_index = len(self.read_blocks)
+                end_index = len(self.read_blocks)                
                 if end_index == 1:
+                    time.sleep(0.1)
                     data = self.device.read(self.addr, self.len)
                 else:
                     data = b''
