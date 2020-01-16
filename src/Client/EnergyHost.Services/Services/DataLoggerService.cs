@@ -76,7 +76,7 @@ namespace EnergyHost.Services.Services
 
             _deviceUpdates5Mins();
 
-            _abbPoller();
+            //_abbPoller();
 
             _deviceUpdate30s();
 
@@ -252,37 +252,37 @@ namespace EnergyHost.Services.Services
             }
         }
 
-        async void _abbPoller()
-        {
-            var lastSolar = DateTime.Now;
+        //async void _abbPoller()
+        //{
+        //    var lastSolar = DateTime.Now;
 
 
-            while (true)
-            {
-                var tAbbStatus = _abbService.Get();
+        //    while (true)
+        //    {
+        //        var tAbbStatus = _abbService.Get();
 
-                await Task.WhenAll(tAbbStatus);
+        //        await Task.WhenAll(tAbbStatus);
 
-                var abb = await tAbbStatus;
+        //        var abb = await tAbbStatus;
 
-                if (abb != null)
-                {
-                    lastSolar = DateTime.Now;
-                    //
-                    SolarToday = abb.feeds.Feed.datastreams.m64061_1_DayWH.data[0].value;
-                }
+        //        if (abb != null)
+        //        {
+        //            lastSolar = DateTime.Now;
+        //            //
+        //            SolarToday = abb.feeds.Feed.datastreams.m64061_1_DayWH.data[0].value;
+        //        }
 
-                if (DateTime.Now.Subtract(lastSolar) > TimeSpan.FromMinutes(20))
-                {
-                    //solar is stale
-                    SolarOutput = 0;
-                    _logService.WriteLog("Solar is stale");
-                }
+        //        if (DateTime.Now.Subtract(lastSolar) > TimeSpan.FromMinutes(20))
+        //        {
+        //            //solar is stale
+        //            SolarOutput = 0;
+        //            _logService.WriteLog("Solar is stale");
+        //        }
 
-                _logService.WriteLog($"[{DateTime.Now.ToString()}] Power: {string.Format("{0:0.00}", SolarOutput)}");
-                await Task.Delay(TimeSpan.FromMinutes(5));
-            }
-        }
+        //        _logService.WriteLog($"[{DateTime.Now.ToString()}] Power: {string.Format("{0:0.00}", SolarOutput)}");
+        //        await Task.Delay(TimeSpan.FromMinutes(5));
+        //    }
+        //}
 
         async void _deviceUpdate30s(){
             while(true){
@@ -295,6 +295,7 @@ namespace EnergyHost.Services.Services
                 if (abbModbus != null)
                 {
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
+                    SolarToday = Convert.ToDouble(abbModbus.WH) / 1000;
                     if (abbModbus.PhVphA != null)
                     {
                         SystemVoltage = (double)abbModbus.PhVphA;
