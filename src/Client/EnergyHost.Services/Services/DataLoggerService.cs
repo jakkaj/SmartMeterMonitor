@@ -26,6 +26,7 @@ namespace EnergyHost.Services.Services
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
+        public double EnergyUsage { get; set; } = 0;
         public double SystemVoltage { get; set; } = 0;
         public double SolarToday { get; set; } = 0;
         public double DaikinInsideTemperature { get; set; }
@@ -294,6 +295,7 @@ namespace EnergyHost.Services.Services
 
                 if (abbModbus != null)
                 {
+                    EnergyUsage = abbModbus.meter.W;
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
                     SolarToday = Convert.ToDouble(abbModbus.WH) / 1000;
                     if (abbModbus.PhVphA != null)

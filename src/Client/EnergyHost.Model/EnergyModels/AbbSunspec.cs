@@ -4,9 +4,77 @@ using System.Text;
 
 namespace EnergyHost.Model.EnergyModels
 {
+    public class SolarEdgeMeter
+    {
+        
+            public double A { get; set; }
+            public double PhVphA { get; set; }
+            public double PhVphB { get; set; }
+            public double PhVphC { get; set; }
+            public double PhVphAB { get; set; }
+            public int TotWhImp { get; set; }
+            public object TotVArhExpQ4PhA { get; set; }
+            public object TotVArhExpQ4PhC { get; set; }
+            public object TotVArhExpQ4PhB { get; set; }
+            public double PFphC { get; set; }
+            public double PhV { get; set; }
+            public double PFphA { get; set; }
+            public double PhVphCA { get; set; }
+            public object TotVAhExpPhA { get; set; }
+            public int WphC { get; set; }
+            public int WphB { get; set; }
+            public object TotVArhImpQ1 { get; set; }
+            public object TotVArhImpQ2 { get; set; }
+            public int Evt { get; set; }
+            public int TotWhExpPhA { get; set; }
+            public object TotWhExpPhB { get; set; }
+            public object TotWhExpPhC { get; set; }
+            public double W { get; set; }
+            public double PF { get; set; }
+            public double PPV { get; set; }
+            public object TotVArhExpQ3PhA { get; set; }
+            public object TotVArhExpQ3PhB { get; set; }
+            public int WphA { get; set; }
+            public double PFphB { get; set; }
+            public object TotVAhImp { get; set; }
+            public double Hz { get; set; }
+            public double PhVphBC { get; set; }
+            public int VAphA { get; set; }
+            public int VAphB { get; set; }
+            public int VAphC { get; set; }
+            public object TotVArhExpQ4 { get; set; }
+            public object TotVAhImpPhA { get; set; }
+            public int VA { get; set; }
+            public object TotVAhExpPhB { get; set; }
+            public int TotWhExp { get; set; }
+            public double AphB { get; set; }
+            public double AphA { get; set; }
+            public int VAR { get; set; }
+            public object TotVArhImpQ2PhB { get; set; }
+            public object TotVArhImpQ2PhC { get; set; }
+            public object TotWhImpPhC { get; set; }
+            public object TotVArhImpQ2PhA { get; set; }
+            public int TotWhImpPhA { get; set; }
+            public object TotVArhExpQ3PhC { get; set; }
+            public int VARphC { get; set; }
+            public int VARphB { get; set; }
+            public int VARphA { get; set; }
+            public object TotVArhExpQ3 { get; set; }
+            public object TotVAhExpPhC { get; set; }
+            public object TotVAhImpPhB { get; set; }
+            public object TotVAhImpPhC { get; set; }
+            public object TotWhImpPhB { get; set; }
+            public object TotVAhExp { get; set; }
+            public double AphC { get; set; }
+            public object TotVArhImpQ1PhC { get; set; }
+            public object TotVArhImpQ1PhB { get; set; }
+            public object TotVArhImpQ1PhA { get; set; }
+        
+    }
 
     public class SolarEdgeSunSpec
     {
+        public SolarEdgeMeter meter { get; set; }
         public object PhVphA { get; set; }
         public object PhVphB { get; set; }
         public object PhVphC { get; set; }
