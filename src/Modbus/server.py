@@ -40,12 +40,17 @@ def inverter():
     d.ac_meter.read()
     d.close()
 
-    if(time.time() - date_since > 900 or not se_energy):
-        se_energy = se.get_energy(site_id, datetime.now().strftime("%Y-%m-%d"), (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), timeUnit='DAY')
-    
     se = Solaredge(SOLAREDGE_API_KEY)
-
     site_id = SOLAREDGE_SITE_ID
+
+    if(time.time() - date_since > 900 or se_energy == None):
+        try:
+            se_energy = se.get_energy(site_id, datetime.now().strftime("%Y-%m-%d"), (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), timeUnit='DAY')
+            date_since = time.time()
+        except:
+            print("Could not access SolarEdge API")
+
+    
 
     dict = {}
     for (key, value) in d.inverter.model.__dict__.items():
@@ -71,7 +76,8 @@ def inverter():
         #print(str(value))
         
     dict["meter"] = dictac
-    dict.update(se_energy)
+    if se_energy != None:
+        dict.update(se_energy)
 
     dumped = json.dumps(dict)
     #print(dumped)
