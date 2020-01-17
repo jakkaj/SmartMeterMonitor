@@ -300,7 +300,10 @@ namespace EnergyHost.Services.Services
 
                     EnergyUsage = -abbModbus.meter.W / 1000;
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
-                    SolarToday = Convert.ToDouble(abbModbus.energy.values.Where(_=>_.value != null).Last().value) / 1000;
+                    if(abbModbus?.energy?.values != null){
+                        SolarToday = Convert.ToDouble(abbModbus.energy.values.Where(_=>_.value != null).Last().value) / 1000;
+                    }
+                    
                     if (abbModbus.PhVphA != null)
                     {
                         SystemVoltage = (double)abbModbus.PhVphA;

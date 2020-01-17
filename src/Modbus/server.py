@@ -18,12 +18,13 @@ import sunspec.core.client as client
 load_dotenv()
 
 
-
-
+date_since = time.time()
+se_energy = None
 
 @app.route('/inverter')
 def inverter():   
-    
+    global date_since
+    global se_energy
     SOLAREDGE_API_KEY = os.getenv("SOLAREDGE_API_KEY")
     SOLAREDGE_SITE_ID = os.getenv("SOLAREDGE_SITE_ID")
 
@@ -39,7 +40,8 @@ def inverter():
     d.ac_meter.read()
     d.close()
 
-    se_energy = se.get_energy(site_id, datetime.now().strftime("%Y-%m-%d"), (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), timeUnit='DAY')
+    if(time.time() - date_since > 900 or not se_energy):
+        se_energy = se.get_energy(site_id, datetime.now().strftime("%Y-%m-%d"), (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), timeUnit='DAY')
     
     se = Solaredge(SOLAREDGE_API_KEY)
 
