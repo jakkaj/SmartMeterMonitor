@@ -14,6 +14,8 @@ import os
 
 import sunspec.core.client as client
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 
@@ -38,17 +40,15 @@ def inverter():
     time.sleep(0.5)
     d.inverter.read()
     d.ac_meter.read()
-    d.close()
+    d.close()    
 
-    se = Solaredge(SOLAREDGE_API_KEY)
-    site_id = SOLAREDGE_SITE_ID
-
-    if(time.time() - date_since > 900 or se_energy == None):
+    if(time.time() - date_since > 900 or se_energy is None):
         try:
             se_energy = se.get_energy(site_id, datetime.now().strftime("%Y-%m-%d"), (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), timeUnit='DAY')
             date_since = time.time()
-        except:
-            print("Could not access SolarEdge API")
+            print("SolarEdge API successful")
+        except Exception as ex:
+            print("Could not access SolarEdge API: "+ str(ex))
 
     
 
@@ -76,7 +76,7 @@ def inverter():
         #print(str(value))
         
     dict["meter"] = dictac
-    if se_energy != None:
+    if not se_energy is None:
         dict.update(se_energy)
 
     dumped = json.dumps(dict)
