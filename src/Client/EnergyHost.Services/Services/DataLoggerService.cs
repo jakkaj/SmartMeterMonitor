@@ -44,6 +44,10 @@ namespace EnergyHost.Services.Services
         public double NextPriceIn { get; set; }
         public double CurrentPriceOut { get; set; }
         public double NextPriceOut { get; set; }
+        public double FeedIn { get; set; }
+        public double SelfConsumption { get; set; }
+        public double Purchased { get; set; }
+        public double Consumption { get; set; }
 
         public DataLoggerService(ILogService logService,
             IDaikinService daikinService,
@@ -123,13 +127,17 @@ namespace EnergyHost.Services.Services
                     { "DaikinPoweredOn", DaikinPoweredOn },
                     { "SolarOutput", SolarOutput },
                     { "SolarToday", SolarToday},
+                    { "Purchased", Purchased },
+                    { "SelfConsumption", SelfConsumption },
+                    { "FeedIn", FeedIn },
+                    { "Consumption", Consumption },
                     { "SystemVoltage", SystemVoltage },
                     { "SolarHistory", EnergyFutures.Futures[0].SolarHistory },
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut },
                     { "NextPriceIn", NextPriceIn },
                     {"NextPriceOut", NextPriceOut },
-                    
+
                 };
 
 
@@ -217,11 +225,11 @@ namespace EnergyHost.Services.Services
                 {
                     lastAmber = DateTime.Now;
 
-                    if(EnergyFutures.Futures.Count > 1)
+                    if (EnergyFutures.Futures.Count > 1)
                     {
                         CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
                         NextPriceIn = EnergyFutures.Futures[1].PriceIn;
-                        
+
 
                         CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
                         NextPriceOut = EnergyFutures.Futures[1].PriceOut;
@@ -233,7 +241,7 @@ namespace EnergyHost.Services.Services
                     {
                         _logService.WriteError("No Energy Future Data!");
                     }
-                    
+
                 }
 
                 while (DateTime.Now.Minute != 30 && DateTime.Now.Minute != 00)
@@ -287,10 +295,12 @@ namespace EnergyHost.Services.Services
         //    }
         //}
 
-        async void _deviceUpdate10s(){
-            while(true){
+        async void _deviceUpdate10s()
+        {
+            while (true)
+            {
                 var tAbbModbus = _abbService.GetModbus();
-                
+
                 await Task.WhenAll(tAbbModbus);
 
                 var abbModbus = await tAbbModbus;
@@ -300,7 +310,16 @@ namespace EnergyHost.Services.Services
 
                     EnergyUsage = abbModbus.meter.W / 1000;
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
-                    SolarToday = Convert.ToDouble(abbModbus.energy.values.Last().value) / 1000;
+                    if (abbModbus?.energyDetails != null)
+                    {
+                        SolarToday = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Production").values[0].value / 1000);
+                        Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value / 1000);
+                        Purchased = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Purchased").values[0].value / 1000);
+                        SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value / 1000);
+                        FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value / 1000);
+
+                    }
+
                     if (abbModbus.PhVphA != null)
                     {
                         SystemVoltage = (double)abbModbus.PhVphA;
@@ -319,22 +338,22 @@ namespace EnergyHost.Services.Services
         async void _deviceUpdates5Mins()
         {
             var lastSolar = DateTime.Now;
-            
+
 
             while (true)
             {
 
                 var tDsStatus = _darkSkyService.GetDetail();
-                
+
                 await Task.WhenAll(tDsStatus);
                 CurrentWeather = await tDsStatus;
 
 
-                
 
-                
 
-                
+
+
+
 
                 _logService.WriteLog($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
                 await Task.Delay(TimeSpan.FromMinutes(5));
@@ -356,13 +375,13 @@ namespace EnergyHost.Services.Services
 
 
                 var tDaikinStatus = _daikinService.GetControlInfo();
-                
+
 
                 await Task.WhenAll(tDaikinSensors, tDaikinStatus);
 
 
                 var daikinStatus = await tDaikinStatus;
-                var daikinSensors = await tDaikinSensors;               
+                var daikinSensors = await tDaikinSensors;
 
 
                 if (daikinSensors != null)

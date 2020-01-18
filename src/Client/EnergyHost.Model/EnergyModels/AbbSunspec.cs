@@ -13,11 +13,15 @@ namespace EnergyHost.Model.EnergyModels
             public double value { get; set; }
         }
 
+        public class Meter
+        {
+            public List<Value> values { get; set; }
+            public string type { get; set; }
+        }
 
         public string timeUnit { get; set; }
-        public List<Value> values { get; set; }
+        public List<Meter> meters { get; set; }
         public string unit { get; set; }
-        public string measuredBy { get; set; }
 
     }
 
@@ -91,7 +95,7 @@ namespace EnergyHost.Model.EnergyModels
 
     public class SolarEdgeSunSpec
     {
-        public SolarEdgeAPIEnergy energy { get; set; }
+        public SolarEdgeAPIEnergy energyDetails { get; set; }
         public SolarEdgeMeter meter { get; set; }
         public object PhVphA { get; set; }
         public object PhVphB { get; set; }
