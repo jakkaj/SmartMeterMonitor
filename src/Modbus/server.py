@@ -45,7 +45,7 @@ def inverter():
     if(time.time() - date_since > 900 or se_energy is None):
         date_since = time.time()
         try:
-            se_energy = se.get_energy(site_id, datetime.now().strftime("%Y-%m-%d"), (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), timeUnit='DAY')
+            se_energy = se.get_energyDetails(site_id, datetime.today().strftime("%Y-%m-%d 00:00:00"), (datetime.today()).strftime("%Y-%m-%d 23:59:59"))
             
             print("SolarEdge API successful")
         except Exception as ex:
