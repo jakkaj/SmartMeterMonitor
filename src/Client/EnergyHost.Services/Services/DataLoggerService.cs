@@ -308,7 +308,7 @@ namespace EnergyHost.Services.Services
                 if (abbModbus != null)
                 {
 
-                    EnergyUsage = abbModbus.meter.W / 1000;
+                    EnergyUsage = -abbModbus.meter.W / 1000;
                     SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
                     if (abbModbus?.energyDetails != null)
                     {

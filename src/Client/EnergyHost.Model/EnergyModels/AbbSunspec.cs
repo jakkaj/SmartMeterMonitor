@@ -10,7 +10,7 @@ namespace EnergyHost.Model.EnergyModels
         public class Value
         {
             public string date { get; set; }
-            public double value { get; set; }
+            public object value { get; set; }
         }
 
         public class Meter
