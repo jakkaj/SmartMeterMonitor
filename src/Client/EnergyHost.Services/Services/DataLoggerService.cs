@@ -86,7 +86,7 @@ namespace EnergyHost.Services.Services
 
             _deviceUpdate10s();
 
-            _halfHourPoller();
+            _fiveMinuteEvenPoller();
 
             await _mqttService.Setup();
 
@@ -212,55 +212,55 @@ namespace EnergyHost.Services.Services
             }
         }
 
-        async void _halfHourPoller()
+        async void _fiveMinuteEvenPoller()
         {
-            //var lastAmber = DateTime.Now;
+            var lastAmber = DateTime.Now;
 
-            //while (true)
-            //{
-            //    var tEnergyFutures = _energyFuturesService.Get();
-            //    await Task.WhenAll(tEnergyFutures);
-            //    EnergyFutures = await tEnergyFutures;
-            //    if (EnergyFutures != null)
-            //    {
-            //        lastAmber = DateTime.Now;
+            while (true)
+            {
+                var tEnergyFutures = _energyFuturesService.Get();
+                await Task.WhenAll(tEnergyFutures);
+                EnergyFutures = await tEnergyFutures;
+                if (EnergyFutures != null)
+                {
+                    lastAmber = DateTime.Now;
 
-            //        if (EnergyFutures.Futures.Count > 1)
-            //        {
-            //            CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
-            //            NextPriceIn = EnergyFutures.Futures[1].PriceIn;
+                    if (EnergyFutures.Futures.Count > 1)
+                    {
+                        CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
+                        NextPriceIn = EnergyFutures.Futures[1].PriceIn;
 
 
-            //            CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
-            //            NextPriceOut = EnergyFutures.Futures[1].PriceOut;
-            //            _logService.WriteLog($"Energy in: {CurrentPriceIn}");
+                        CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
+                        NextPriceOut = EnergyFutures.Futures[1].PriceOut;
+                        _logService.WriteLog($"Energy in: {CurrentPriceIn}");
 
-            //            await _notificationService.SendPrice(CurrentPriceIn);
-            //        }
-            //        else
-            //        {
-            //            _logService.WriteError("No Energy Future Data!");
-            //        }
+                        await _notificationService.SendPrice(CurrentPriceIn);
+                    }
+                    else
+                    {
+                        _logService.WriteError("No Energy Future Data!");
+                    }
 
-            //    }
+                }
 
-            //    while (DateTime.Now.Minute != 30 && DateTime.Now.Minute != 45)
-            //    {
-            //        await Task.Delay(TimeSpan.FromSeconds(20));
-            //    }
+                while (DateTime.Now.Minute % 5 != 0 && DateTime.Now.Second != 30)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(20));
+                }
 
-            //    await Task.Delay(TimeSpan.FromSeconds(30));
+                await Task.Delay(TimeSpan.FromSeconds(30));
 
-            //    if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
-            //    {
-            //        _logService.WriteLog("Amber Data Stale");
-            //        CurrentPriceIn = 0;
-            //        CurrentPriceOut = 0;
-            //        NextPriceIn = 0;
-            //        NextPriceOut = 0;
-            //    }
+                if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
+                {
+                    _logService.WriteLog("Amber Data Stale");
+                    CurrentPriceIn = 0;
+                    CurrentPriceOut = 0;
+                    NextPriceIn = 0;
+                    NextPriceOut = 0;
+                }
 
-            //}
+            }
         }
 
         //async void _abbPoller()
@@ -348,64 +348,7 @@ namespace EnergyHost.Services.Services
                 await Task.WhenAll(tDsStatus);
                 CurrentWeather = await tDsStatus;
 
-
-
-
-
-
-
-
-                _logService.WriteLog($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
-
-
-                //amber
-
-
-                var lastAmber = DateTime.Now;
-
-                
-                    var tEnergyFutures = _energyFuturesService.Get();
-                    await Task.WhenAll(tEnergyFutures);
-                    EnergyFutures = await tEnergyFutures;
-                    if (EnergyFutures != null)
-                    {
-                        lastAmber = DateTime.Now;
-
-                        if (EnergyFutures.Futures.Count > 1)
-                        {
-                            CurrentPriceIn = EnergyFutures.Futures[0].PriceIn;
-                            NextPriceIn = EnergyFutures.Futures[1].PriceIn;
-
-
-                            CurrentPriceOut = EnergyFutures.Futures[0].PriceOut;
-                            NextPriceOut = EnergyFutures.Futures[1].PriceOut;
-                            _logService.WriteLog($"Energy in: {CurrentPriceIn}");
-
-                            await _notificationService.SendPrice(CurrentPriceIn);
-                        }
-                        else
-                        {
-                            _logService.WriteError("No Energy Future Data!");
-                        }
-
-                    }
-
-                    //while (DateTime.Now.Minute != 30 && DateTime.Now.Minute != 45)
-                    //{
-                    //    await Task.Delay(TimeSpan.FromSeconds(20));
-                    //}
-
-                    await Task.Delay(TimeSpan.FromSeconds(30));
-
-                    if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
-                    {
-                        _logService.WriteLog("Amber Data Stale");
-                        CurrentPriceIn = 0;
-                        CurrentPriceOut = 0;
-                        NextPriceIn = 0;
-                        NextPriceOut = 0;
-                    }
-
+                //_logService.WriteLog($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
                 
                 await Task.Delay(TimeSpan.FromMinutes(5));
             }
