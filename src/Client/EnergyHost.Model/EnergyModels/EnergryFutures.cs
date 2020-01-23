@@ -12,6 +12,7 @@ namespace EnergyHost.Model.EnergyModels
 
     public class EnergyFuture
     {
+        public string AmberSource { get; set; }
         public double Value { get; set; }
         public double SolarValue { get; set; }
         public double GridValue { get; set; }

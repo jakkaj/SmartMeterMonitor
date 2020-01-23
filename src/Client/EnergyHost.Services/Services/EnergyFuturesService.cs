@@ -87,6 +87,7 @@ namespace EnergyHost.Services.Services
             
             var obj = new EnergyFuture()
             {
+                AmberSource = amberVars.periodType,
                 AmberPrices = amberVars,
                 Cloudiness = dp.CloudCover ?? 1,                
                 Temperature = dp.Temperature ?? 0,
