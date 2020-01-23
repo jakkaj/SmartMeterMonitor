@@ -253,7 +253,7 @@ namespace EnergyHost.Services.Services
                     await Task.Delay(TimeSpan.FromSeconds(.5));
                 }               
 
-                await Task.Delay(TimeSpan.FromSeconds(120));
+                await Task.Delay(TimeSpan.FromSeconds(130));
 
                 if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
                 {
