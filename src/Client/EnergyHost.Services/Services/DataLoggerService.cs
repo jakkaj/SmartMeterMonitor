@@ -251,11 +251,9 @@ namespace EnergyHost.Services.Services
                         break;
                     }
                     await Task.Delay(TimeSpan.FromSeconds(.5));
-                }
+                }               
 
-                Debug.WriteLine($"DateTime: {DateTime.Now.ToString()}");
-
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromSeconds(120));
 
                 if (DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(35))
                 {
