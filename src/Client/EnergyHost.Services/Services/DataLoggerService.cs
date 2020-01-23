@@ -244,7 +244,7 @@ namespace EnergyHost.Services.Services
 
                 }
 
-                while (DateTime.Now.Minute % 5 != 0 && DateTime.Now.Second != 30)
+                while ((DateTime.Now.Minute % 5 != 0 && DateTime.Now.Second != 30) || DateTime.Now.Subtract(lastAmber) > TimeSpan.FromMinutes(6))
                 {
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
