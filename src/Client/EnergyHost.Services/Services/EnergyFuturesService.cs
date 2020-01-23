@@ -49,7 +49,7 @@ namespace EnergyHost.Services.Services
             };
 
 
-            var currentAd = amberData.data.variablePricesAndRenewables.Last(_ => _.periodType == "ACTUAL");//TZ for the AEMO is based on Brisbane, so may be wrong in Summer time. 
+            var currentAd = amberData.data.variablePricesAndRenewables.Last(_ => _.periodType == "ACTUAL");//TZ for the AE is based on Brisbane, so may be wrong in Summer time. 
             var currentDp = darkData.Currently;
 
             var startTime = currentAd.period.Subtract(TimeSpan.FromDays(14)).ToUniversalTime().ConvertToISO();
