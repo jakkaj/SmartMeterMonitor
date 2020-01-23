@@ -244,10 +244,13 @@ namespace EnergyHost.Services.Services
 
                 }
 
-                while (DateTime.Now.Minute % 5 != 0 && DateTime.Now.Second != 30)
+                while (DateTime.Now.Minute % 5 != 0 || DateTime.Now.Second != 30)
                 {
+                    Debug.WriteLine("Delay");
                     await Task.Delay(TimeSpan.FromSeconds(.5));
                 }
+
+                Debug.WriteLine($"DateTime: {DateTime.Now.ToString()}");
 
                 await Task.Delay(TimeSpan.FromSeconds(1));
 
