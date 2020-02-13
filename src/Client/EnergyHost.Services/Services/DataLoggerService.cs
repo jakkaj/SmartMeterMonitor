@@ -225,7 +225,7 @@ namespace EnergyHost.Services.Services
             await _writeUsage(usage);
 
 
-            await _influxService.WriteObject("house", "amberUsageFromGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.FromGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.FromGrid.date);
             await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.ToGrid.date);
 
             await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastWeekUsage, null, AmberUsage.data.lastWeekUsage.FromGrid.date);
