@@ -143,7 +143,9 @@ namespace EnergyHost.Services.Services
                     { "NextPriceOut", NextPriceOut },
                     { "MonthTotalCost", AmberUsage?.data.lastMonthUsage.FromGrid.actualCost ?? 0 },
                     { "LastWeekTotalCost", AmberUsage?.data.lastWeekUsage.FromGrid.actualCost ?? 0},
-                    { "WeekTotalCost", AmberUsage?.data.thisWeekUsage.FromGrid.actualCost ?? 0}
+                    { "WeekTotalCost", AmberUsage?.data.thisWeekUsage.FromGrid.actualCost ?? 0},
+                    { "YesterdayTotalCost", AmberUsage?.data.thisWeekDailyUsage.Where(_=>_.meterSuffix=="E1").OrderByDescending(_=>_.date).First().actualCost ?? 0},
+
 
                 };
 

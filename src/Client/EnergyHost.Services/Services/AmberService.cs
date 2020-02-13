@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -184,13 +185,15 @@ namespace EnergyHost.Services.Services
         {
             foreach (var item in costs)
             {
+                item.date = new DateTime(item.date.Year, item.date.Month, item.date.Day, 0, 0, 0);
+            }
+            foreach (var item in costs)
+            {
                 var otherItem = costs.First(_ => _.meterSuffix != item.meterSuffix && item.date == _.date);
                 if (item.meterSuffix == "E1")
                 {
                     item.actualCost = item.usageCost + otherItem.usageCost;
                 }
-
-                item.date = new DateTime(item.date.Year, item.date.Month, item.date.Day, 0, 0, 0);
             }
         }
 
