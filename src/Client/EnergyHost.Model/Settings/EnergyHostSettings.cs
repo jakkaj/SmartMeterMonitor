@@ -8,6 +8,10 @@ namespace EnergyHost.Model.Settings
     {
         public bool SuppressWarning { get; set; }
         public string AMBER_API_URL { get; set; }
+        public string AMBER_USAGE_URL { get; set; }
+        public string AMBER_USERNAME { get; set; }
+        public string AMBER_PASSWORD { get; set; }
+        public string AMBER_LOGIN_URL { get; set; }
         public string DARK_SKY_API_KEY { get; set; }
         public string MQTT_SERVER_ADDRESS { get; set; }
         public string INFLUX_SERVER_ADDRESS { get; set; }

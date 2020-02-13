@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
+using System.Text;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
 using EnergyHost.Model.EnergyModels;
@@ -20,12 +24,21 @@ namespace EnergyHost.Services.Services
 
 
         private string _amberUrl;
+        private string _amberLoginUrl;
+        private string _amberUsageUrl ;
+        private string _amberUserName;
+        private string _amberPassword;
 
         public AmberService(ILogService logService, IOptions<EnergyHostSettings> settings)
         {
             _logService = logService;
             _settings = settings;
             this._amberUrl = _settings.Value.AMBER_API_URL;
+            _amberLoginUrl = _settings.Value.AMBER_LOGIN_URL;
+            _amberUsageUrl = _settings.Value.AMBER_USAGE_URL;
+            _amberPassword = _settings.Value.AMBER_PASSWORD;
+            _amberUserName = _settings.Value.AMBER_USERNAME;
+            
         }
         public double _inPrice(AmberData data, VariablePricesAndRenewable variables)
         {
@@ -92,6 +105,76 @@ namespace EnergyHost.Services.Services
                 return amberData;
 
 
+            }
+        }
+
+        public async Task<AmberUsage> GetUsage()
+        {
+            var data = $"{{\"email\": \"{_amberUserName}\"}}";
+
+            var login = await Login();
+
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                client.DefaultRequestHeaders.Add("authorization", new List<string>()
+                {
+                    login.data.idToken
+                });
+
+                client.DefaultRequestHeaders.Add("refreshtoken", new List<string>()
+                {
+                    login.data.refreshToken
+                });
+
+                var result = await client.PostAsync(new Uri(_amberUsageUrl), new StringContent(data, Encoding.UTF8, "application/json"));
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var stringResult = await result.Content.ReadAsStringAsync();
+                var amberData = JsonConvert.DeserializeObject<AmberUsage>(stringResult, new JsonSerializerSettings
+                {
+                    Error = HandleDeserializationError
+                });
+
+                return amberData;
+            }
+
+           
+
+            
+        }
+
+
+
+        public async Task<AmberLogin> Login()
+        {
+            var data = $"{{\"username\": \"{_amberUserName}\", password:\"{_amberPassword}\"}}";
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+               
+
+                var result = await client.PostAsync(new Uri(_amberLoginUrl), new StringContent(data, Encoding.UTF8, "application/json"));
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var stringResult = await result.Content.ReadAsStringAsync();
+                var amberData = JsonConvert.DeserializeObject<AmberLogin>(stringResult, new JsonSerializerSettings
+                {
+                    Error = HandleDeserializationError
+                });
+
+                return amberData;
             }
         }
 

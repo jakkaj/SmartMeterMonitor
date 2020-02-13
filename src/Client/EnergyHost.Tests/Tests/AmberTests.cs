@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
@@ -40,6 +42,16 @@ namespace EnergyHost.Tests.Tests
             }
 
             Assert.IsNotNull(amberData);
+        }
+
+        [TestMethod]
+        public async Task GetUsage()
+        {
+            var aService = Resolve<IAmberService>();
+
+            var result = await aService.GetUsage();
+
+            Assert.IsNotNull(result);
         }
     }
 }
