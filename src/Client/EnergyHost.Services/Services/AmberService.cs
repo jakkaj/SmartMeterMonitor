@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using EnergyHost.Contract;
 using EnergyHost.Model.EnergyModels;
 using EnergyHost.Model.Settings;
+using EnergyHost.Services.Utils;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -142,12 +143,43 @@ namespace EnergyHost.Services.Services
                     Error = HandleDeserializationError
                 });
 
+                var now = DateTime.Today.ToUniversalTime();
+
+                _calculateRealCosts(amberData.data.lastMonthDailyUsage);
+                _calculateRealCosts(amberData.data.lastWeekDailyUsage);
+                _calculateRealCosts(amberData.data.thisWeekDailyUsage);
+
+                //set the dates to the correct period
+                amberData.data.lastMonthUsage.FromGrid.date = amberData.data.lastMonthUsage.FromGrid.date.ToUniversalTime();
+                amberData.data.lastMonthUsage.ToGrid.date = amberData.data.lastMonthUsage.ToGrid.date.ToUniversalTime();
+
+                amberData.data.lastWeekUsage.ToGrid.date = now.StartOfWeek().AddDays(-7).ToUniversalTime();
+                amberData.data.lastWeekUsage.FromGrid.date = now.StartOfWeek().AddDays(-7).ToUniversalTime();
+
+                amberData.data.thisWeekUsage.ToGrid.date = now.StartOfWeek().ToUniversalTime();
+                amberData.data.thisWeekUsage.FromGrid.date = now.StartOfWeek().ToUniversalTime();
+
+
                 return amberData;
             }
 
            
 
             
+        }
+
+        public void _calculateRealCosts(List<DailyUsage> costs)
+        {
+            foreach (var item in costs)
+            {
+                var otherItem = costs.First(_ => _.meterSuffix != item.meterSuffix && item.date == _.date);
+                if (item.meterSuffix == "E1")
+                {
+                    item.actualCost = item.usageCost + otherItem.usageCost;
+                }
+
+                item.date = new DateTime(item.date.Year, item.date.Month, item.date.Day, 0, 0, 0);
+            }
         }
 
 

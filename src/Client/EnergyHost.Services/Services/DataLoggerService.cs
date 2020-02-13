@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using EnergyHost.Contract;
 using EnergyHost.Model.EnergyModels;
 using EnergyHost.Model.EnergyModels.Status;
+using EnergyHost.Services.Utils;
 
 namespace EnergyHost.Services.Services
 {
@@ -48,6 +49,7 @@ namespace EnergyHost.Services.Services
         public double SelfConsumption { get; set; }
         public double Purchased { get; set; }
         public double Consumption { get; set; }
+        public AmberUsage AmberUsage { get; set; }
 
         public DataLoggerService(ILogService logService,
             IDaikinService daikinService,
@@ -87,6 +89,7 @@ namespace EnergyHost.Services.Services
             _deviceUpdate10s();
 
             _fiveMinuteEvenPoller();
+            _hourEvenPoller();
 
             await _mqttService.Setup();
 
@@ -198,6 +201,46 @@ namespace EnergyHost.Services.Services
 
         }
 
+        public async Task _writeAmberUsage()
+        {
+            while (AmberUsage == null)
+            {
+                await Task.Delay(5000);
+            }
+
+            var usage = new List<DailyUsage>();
+            usage.AddRange(AmberUsage.data.lastMonthDailyUsage);
+            usage.AddRange(AmberUsage.data.lastWeekDailyUsage);
+            usage.AddRange(AmberUsage.data.thisWeekDailyUsage);
+
+            await _writeUsage(usage);
+
+
+            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.FromGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.ToGrid.date);
+
+            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastWeekUsage, null, AmberUsage.data.lastWeekUsage.FromGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastWeekUsage, null, AmberUsage.data.lastWeekUsage.ToGrid.date);
+
+            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.thisWeekUsage, null, AmberUsage.data.thisWeekUsage.FromGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.thisWeekUsage, null, AmberUsage.data.thisWeekUsage.ToGrid.date);
+        }
+
+       
+
+        public async Task _writeUsage(List<DailyUsage> usage)
+        {
+            foreach (var u in usage)
+            {
+                u.date = u.date.ToUniversalTime();
+                var meterSuffix = u.meterSuffix == "B1" ? "ToGrid" : "FromGrid";
+                
+                await _influxService.WriteObject("house", $"amberDailyUsage{meterSuffix}", u, null, u.date);
+                
+            }
+           
+        }
+
         public async Task _writeFutures()
         {
             if (EnergyFutures == null)
@@ -210,6 +253,26 @@ namespace EnergyHost.Services.Services
                 //var utcNow = DateTime.UtcNow;
                 var t = i.IsForecast ? i.Period.ToUniversalTime() : DateTime.Now.ToUniversalTime();
                 await _influxService.WriteObject("house", "energyFutures", i, null, t);
+            }
+        }
+
+        async void _hourEvenPoller()
+        {
+            while (true)
+            {
+                AmberUsage = await _amberService.GetUsage();
+                await _writeAmberUsage();
+
+                while (true)
+                {
+                    if (DateTime.Now.Minute == 0)
+                    {
+                        break;
+                    }
+                    await Task.Delay(TimeSpan.FromSeconds(30));
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(130));
             }
         }
 

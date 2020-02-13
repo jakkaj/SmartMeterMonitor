@@ -43,9 +43,12 @@ namespace EnergyHost.Services.Services
 
         ILineProtocolClient _getLineProtocolClient(string db)
         {
-            if (!_lineProtocolClients.ContainsKey(db))
+            lock (_lineProtocolClients)
             {
-                _lineProtocolClients.Add(db, new LineProtocolClient(new Uri(InfluxServerUrl), db));
+                if (!_lineProtocolClients.ContainsKey(db))
+                {
+                    _lineProtocolClients.Add(db, new LineProtocolClient(new Uri(InfluxServerUrl), db));
+                }
             }
 
             return _lineProtocolClients[db];

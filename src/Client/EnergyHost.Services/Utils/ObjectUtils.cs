@@ -40,5 +40,19 @@ namespace EnergyHost.Services.Utils
             return String.Join("&", properties.ToArray());
         }
 
+        public static List<T> ToList<T>(this T listItem)
+        {
+            return new List<T>(){ listItem };
+        }
+
+        
+        public static DateTime StartOfWeek(this DateTime dt)
+        {
+            int diff = (7 + (dt.DayOfWeek - DayOfWeek.Monday)) % 7;
+            return dt.AddDays(-1 * diff).Date;
+        }
+        
+
+
     }
 }
