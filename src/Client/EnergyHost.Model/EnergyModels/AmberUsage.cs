@@ -15,6 +15,7 @@ namespace EnergyHost.Model.EnergyModels
         public double usedPriceSpikesInCertainPeriod { get; set; }
         public double lessThanAveragePrice { get; set; }
         public DateTime date { get; set; }
+        public double actualCost { get; set; }
     }
     
     public class Usage

@@ -152,12 +152,24 @@ namespace EnergyHost.Services.Services
                 //set the dates to the correct period
                 amberData.data.lastMonthUsage.FromGrid.date = amberData.data.lastMonthUsage.FromGrid.date.ToUniversalTime();
                 amberData.data.lastMonthUsage.ToGrid.date = amberData.data.lastMonthUsage.ToGrid.date.ToUniversalTime();
+                
+                amberData.data.lastMonthUsage.FromGrid.actualCost =
+                    amberData.data.lastMonthUsage.FromGrid.totalUsageCostInCertainPeriod +
+                    amberData.data.lastMonthUsage.ToGrid.totalUsageCostInCertainPeriod;
 
                 amberData.data.lastWeekUsage.ToGrid.date = now.StartOfWeek().AddDays(-7).ToUniversalTime();
                 amberData.data.lastWeekUsage.FromGrid.date = now.StartOfWeek().AddDays(-7).ToUniversalTime();
+                
+                amberData.data.lastWeekUsage.FromGrid.actualCost =
+                    amberData.data.lastWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
+                    amberData.data.lastWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
 
                 amberData.data.thisWeekUsage.ToGrid.date = now.StartOfWeek().ToUniversalTime();
                 amberData.data.thisWeekUsage.FromGrid.date = now.StartOfWeek().ToUniversalTime();
+                
+                amberData.data.thisWeekUsage.FromGrid.actualCost =
+                    amberData.data.thisWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
+                    amberData.data.thisWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
 
 
                 return amberData;

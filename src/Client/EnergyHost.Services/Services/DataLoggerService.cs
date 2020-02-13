@@ -140,7 +140,10 @@ namespace EnergyHost.Services.Services
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut },
                     { "NextPriceIn", NextPriceIn },
-                    {"NextPriceOut", NextPriceOut },
+                    { "NextPriceOut", NextPriceOut },
+                    { "MonthTotalCost", AmberUsage?.data.lastMonthUsage.FromGrid.actualCost ?? 0 },
+                    { "LastWeekTotalCost", AmberUsage?.data.lastWeekUsage.FromGrid.actualCost ?? 0},
+                    { "WeekTotalCost", AmberUsage?.data.thisWeekUsage.FromGrid.actualCost ?? 0}
 
                 };
 
@@ -216,7 +219,7 @@ namespace EnergyHost.Services.Services
             await _writeUsage(usage);
 
 
-            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.FromGrid.date);
+            await _influxService.WriteObject("house", "amberUsageFromGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.FromGrid.date);
             await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.ToGrid.date);
 
             await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastWeekUsage, null, AmberUsage.data.lastWeekUsage.FromGrid.date);
@@ -226,7 +229,7 @@ namespace EnergyHost.Services.Services
             await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.thisWeekUsage, null, AmberUsage.data.thisWeekUsage.ToGrid.date);
         }
 
-       
+
 
         public async Task _writeUsage(List<DailyUsage> usage)
         {
@@ -234,11 +237,11 @@ namespace EnergyHost.Services.Services
             {
                 u.date = u.date.ToUniversalTime();
                 var meterSuffix = u.meterSuffix == "B1" ? "ToGrid" : "FromGrid";
-                
+
                 await _influxService.WriteObject("house", $"amberDailyUsage{meterSuffix}", u, null, u.date);
-                
+
             }
-           
+
         }
 
         public async Task _writeFutures()
@@ -315,7 +318,7 @@ namespace EnergyHost.Services.Services
                         break;
                     }
                     await Task.Delay(TimeSpan.FromSeconds(.5));
-                }               
+                }
 
                 await Task.Delay(TimeSpan.FromSeconds(130));
 
@@ -417,11 +420,11 @@ namespace EnergyHost.Services.Services
                 CurrentWeather = await tDsStatus;
 
                 //_logService.WriteLog($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
-                
+
                 await Task.Delay(TimeSpan.FromMinutes(5));
             }
 
-            
+
 
 
         }
