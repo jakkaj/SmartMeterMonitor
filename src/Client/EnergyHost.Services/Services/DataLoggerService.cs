@@ -82,7 +82,7 @@ namespace EnergyHost.Services.Services
         {
             _deviceUpdates1Mins();
 
-            _deviceUpdates5Mins();
+            _deviceUpdates10Mins();
 
             //_abbPoller();
 
@@ -412,7 +412,7 @@ namespace EnergyHost.Services.Services
             }
         }
 
-        async void _deviceUpdates5Mins()
+        async void _deviceUpdates10Mins()
         {
             var lastSolar = DateTime.Now;
 
@@ -427,7 +427,7 @@ namespace EnergyHost.Services.Services
 
                 //_logService.WriteLog($"[{DateTime.Now.ToString()}] Current outside temp: {CurrentWeather.temp}");
 
-                await Task.Delay(TimeSpan.FromMinutes(5));
+                await Task.Delay(TimeSpan.FromMinutes(10));
             }
 
 
