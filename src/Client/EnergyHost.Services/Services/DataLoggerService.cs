@@ -80,7 +80,7 @@ namespace EnergyHost.Services.Services
 
         public async Task Start()
         {
-            _deviceUpdates1Mins();
+            _daikinUpdate();
 
             _deviceUpdates10Mins();
 
@@ -437,7 +437,7 @@ namespace EnergyHost.Services.Services
         /// <summary>
         /// Periodically refresh device status 
         /// </summary>
-        async void _deviceUpdates1Mins()
+        async void _daikinUpdate ()
         {
 
             var lastDaikinSensors = DateTime.Now;
@@ -491,7 +491,7 @@ namespace EnergyHost.Services.Services
 
                 _logService.WriteLog($"[{DateTime.Now.ToString()}] inside temp: {DaikinInsideTemperature}, inside set: {DaikinSetTemperature}, power: {DaikinPoweredOn}, mode: {DaikinMode}");
 
-                await Task.Delay(TimeSpan.FromSeconds(60));
+                await Task.Delay(TimeSpan.FromMinutes(5));
             }
         }
     }
