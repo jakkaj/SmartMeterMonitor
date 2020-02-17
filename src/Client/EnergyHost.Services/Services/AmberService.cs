@@ -167,13 +167,16 @@ namespace EnergyHost.Services.Services
                     amberData.data.lastWeekUsage.FromGrid.actualCost =
                         amberData.data.lastWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
                         amberData.data.lastWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
+                    
+                    if (amberData.data.thisWeekUsage.ToGrid != null)
+                    {
+                        amberData.data.thisWeekUsage.ToGrid.date = now.StartOfWeek().ToUniversalTime();
+                        amberData.data.thisWeekUsage.FromGrid.date = now.StartOfWeek().ToUniversalTime();
 
-                    amberData.data.thisWeekUsage.ToGrid.date = now.StartOfWeek().ToUniversalTime();
-                    amberData.data.thisWeekUsage.FromGrid.date = now.StartOfWeek().ToUniversalTime();
-
-                    amberData.data.thisWeekUsage.FromGrid.actualCost =
-                        amberData.data.thisWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
-                        amberData.data.thisWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
+                        amberData.data.thisWeekUsage.FromGrid.actualCost =
+                            amberData.data.thisWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
+                            amberData.data.thisWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
+                    }
 
                     _logService.WriteLog("Amber data collected");
                 }
