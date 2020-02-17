@@ -270,7 +270,10 @@ namespace EnergyHost.Services.Services
             while (true)
             {
                 AmberUsage = await _amberService.GetUsage();
-                await _writeAmberUsage();
+                if(AmberUsage!=null){
+                    await _writeAmberUsage();
+                }
+                
 
                 while (true)
                 {
@@ -278,7 +281,7 @@ namespace EnergyHost.Services.Services
                     {
                         break;
                     }
-                    await Task.Delay(TimeSpan.FromSeconds(30));
+                    await Task.Delay(TimeSpan.FromSeconds(10));
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(130));

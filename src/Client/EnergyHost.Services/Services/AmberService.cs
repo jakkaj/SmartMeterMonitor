@@ -27,7 +27,7 @@ namespace EnergyHost.Services.Services
 
         private string _amberUrl;
         private string _amberLoginUrl;
-        private string _amberUsageUrl ;
+        private string _amberUsageUrl;
         private string _amberUserName;
         private string _amberPassword;
 
@@ -40,7 +40,7 @@ namespace EnergyHost.Services.Services
             _amberUsageUrl = _settings.Value.AMBER_USAGE_URL;
             _amberPassword = _settings.Value.AMBER_PASSWORD;
             _amberUserName = _settings.Value.AMBER_USERNAME;
-            
+
         }
         public double _inPrice(AmberData data, VariablePricesAndRenewable variables)
         {
@@ -145,40 +145,49 @@ namespace EnergyHost.Services.Services
                 });
 
                 var now = DateTime.Today.ToUniversalTime();
-
-                _calculateRealCosts(amberData.data.lastMonthDailyUsage);
-                _calculateRealCosts(amberData.data.lastWeekDailyUsage);
-                _calculateRealCosts(amberData.data.thisWeekDailyUsage);
-
-                //set the dates to the correct period
-                amberData.data.lastMonthUsage.FromGrid.date = amberData.data.lastMonthUsage.FromGrid.date.ToUniversalTime();
-                amberData.data.lastMonthUsage.ToGrid.date = amberData.data.lastMonthUsage.ToGrid.date.ToUniversalTime();
-                
-                amberData.data.lastMonthUsage.FromGrid.actualCost =
-                    amberData.data.lastMonthUsage.FromGrid.totalUsageCostInCertainPeriod +
-                    amberData.data.lastMonthUsage.ToGrid.totalUsageCostInCertainPeriod;
-
-                amberData.data.lastWeekUsage.ToGrid.date = now.StartOfWeek().AddDays(-7).ToUniversalTime();
-                amberData.data.lastWeekUsage.FromGrid.date = now.StartOfWeek().AddDays(-7).ToUniversalTime();
-                
-                amberData.data.lastWeekUsage.FromGrid.actualCost =
-                    amberData.data.lastWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
-                    amberData.data.lastWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
-
-                amberData.data.thisWeekUsage.ToGrid.date = now.StartOfWeek().ToUniversalTime();
-                amberData.data.thisWeekUsage.FromGrid.date = now.StartOfWeek().ToUniversalTime();
-                
-                amberData.data.thisWeekUsage.FromGrid.actualCost =
-                    amberData.data.thisWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
-                    amberData.data.thisWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
+                try
+                {
 
 
+                    _calculateRealCosts(amberData.data.lastMonthDailyUsage);
+                    _calculateRealCosts(amberData.data.lastWeekDailyUsage);
+                    _calculateRealCosts(amberData.data.thisWeekDailyUsage);
+
+                    //set the dates to the correct period
+                    amberData.data.lastMonthUsage.FromGrid.date = amberData.data.lastMonthUsage.FromGrid.date.ToUniversalTime();
+                    amberData.data.lastMonthUsage.ToGrid.date = amberData.data.lastMonthUsage.ToGrid.date.ToUniversalTime();
+
+                    amberData.data.lastMonthUsage.FromGrid.actualCost =
+                        amberData.data.lastMonthUsage.FromGrid.totalUsageCostInCertainPeriod +
+                        amberData.data.lastMonthUsage.ToGrid.totalUsageCostInCertainPeriod;
+
+                    amberData.data.lastWeekUsage.ToGrid.date = now.StartOfWeek().AddDays(-7).ToUniversalTime();
+                    amberData.data.lastWeekUsage.FromGrid.date = now.StartOfWeek().AddDays(-7).ToUniversalTime();
+
+                    amberData.data.lastWeekUsage.FromGrid.actualCost =
+                        amberData.data.lastWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
+                        amberData.data.lastWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
+
+                    amberData.data.thisWeekUsage.ToGrid.date = now.StartOfWeek().ToUniversalTime();
+                    amberData.data.thisWeekUsage.FromGrid.date = now.StartOfWeek().ToUniversalTime();
+
+                    amberData.data.thisWeekUsage.FromGrid.actualCost =
+                        amberData.data.thisWeekUsage.FromGrid.totalUsageCostInCertainPeriod +
+                        amberData.data.thisWeekUsage.ToGrid.totalUsageCostInCertainPeriod;
+
+                    _logService.WriteLog("Amber data collected");
+                }
+                catch (Exception ex)
+                {
+                    _logService.WriteError(ex);
+                    return null;
+                }
                 return amberData;
             }
 
-           
 
-            
+
+
         }
 
         public void _calculateRealCosts(List<DailyUsage> costs)
@@ -206,7 +215,7 @@ namespace EnergyHost.Services.Services
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-               
+
 
                 var result = await client.PostAsync(new Uri(_amberLoginUrl), new StringContent(data, Encoding.UTF8, "application/json"));
 
