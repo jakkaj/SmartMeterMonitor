@@ -225,14 +225,22 @@ namespace EnergyHost.Services.Services
             await _writeUsage(usage);
 
 
-            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.FromGrid.date);
-            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastMonthUsage, null, AmberUsage.data.lastMonthUsage.ToGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastMonthUsage, null,
+                AmberUsage.data.lastMonthUsage.FromGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastMonthUsage, null,
+                AmberUsage.data.lastMonthUsage.ToGrid.date);
 
-            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastWeekUsage, null, AmberUsage.data.lastWeekUsage.FromGrid.date);
-            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastWeekUsage, null, AmberUsage.data.lastWeekUsage.ToGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastWeekUsage, null,
+                AmberUsage.data.lastWeekUsage.FromGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastWeekUsage, null,
+                AmberUsage.data.lastWeekUsage.ToGrid.date);
 
-            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.thisWeekUsage, null, AmberUsage.data.thisWeekUsage.FromGrid.date);
-            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.thisWeekUsage, null, AmberUsage.data.thisWeekUsage.ToGrid.date);
+            if (AmberUsage.data.thisWeekUsage.ToGrid != null) { 
+                await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.thisWeekUsage,
+                    null, AmberUsage.data.thisWeekUsage.FromGrid.date);
+            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.thisWeekUsage, null,
+                AmberUsage.data.thisWeekUsage.ToGrid.date);
+            }
         }
 
 
