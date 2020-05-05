@@ -40,6 +40,11 @@ namespace EnergyHost.Services.Services
             var amberData = await _amberService.Get(_options.Value.PostCode);
             var darkData = await _darkSkyService.Get();
 
+            if (darkData == null)
+            {
+                return null;
+            }
+
             var sunrise = darkData.Daily.Data[0].SunriseDateTime.Value.DateTime.AddHours(0);
             var sunset = darkData.Daily.Data[0].SunsetDateTime.Value.DateTime.AddHours(0);
 
