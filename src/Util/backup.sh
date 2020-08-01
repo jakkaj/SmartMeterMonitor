@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#cron 0 0 */2 * * /home/jordan/GitHub/SmartMeterMonitor3/src/Util/backup.sh > /home/jordan/cron.log 2>&1
 
 . /home/jordan/.bashrc
 container=$(docker ps | grep "influxdb" | awk '{ print $1 }')
