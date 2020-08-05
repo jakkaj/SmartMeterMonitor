@@ -1,6 +1,6 @@
 #!/bin/bash
 
-//docker build -t jakkaj/smartmetermqttclient ../src/Client
+#docker build -t jakkaj/smartmetermqttclient ../src/Client
 
 set -o allexport
 source .env
