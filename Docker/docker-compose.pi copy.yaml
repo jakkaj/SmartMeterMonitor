@@ -1,14 +1,5 @@
-version: '3'
+version: '2'
 services:
-  modbus:
-    volumes:
-      - /etc/localtime:/etc/localtime
-    restart: always
-    build: 
-      context: ../src/Modbus
-      dockerfile: Dockerfile    
-    ports:
-    - 5060:5000
   mqttserver:
     image: "eclipse-mosquitto"
     restart: always
@@ -26,8 +17,7 @@ services:
     ports:
     - "8086:8086"
     volumes:
-    - /data/influx2:/var/lib/influxdb 
-    restart: always
+    - /data/smart/influx2:/var/lib/influxdb 
   grafana:
     image: "grafana/grafana"
     environment: 
@@ -37,8 +27,7 @@ services:
     depends_on: 
     - influxdb
     volumes:
-    - /data/grafana:/var/lib/grafana 
-    restart: always
+    - /data/smart/grafana:/var/lib/grafana 
   mqttclient:
     build: 
       context: ../src/Client
@@ -51,4 +40,3 @@ services:
     depends_on: 
     - mqttserver
     - influxdb
-    
