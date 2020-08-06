@@ -398,7 +398,7 @@ namespace EnergyHost.Services.Services
                 if (abbModbus != null)
                 {
 
-                    if (-abbModbus?.meter.W != null && -abbModbus.meter.W != 0)
+                    if (-abbModbus?.meter?.W != null && -abbModbus.meter.W != 0)
                     {
                         EnergyUsage = -abbModbus.meter.W / 1000;
                     }
