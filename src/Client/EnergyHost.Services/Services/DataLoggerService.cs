@@ -395,26 +395,29 @@ namespace EnergyHost.Services.Services
 
                 if (abbModbus != null)
                 {
+                    try{                    
+                        EnergyUsage = -abbModbus.meter.W / 1000;
+                        SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
+                        if (abbModbus?.energyDetails != null)
+                        {
+                            SolarToday = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Production").values[0].value) / 1000;
+                            Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value) / 1000;
+                            Purchased = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Purchased").values[0].value) / 1000;
+                            SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value) / 1000;
+                            FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value) / 1000;
 
-                    EnergyUsage = -abbModbus.meter.W / 1000;
-                    SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
-                    if (abbModbus?.energyDetails != null)
-                    {
-                        SolarToday = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Production").values[0].value) / 1000;
-                        Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value) / 1000;
-                        Purchased = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Purchased").values[0].value) / 1000;
-                        SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value) / 1000;
-                        FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value) / 1000;
+                        }
 
-                    }
-
-                    if (abbModbus.PhVphA != null)
-                    {
-                        SystemVoltage = (double)abbModbus.PhVphA;
-                    }
-                    else
-                    {
-                        SystemVoltage = 0;
+                        if (abbModbus.PhVphA != null)
+                        {
+                            SystemVoltage = (double)abbModbus.PhVphA;
+                        }
+                        else
+                        {
+                            SystemVoltage = 0;
+                        }
+                    }catch(Exception ex){
+                        _logService.WriteError("Modbus problem: " + ex.ToString());
                     }
 
                 }
