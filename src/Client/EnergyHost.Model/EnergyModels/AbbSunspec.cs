@@ -25,6 +25,40 @@ namespace EnergyHost.Model.EnergyModels
 
     }
 
+    public class LOAD
+    {
+        public string status { get; set; }
+        public double currentPower { get; set; }
+    }
+
+    public class PV
+    {
+        public string status { get; set; }
+        public double currentPower { get; set; }
+    }
+
+    public class Connection
+    {
+        public string to { get; set; }
+        public string from { get; set; }
+    }
+
+    public class GRID
+    {
+        public string status { get; set; }
+        public double currentPower { get; set; }
+    }
+
+    public class SiteCurrentPowerFlow
+    {
+        public LOAD LOAD { get; set; }
+        public PV PV { get; set; }
+        public List<Connection> connections { get; set; }
+        public GRID GRID { get; set; }
+        public int updateRefreshRate { get; set; }
+        public string unit { get; set; }
+    }
+
     public class SolarEdgeMeter
     {
 
@@ -95,6 +129,7 @@ namespace EnergyHost.Model.EnergyModels
 
     public class SolarEdgeSunSpec
     {
+        public SiteCurrentPowerFlow siteCurrentPowerFlow { get; set; }
         public SolarEdgeAPIEnergy energyDetails { get; set; }
         public SolarEdgeMeter meter { get; set; }
         public object PhVphA { get; set; }

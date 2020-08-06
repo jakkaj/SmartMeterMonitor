@@ -235,11 +235,12 @@ namespace EnergyHost.Services.Services
             await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastWeekUsage, null,
                 AmberUsage.data.lastWeekUsage.ToGrid.date);
 
-            if (AmberUsage.data.thisWeekUsage.ToGrid != null) { 
+            if (AmberUsage.data.thisWeekUsage.ToGrid != null)
+            {
                 await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.thisWeekUsage,
                     null, AmberUsage.data.thisWeekUsage.FromGrid.date);
-            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.thisWeekUsage, null,
-                AmberUsage.data.thisWeekUsage.ToGrid.date);
+                await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.thisWeekUsage, null,
+                    AmberUsage.data.thisWeekUsage.ToGrid.date);
             }
         }
 
@@ -278,10 +279,11 @@ namespace EnergyHost.Services.Services
             while (true)
             {
                 AmberUsage = await _amberService.GetUsage();
-                if(AmberUsage!=null){
+                if (AmberUsage != null)
+                {
                     await _writeAmberUsage();
                 }
-                
+
 
                 while (true)
                 {
@@ -395,30 +397,44 @@ namespace EnergyHost.Services.Services
 
                 if (abbModbus != null)
                 {
-                    try{                    
+
+                    if (-abbModbus?.meter.W != null && -abbModbus.meter.W != 0)
+                    {
                         EnergyUsage = -abbModbus.meter.W / 1000;
-                        SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
-                        if (abbModbus?.energyDetails != null)
-                        {
-                            SolarToday = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Production").values[0].value) / 1000;
-                            Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value) / 1000;
-                            Purchased = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Purchased").values[0].value) / 1000;
-                            SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value) / 1000;
-                            FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value) / 1000;
-
-                        }
-
-                        if (abbModbus.PhVphA != null)
-                        {
-                            SystemVoltage = (double)abbModbus.PhVphA;
-                        }
-                        else
-                        {
-                            SystemVoltage = 0;
-                        }
-                    }catch(Exception ex){
-                        _logService.WriteError("Modbus problem: " + ex.ToString());
                     }
+                    else
+                    {
+                        EnergyUsage = abbModbus.siteCurrentPowerFlow.GRID.currentPower;
+                    }
+
+                    if (abbModbus.W != 0)
+                    {
+                        SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
+                    }
+                    else
+                    {
+                        SolarOutput = 0;
+                    }
+
+                    if (abbModbus?.energyDetails != null)
+                    {
+                        SolarToday = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Production").values[0].value) / 1000;
+                        Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value) / 1000;
+                        Purchased = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Purchased").values[0].value) / 1000;
+                        SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value) / 1000;
+                        FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value) / 1000;
+
+                    }
+
+                    if (abbModbus.PhVphA != null)
+                    {
+                        SystemVoltage = (double)abbModbus.PhVphA;
+                    }
+                    else
+                    {
+                        SystemVoltage = 0;
+                    }
+
 
                 }
 
@@ -451,7 +467,7 @@ namespace EnergyHost.Services.Services
         /// <summary>
         /// Periodically refresh device status 
         /// </summary>
-        async void _daikinUpdate ()
+        async void _daikinUpdate()
         {
 
             var lastDaikinSensors = DateTime.Now;
