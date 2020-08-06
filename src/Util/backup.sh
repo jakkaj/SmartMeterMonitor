@@ -11,4 +11,4 @@ command="influxd backup -portable -host 127.0.0.1:8088 ./var/lib/influxdb/$date"
 zip -r /home/pi/backup/influx/$date.zip $dir
 rclone copy /home/pi/backup/influx/$date.zip onedrive:backup/house
 rm /home/pi/backup/influx/$date.zip
-rm -r $dir
+rm -r $dir  

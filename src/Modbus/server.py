@@ -35,12 +35,7 @@ def inverter():
     site_id = SOLAREDGE_SITE_ID
     ip = request.args.get('ip')
     
-    d = client.SunSpecClientDevice(client.TCP, 1,  ipaddr=ip, ipport=1502)
     
-    time.sleep(0.5)
-    d.inverter.read()
-    d.ac_meter.read()
-    d.close()    
 
     if(time.time() - date_since > 900 or se_energy is None):
         date_since = time.time()
@@ -50,33 +45,44 @@ def inverter():
             print("SolarEdge API successful")
         except Exception as ex:
             print("Could not access SolarEdge API: "+ str(ex))
-
     
-
     dict = {}
-    for (key, value) in d.inverter.model.__dict__.items():
-        #print(key)
-        if(key == "points"):
-            
-            for(k, v) in value.items():
-                #print(k)
-                #print(v.value_base)
-                dict[k] = d.inverter[k]
-            
-        #print(str(value))
-    dictac = {}
-    for (key, value) in d.ac_meter.model.__dict__.items():
-        #print(key)
-        if(key == "points"):
-            
-            for(k, v) in value.items():
-                #print(k)
-                #print(v.value_base)
-                dictac[k] = d.ac_meter[k]
-            
-        #print(str(value))
+
+    try:
+        d = client.SunSpecClientDevice(client.TCP, 1,  ipaddr=ip, ipport=1502)
         
-    dict["meter"] = dictac
+        time.sleep(0.5)
+        d.inverter.read()
+        d.ac_meter.read()
+        d.close()    
+
+        
+        for (key, value) in d.inverter.model.__dict__.items():
+            #print(key)
+            if(key == "points"):
+                
+                for(k, v) in value.items():
+                    #print(k)
+                    #print(v.value_base)
+                    dict[k] = d.inverter[k]
+                
+            #print(str(value))
+        dictac = {}
+        for (key, value) in d.ac_meter.model.__dict__.items():
+            #print(key)
+            if(key == "points"):
+                
+                for(k, v) in value.items():
+                    #print(k)
+                    #print(v.value_base)
+                    dictac[k] = d.ac_meter[k]
+                
+            #print(str(value))
+            
+        dict["meter"] = dictac
+    except Exception as ex:
+            print("Could not access modbus: "+ str(ex))
+    
     if not se_energy is None:
         dict.update(se_energy)
 
