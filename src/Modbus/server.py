@@ -21,13 +21,16 @@ load_dotenv()
 
 
 date_since = time.time()
+
 se_energy = None
+
 se_currentPower = None
 
 @app.route('/inverter')
 def inverter():   
     global date_since
     global se_energy
+    global se_currentPower
     SOLAREDGE_API_KEY = os.getenv("SOLAREDGE_API_KEY")
     SOLAREDGE_SITE_ID = os.getenv("SOLAREDGE_SITE_ID")
 
@@ -38,7 +41,7 @@ def inverter():
     
     
 
-    if(time.time() - date_since > 900 or se_energy is None):
+    if(time.time() - date_since > 900 or se_energy is None or se_currentPower is None):
         date_since = time.time()
         try:
             se_energy = se.get_energyDetails(site_id, datetime.today().strftime("%Y-%m-%d 00:00:00"), (datetime.today()).strftime("%Y-%m-%d 23:59:59"))
