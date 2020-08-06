@@ -22,6 +22,7 @@ load_dotenv()
 
 date_since = time.time()
 se_energy = None
+se_currentPower = None
 
 @app.route('/inverter')
 def inverter():   
@@ -41,7 +42,7 @@ def inverter():
         date_since = time.time()
         try:
             se_energy = se.get_energyDetails(site_id, datetime.today().strftime("%Y-%m-%d 00:00:00"), (datetime.today()).strftime("%Y-%m-%d 23:59:59"))
-            
+            se_currentPower = se.get_currentPowerFlow(site_id)
             print("SolarEdge API successful")
         except Exception as ex:
             print("Could not access SolarEdge API: "+ str(ex))
@@ -85,6 +86,8 @@ def inverter():
     
     if not se_energy is None:
         dict.update(se_energy)
+    if not se_currentPower is None:
+        dict.update(se_currentPower)
 
     dumped = json.dumps(dict)
     #print(dumped)
