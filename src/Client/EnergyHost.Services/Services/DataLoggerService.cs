@@ -136,7 +136,7 @@ namespace EnergyHost.Services.Services
                     { "FeedIn", FeedIn },
                     { "Consumption", Consumption },
                     { "SystemVoltage", SystemVoltage },
-                    { "SolarHistory", EnergyFutures?.Futures[0].SolarHistory },
+                    { "SolarHistory", EnergyFutures?.Futures[0].SolarHistory != null ? EnergyFutures?.Futures[0].SolarHistory : 0},
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut },
                     { "NextPriceIn", NextPriceIn },

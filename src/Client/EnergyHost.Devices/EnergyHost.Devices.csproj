@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DarkSkyCore" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EnergyHost.Contract\EnergyHost.Contract.csproj" />
     <ProjectReference Include="..\EnergyHost.Model\EnergyHost.Model.csproj" />
   </ItemGroup>

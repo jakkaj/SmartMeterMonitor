@@ -51,8 +51,7 @@ namespace EnergyHost.Services.Services
         {
             var weather = new DarkSky.Services.DarkSkyService(_settings.Value.DARK_SKY_API_KEY);
 
-            var forecast = await weather.GetForecast(_settings.Value.Latitude, _settings.Value.Longitude, new DarkSky.Services.DarkSkyService.OptionalParameters
-            {
+            var forecast = await weather.GetForecast(_settings.Value.Latitude, _settings.Value.Longitude, new OptionalParameters {
                 MeasurementUnits = "si",
             });
             
