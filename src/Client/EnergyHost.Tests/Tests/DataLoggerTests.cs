@@ -19,7 +19,8 @@ namespace EnergyHost.Tests.Tests
         //    //    await Task.Delay(TimeSpan.FromSeconds(1));
         //    //}
         //}
-        [TestMethod]
+
+        //[TestMethod]
         public async Task TestLoggerPolling()
         {
             var ser = Resolve<IDataLoggerService>();

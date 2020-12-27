@@ -28,5 +28,11 @@ namespace EnergyHost.Model.Settings
         public string ALEXA_NOTIFICATION_KEY { get; set; } //https://www.thomptronics.com/about/notify-me
         public string PUSHOVER_USER { get; set; } //https://pushover.net/api
         public string PUSHOVER_TOKEN { get; set; }
+
+        public string NETATMO_CLIENT_ID { get; set; }
+        public string NETATMO_CLIENT_SECRET { get; set; }
+        public string NETATMO_USER_NAME { get; set; }
+        public string NETATMO_PASSWORD { get; set; }
+        public string NETATMO_DEVICE_ID { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using EnergyHost.Services.Services;
 using EnergyHost.Services.Services.AlertServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using INetatmoService = EnergyHost.Services.Contract.INetatmoService;
 
 namespace EnergyHost.Services.ServiceSetup
 {
@@ -33,6 +34,8 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddSingleton<ITimeAlertService, TimeAlertService>();
             services.AddSingleton<IThresholdingService, ThresholdingService>();
             services.AddSingleton<INotificationService, NotificationService>();
+            services.AddSingleton<INetatmoService, NetatmoService>();
+            
 
             services.AddHttpClient();
 

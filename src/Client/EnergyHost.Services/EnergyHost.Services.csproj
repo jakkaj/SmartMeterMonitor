@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EnergyHost.Contract\EnergyHost.Contract.csproj" />
     <ProjectReference Include="..\EnergyHost.Model\EnergyHost.Model.csproj" />
+    <ProjectReference Include="..\NetatmoCore\NetatmoCore\NetatmoCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

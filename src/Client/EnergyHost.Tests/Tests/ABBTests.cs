@@ -19,17 +19,17 @@ namespace EnergyHost.Tests.Tests
             var model = await service.GetModbus();
             Assert.IsNotNull(model);
         }
-        [TestMethod]
-        public async Task TestABBGetData()
-        {
-            var service = Resolve<ISunSpecService>();
+        //[TestMethod]
+        //public async Task TestABBGetData()
+        //{
+        //    var service = Resolve<ISunSpecService>();
 
-            var result = await service.Get();
+        //    var result = await service.Get();
 
-            Assert.IsNotNull(result);
+        //    Assert.IsNotNull(result);
 
-            var pout = result.feeds.Feed.datastreams.m101_1_W.data[0].value;
-            Debug.WriteLine(pout);
-        }
+        //    var pout = result.feeds.Feed.datastreams.m101_1_W.data[0].value;
+        //    Debug.WriteLine(pout);
+        //}
     }
 }
