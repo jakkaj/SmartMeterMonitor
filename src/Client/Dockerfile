@@ -8,7 +8,7 @@ COPY ./EnergyHost.Contract/EnergyHost.Contract.csproj ./EnergyHost.Contract/
 COPY ./EnergyHost.Model/EnergyHost.Model.csproj ./EnergyHost.Model/
 COPY ./EnergyHost.Services/EnergyHost.Services.csproj ./EnergyHost.Services/
 COPY ./EnergyHost.Tests/EnergyHost.Tests.csproj ./EnergyHost.Tests/
-COPY ./NetatmoCore/NetatmoCore/NetatmoCore.csproj ./NetatmoCore/NetatmoCore
+COPY ./NetatmoCore/NetatmoCore/NetatmoCore.csproj ./NetatmoCore/NetatmoCore/
 
 RUN dotnet restore ./EnergyHost.App/
 
