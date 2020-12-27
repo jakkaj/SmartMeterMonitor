@@ -20,7 +20,7 @@ namespace EnergyHost.Tests.Tests
         //    //}
         //}
 
-        //[TestMethod]
+        [TestMethod]
         public async Task TestLoggerPolling()
         {
             var ser = Resolve<IDataLoggerService>();

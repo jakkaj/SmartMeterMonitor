@@ -27,38 +27,47 @@ namespace EnergyHost.Services.Services
 
         public async Task<NetatmoData> Get()
         {
-            var auth = new NetatmoAuth();
-            var token = auth.Login(
-                _settings.Value.NETATMO_CLIENT_ID, 
-                _settings.Value.NETATMO_CLIENT_SECRET, 
-                _settings.Value.NETATMO_USER_NAME, 
-                _settings.Value.NETATMO_PASSWORD, 
-                new[] { NetatmoAuth.READ_STATION });
-            var netatmo = new NetAtmoClient(token.access_token);
-
-            var result = await netatmo.Getthermostatsdata(_settings.Value.NETATMO_DEVICE_ID);
-
-            var indoorData = result.Body.Devices[0].DashboardData;
-            var outdoorData = result.Body.Devices[0].Modules[0].DashboardData;
-            var windData = result.Body.Devices[0].Modules[1].DashboardData;
-            var rainData = result.Body.Devices[0].Modules[2].DashboardData;
-
-            var netatmoData = new NetatmoData
+            try
             {
-                IndoorTemp = indoorData.Temperature,
-                OutdoorTemp = outdoorData.Temperature,
-                AbsPressure = indoorData.AbsolutePressure,
-                Pressure = indoorData.Pressure,
-                CO2 = indoorData.CO2,
-                IndoorHumidity = indoorData.Humidity,
-                OutdoorHumidity = outdoorData.Humidity,
-                Noise = indoorData.Noise,
-                Rain = rainData.Rain,
-                WindAngle = windData.WindAngle,
-                WindStrength = windData.WindStrength
-            };
+                var auth = new NetatmoAuth();
+                var token = auth.Login(
+                    _settings.Value.NETATMO_CLIENT_ID,
+                    _settings.Value.NETATMO_CLIENT_SECRET,
+                    _settings.Value.NETATMO_USER_NAME,
+                    _settings.Value.NETATMO_PASSWORD,
+                    new[] {NetatmoAuth.READ_STATION});
+                var netatmo = new NetAtmoClient(token.access_token);
 
-            return netatmoData;
+                var result = await netatmo.Getthermostatsdata(_settings.Value.NETATMO_DEVICE_ID);
+
+                var indoorData = result.Body.Devices[0].DashboardData;
+                var outdoorData = result.Body.Devices[0].Modules[0].DashboardData;
+                var windData = result.Body.Devices[0].Modules[1].DashboardData;
+                var rainData = result.Body.Devices[0].Modules[2].DashboardData;
+
+                var netatmoData = new NetatmoData
+                {
+                    IndoorTemp = indoorData.Temperature,
+                    OutdoorTemp = outdoorData.Temperature,
+                    AbsPressure = indoorData.AbsolutePressure,
+                    Pressure = indoorData.Pressure,
+                    CO2 = indoorData.CO2,
+                    IndoorHumidity = indoorData.Humidity,
+                    OutdoorHumidity = outdoorData.Humidity,
+                    Noise = indoorData.Noise,
+                    Rain = rainData.Rain,
+                    WindAngle = windData.WindAngle,
+                    WindStrength = windData.WindStrength
+                };
+
+                return netatmoData;
+            }
+            catch (Exception ex)
+            {
+                _logService.WriteLog(ex.ToString());
+            }
+
+            return null;
         }
     }
 }

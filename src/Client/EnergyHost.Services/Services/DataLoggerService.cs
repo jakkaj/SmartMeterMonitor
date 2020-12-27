@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
+using EnergyHost.Model.DataModels;
 using EnergyHost.Model.EnergyModels;
 using EnergyHost.Model.EnergyModels.Status;
+using EnergyHost.Services.Contract;
 using EnergyHost.Services.Utils;
 
 namespace EnergyHost.Services.Services
@@ -25,6 +27,7 @@ namespace EnergyHost.Services.Services
         private readonly ISystemStatusService _statusService;
         private readonly IThresholdingService _thresholdingService;
         private readonly INotificationService _notificationService;
+        private readonly INetatmoService _netatmoService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -41,6 +44,7 @@ namespace EnergyHost.Services.Services
         { get; set; }
 
         public EnergryFutures EnergyFutures { get; set; }
+        public NetatmoData NetatmoData { get; set; }
         public double CurrentPriceIn { get; set; }
         public double NextPriceIn { get; set; }
         public double CurrentPriceOut { get; set; }
@@ -61,7 +65,8 @@ namespace EnergyHost.Services.Services
             IMQTTService mqttService,
             ISystemStatusService statusService,
             IThresholdingService thresholdingService,
-            INotificationService notificationService
+            INotificationService notificationService,
+            INetatmoService netatmoService
             )
         {
             _logService = logService;
@@ -74,6 +79,7 @@ namespace EnergyHost.Services.Services
             _statusService = statusService;
             _thresholdingService = thresholdingService;
             _notificationService = notificationService;
+            _netatmoService = netatmoService;
             _daikinService = daikinService;
         }
 
@@ -113,12 +119,15 @@ namespace EnergyHost.Services.Services
                     { "kwh", EnergyUsage },
                     { "ctkwh", EnergyUsage},
                     { "powerTotal", EnergyUsage + SolarOutput},
-                    { "temp", CurrentWeather.temp},
-                    { "temp3", Convert.ToDouble(_mqttService.Values["temp1"])},
-                    { "humid3", Convert.ToDouble(_mqttService.Values["humid1"])},
-                    { "humidity", CurrentWeather.humid},
-                    { "pressure", CurrentWeather.pressure},
-                    { "windSpeed", CurrentWeather.wind},
+                    { "temp", NetatmoData?.IndoorTemp ?? 0},
+                    { "outdoorTemp", NetatmoData?.OutdoorTemp ?? 0 },
+                    { "humidity", NetatmoData?.OutdoorHumidity ?? 0},
+                    { "indoorHumidity", NetatmoData?.IndoorHumidity ?? 0},
+                    { "pressure", NetatmoData?.Pressure ?? 0},
+                    { "co2", NetatmoData?.CO2 ?? 0},
+                    { "rain", NetatmoData?.Rain ?? 0},
+                    { "noise", NetatmoData?.Noise ?? 0},
+                    { "windSpeed", NetatmoData?.WindStrength ?? 0},
                     { "cloudiness", CurrentWeather.cloudiness},
                     { "min", CurrentWeather.minToday},
                     { "max", CurrentWeather.maxToday},
@@ -305,8 +314,11 @@ namespace EnergyHost.Services.Services
             while (true)
             {
                 var tEnergyFutures = _energyFuturesService.Get();
-                await Task.WhenAll(tEnergyFutures);
+                var tNetatmoData = _netatmoService.Get();
+                await Task.WhenAll(tEnergyFutures, tNetatmoData);
                 EnergyFutures = await tEnergyFutures;
+                NetatmoData = await tNetatmoData;
+
                 if (EnergyFutures != null)
                 {
                     lastAmber = DateTime.Now;
