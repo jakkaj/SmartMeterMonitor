@@ -58,7 +58,8 @@ namespace EnergyHost.Services.Services
                     Rain = rainData.Rain,
                     Rain24 = rainData.SumRain24,
                     WindAngle = windData.WindAngle,
-                    WindStrength = windData.WindStrength
+                    WindStrength = windData.WindStrength,
+                    WindGusts = windData.GustStrength
                 };
 
                 return netatmoData;

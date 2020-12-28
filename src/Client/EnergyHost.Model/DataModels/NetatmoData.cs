@@ -18,6 +18,7 @@ namespace EnergyHost.Model.DataModels
         public double? Rain24 { get; set; }
         public int? WindAngle { get; set; }
         public int? WindStrength { get; set; }
+        public int? WindGusts { get; set; }
 
     }
 }
