@@ -56,6 +56,7 @@ namespace EnergyHost.Services.Services
                     OutdoorHumidity = outdoorData.Humidity,
                     Noise = indoorData.Noise,
                     Rain = rainData.Rain,
+                    Rain24 = rainData.SumRain24,
                     WindAngle = windData.WindAngle,
                     WindStrength = windData.WindStrength
                 };

@@ -126,6 +126,7 @@ namespace EnergyHost.Services.Services
                     { "pressure", NetatmoData?.Pressure ?? 0},
                     { "co2", NetatmoData?.CO2 ?? 0},
                     { "rain", NetatmoData?.Rain ?? 0},
+                    { "rain24", NetatmoData?.Rain24 ?? 0},
                     { "noise", NetatmoData?.Noise ?? 0},
                     { "windSpeed", Convert.ToDouble(NetatmoData?.WindStrength ?? 0)},
                     { "cloudiness", CurrentWeather.cloudiness},
