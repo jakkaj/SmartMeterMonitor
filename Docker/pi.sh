@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #docker build -t jakkaj/smartmetermqttclient ../src/Client
 
 set -o allexport
