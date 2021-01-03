@@ -57,6 +57,7 @@ namespace EnergyHost.Services.Services
                     Noise = indoorData.Noise,
                     Rain = rainData.Rain,
                     Rain24 = rainData.SumRain24,
+                    Rain1 = rainData.SumRain1,
                     WindAngle = windData.WindAngle,
                     WindStrength = windData.WindStrength,
                     WindGusts = windData.GustStrength
