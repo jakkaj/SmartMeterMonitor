@@ -115,7 +115,11 @@ namespace EnergyHost.Services.Services
             var data = $"{{\"email\": \"{_amberUserName}\"}}";
 
             var login = await Login();
-
+            
+            if (login == null)
+            {
+                return null;
+            }
 
             using (var client = new HttpClient())
             {
@@ -215,25 +219,34 @@ namespace EnergyHost.Services.Services
         {
             var data = $"{{\"username\": \"{_amberUserName}\", password:\"{_amberPassword}\"}}";
 
-            using (var client = new HttpClient())
+            try
             {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-
-                var result = await client.PostAsync(new Uri(_amberLoginUrl), new StringContent(data, Encoding.UTF8, "application/json"));
-
-                if (!result.IsSuccessStatusCode)
+                using (var client = new HttpClient())
                 {
-                    return null;
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+                    var result = await client.PostAsync(new Uri(_amberLoginUrl),
+                        new StringContent(data, Encoding.UTF8, "application/json"));
+
+                    if (!result.IsSuccessStatusCode)
+                    {
+                        return null;
+                    }
+
+                    var stringResult = await result.Content.ReadAsStringAsync();
+                    var amberData = JsonConvert.DeserializeObject<AmberLogin>(stringResult, new JsonSerializerSettings
+                    {
+                        Error = HandleDeserializationError
+                    });
+
+                    return amberData;
                 }
-
-                var stringResult = await result.Content.ReadAsStringAsync();
-                var amberData = JsonConvert.DeserializeObject<AmberLogin>(stringResult, new JsonSerializerSettings
-                {
-                    Error = HandleDeserializationError
-                });
-
-                return amberData;
+            }
+            catch (Exception ex)
+            {
+                _logService.WriteError(ex);
+                return null;
             }
         }
 
