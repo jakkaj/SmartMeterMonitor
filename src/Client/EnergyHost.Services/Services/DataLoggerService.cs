@@ -418,10 +418,10 @@ namespace EnergyHost.Services.Services
                     {
                         EnergyUsage = -abbModbus.meter.W / 1000;
                     }
-                    else
-                    {
-                        EnergyUsage = abbModbus.siteCurrentPowerFlow.GRID.currentPower;
-                    }
+                    //else
+                    //{
+                    //    EnergyUsage = abbModbus.siteCurrentPowerFlow.GRID.currentPower;
+                    //}
 
                     if (abbModbus.W != 0)
                     {
