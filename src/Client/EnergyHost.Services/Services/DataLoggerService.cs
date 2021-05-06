@@ -427,10 +427,6 @@ namespace EnergyHost.Services.Services
                     {
                         SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
                     }
-                    else
-                    {
-                        SolarOutput = 0;
-                    }
 
                     if (abbModbus?.energyDetails != null)
                     {
@@ -440,6 +436,10 @@ namespace EnergyHost.Services.Services
                         SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value) / 1000;
                         FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value) / 1000;
 
+                    }
+                    else
+                    {
+                        SolarOutput = 0;
                     }
 
                     if (abbModbus.PhVphA != null)
