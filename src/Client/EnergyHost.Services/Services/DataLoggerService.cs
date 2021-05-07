@@ -28,10 +28,11 @@ namespace EnergyHost.Services.Services
         private readonly IThresholdingService _thresholdingService;
         private readonly INotificationService _notificationService;
         private readonly INetatmoService _netatmoService;
+        private readonly IPowerwallService _powerwallService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
-        public double EnergyUsage { get; set; } = 0;
+        public double EnergyUsage { get; set; } = 0; //Grid
         public double SystemVoltage { get; set; } = 0;
         public double SolarToday { get; set; } = 0;
         public double DaikinInsideTemperature { get; set; }
@@ -55,6 +56,15 @@ namespace EnergyHost.Services.Services
         public double Consumption { get; set; }
         public AmberUsage AmberUsage { get; set; }
 
+        
+        public double BatteryUsage { get; set; } //Battery
+        public double LoadUsage { get; set; } //House
+        public double BatteryLevel { get; set; }
+        public bool IsCharging { get; set; }
+        public bool IsDischarging { get; set; }
+
+
+
         public DataLoggerService(ILogService logService,
             IDaikinService daikinService,
             ISunSpecService abbService,
@@ -66,7 +76,8 @@ namespace EnergyHost.Services.Services
             ISystemStatusService statusService,
             IThresholdingService thresholdingService,
             INotificationService notificationService,
-            INetatmoService netatmoService
+            INetatmoService netatmoService,
+            IPowerwallService powerwallService
             )
         {
             _logService = logService;
@@ -80,6 +91,7 @@ namespace EnergyHost.Services.Services
             _thresholdingService = thresholdingService;
             _notificationService = notificationService;
             _netatmoService = netatmoService;
+            _powerwallService = powerwallService;
             _daikinService = daikinService;
         }
 
@@ -118,7 +130,7 @@ namespace EnergyHost.Services.Services
                 {
                     { "kwh", EnergyUsage },
                     { "ctkwh", EnergyUsage},
-                    { "powerTotal", EnergyUsage + SolarOutput},
+                    { "powerTotal", LoadUsage},
                     { "temp", NetatmoData?.OutdoorTemp ?? 0},
                     { "indoorTemp", NetatmoData?.IndoorTemp ?? 0 },
                     { "humidity", NetatmoData?.OutdoorHumidity ?? 0},
@@ -152,16 +164,19 @@ namespace EnergyHost.Services.Services
                     { "SolarHistory", EnergyFutures?.Futures[0].SolarHistory != null ? EnergyFutures?.Futures[0].SolarHistory : 0},
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut },
-                    { "NextPriceIn", NextPriceIn },
-                    { "NextPriceOut", NextPriceOut },
-                    { "MonthTotalCost", AmberUsage?.data.lastMonthUsage.FromGrid.actualCost ?? 0 },
-                    { "LastWeekTotalCost", AmberUsage?.data.lastWeekUsage.FromGrid.actualCost ?? 0},
-                    { "WeekTotalCost", AmberUsage?.data.thisWeekUsage?.FromGrid?.actualCost ?? 0},
-                    { "MonthTotalSolarCost", AmberUsage?.data.lastMonthUsage.ToGrid.totalUsageCostInCertainPeriod ?? 0 },
-                    { "LastWeekTotalSolarCost", AmberUsage?.data.lastWeekUsage.ToGrid.totalUsageCostInCertainPeriod ?? 0},
-                    { "WeekSolarCost", AmberUsage?.data.thisWeekUsage?.ToGrid?.totalUsageCostInCertainPeriod ?? 0},
-                    { "YesterdayTotalCost", AmberUsage?.data.thisWeekDailyUsage.Where(_=>_.meterSuffix=="E1").OrderByDescending(_=>_.date).FirstOrDefault()?.actualCost ?? 0},
-                    { "YesterdaySolarCost", AmberUsage?.data.thisWeekDailyUsage.Where(_=>_.meterSuffix=="B1").OrderByDescending(_=>_.date).FirstOrDefault()?.usageCost ?? 0},
+                    { "BatteryUsage", BatteryUsage },
+                    { "BatteryLevel", BatteryLevel },
+                    { "IsCharging", IsCharging },
+                    { "IsDischarging", IsDischarging }
+
+                    //{ "MonthTotalCost", AmberUsage?.data.lastMonthUsage.FromGrid.actualCost ?? 0 },
+                    //{ "LastWeekTotalCost", AmberUsage?.data.lastWeekUsage.FromGrid.actualCost ?? 0},
+                    //{ "WeekTotalCost", AmberUsage?.data.thisWeekUsage?.FromGrid?.actualCost ?? 0},
+                    //{ "MonthTotalSolarCost", AmberUsage?.data.lastMonthUsage.ToGrid.totalUsageCostInCertainPeriod ?? 0 },
+                    //{ "LastWeekTotalSolarCost", AmberUsage?.data.lastWeekUsage.ToGrid.totalUsageCostInCertainPeriod ?? 0},
+                    //{ "WeekSolarCost", AmberUsage?.data.thisWeekUsage?.ToGrid?.totalUsageCostInCertainPeriod ?? 0},
+                    //{ "YesterdayTotalCost", AmberUsage?.data.thisWeekDailyUsage.Where(_=>_.meterSuffix=="E1").OrderByDescending(_=>_.date).FirstOrDefault()?.actualCost ?? 0},
+                    //{ "YesterdaySolarCost", AmberUsage?.data.thisWeekDailyUsage.Where(_=>_.meterSuffix=="B1").OrderByDescending(_=>_.date).FirstOrDefault()?.usageCost ?? 0},
 
 
                 };
@@ -406,22 +421,35 @@ namespace EnergyHost.Services.Services
             while (true)
             {
                 var tAbbModbus = _abbService.GetModbus();
+                var tPowerall = _powerwallService.GetPowerwall();
 
-                await Task.WhenAll(tAbbModbus);
+                await Task.WhenAll(tAbbModbus, tPowerall);
 
                 var abbModbus = await tAbbModbus;
+
+                var powerWall = await tPowerall;
+
+                if (powerWall != null)
+                {
+                    EnergyUsage = powerWall.site.instant_power;
+                    BatteryUsage = powerWall.battery.instant_power;
+                    LoadUsage = powerWall.load.instant_power;
+                    BatteryLevel = powerWall.charge;
+                    IsCharging = powerWall.battery.instant_power < 0;
+                    IsDischarging = powerWall.battery.instant_power > 0;
+                }
 
                 if (abbModbus != null)
                 {
 
-                    if (-abbModbus?.meter?.W != null && -abbModbus.meter.W != 0)
-                    {
-                        EnergyUsage = -abbModbus.meter.W / 1000;
-                    }
-                    //else
+                    //if (-abbModbus?.meter?.W != null && -abbModbus.meter.W != 0)
                     //{
-                    //    EnergyUsage = abbModbus.siteCurrentPowerFlow.GRID.currentPower;
+                    //    EnergyUsage = -abbModbus.meter.W / 1000;
                     //}
+                    ////else
+                    ////{
+                    ////    EnergyUsage = abbModbus.siteCurrentPowerFlow.GRID.currentPower;
+                    ////}
 
                     if (abbModbus.W != 0)
                     {
