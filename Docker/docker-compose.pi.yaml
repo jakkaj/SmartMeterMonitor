@@ -1,5 +1,12 @@
 version: '3'
 services:
+  tesla:    
+    restart: always
+    build: 
+      context: ../src/Tesla
+      dockerfile: Dockerfile    
+    ports:
+    - 5061:5001
   modbus:
     volumes:
       - /etc/localtime:/etc/localtime
