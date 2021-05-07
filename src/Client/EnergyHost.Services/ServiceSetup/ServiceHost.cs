@@ -35,7 +35,8 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddSingleton<IThresholdingService, ThresholdingService>();
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<INetatmoService, NetatmoService>();
-            
+            services.AddSingleton<IPowerwallService, PowerwallService>();
+
 
             services.AddHttpClient();
 

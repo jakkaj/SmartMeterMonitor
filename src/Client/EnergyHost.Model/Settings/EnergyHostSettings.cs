@@ -34,5 +34,7 @@ namespace EnergyHost.Model.Settings
         public string NETATMO_USER_NAME { get; set; }
         public string NETATMO_PASSWORD { get; set; }
         public string NETATMO_DEVICE_ID { get; set; }
+
+        public string TESLA_IP { get; set; }
     }
 }

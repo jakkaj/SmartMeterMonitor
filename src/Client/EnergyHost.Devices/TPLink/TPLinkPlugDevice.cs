@@ -23,10 +23,7 @@ namespace EnergyHost.Devices.TPLink
             _settings = settings;
         }
 
-        async void _getStatus()
-        {
-
-        }
+        
 
         public bool IsOn { get; set; }
         public Task SwitchOff()
