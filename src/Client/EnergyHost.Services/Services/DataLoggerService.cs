@@ -431,9 +431,9 @@ namespace EnergyHost.Services.Services
 
                 if (powerWall != null)
                 {
-                    EnergyUsage = powerWall.site.instant_power;
-                    BatteryUsage = powerWall.battery.instant_power;
-                    LoadUsage = powerWall.load.instant_power;
+                    EnergyUsage = powerWall.site.instant_power / 1000;
+                    BatteryUsage = powerWall.battery.instant_power / 1000;
+                    LoadUsage = powerWall.load.instant_power / 1000;
                     BatteryLevel = powerWall.charge;
                     IsCharging = powerWall.battery.instant_power < 0;
                     IsDischarging = powerWall.battery.instant_power > 0;
