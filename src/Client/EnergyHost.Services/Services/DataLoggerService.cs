@@ -164,6 +164,7 @@ namespace EnergyHost.Services.Services
                     { "SolarHistory", EnergyFutures?.Futures[0].SolarHistory != null ? EnergyFutures?.Futures[0].SolarHistory : 0},
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut },
+                    { "NextPriceIn", NextPriceIn },
                     { "BatteryUsage", BatteryUsage },
                     { "BatteryLevel", BatteryLevel },
                     { "IsCharging", IsCharging },

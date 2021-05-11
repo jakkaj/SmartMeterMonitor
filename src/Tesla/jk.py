@@ -1,7 +1,7 @@
 
 import json
 import time
-import sunspec.core.client as client
+
 import time
 import sys
 import os
