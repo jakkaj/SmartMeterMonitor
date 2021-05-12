@@ -62,6 +62,10 @@ namespace EnergyHost.Services.Services
         public double BatteryLevel { get; set; }
         public bool IsCharging { get; set; }
         public bool IsDischarging { get; set; }
+        public double LoadImported { get; set; }
+        public double SolarExported { get; set; }
+        public double BatteryImported { get; set; }
+        public double BatteryExported { get; set; }
 
 
 
@@ -168,7 +172,12 @@ namespace EnergyHost.Services.Services
                     { "BatteryUsage", BatteryUsage },
                     { "BatteryLevel", BatteryLevel },
                     { "IsCharging", IsCharging },
-                    { "IsDischarging", IsDischarging }
+                    { "IsDischarging", IsDischarging },
+                    { "LoadImported", LoadImported },
+                    { "SolarExported", SolarExported },
+                    { "BatteryImported", BatteryImported },
+                    { "BatteryExported", BatteryExported }
+
 
                     //{ "MonthTotalCost", AmberUsage?.data.lastMonthUsage.FromGrid.actualCost ?? 0 },
                     //{ "LastWeekTotalCost", AmberUsage?.data.lastWeekUsage.FromGrid.actualCost ?? 0},
@@ -438,6 +447,11 @@ namespace EnergyHost.Services.Services
                     BatteryLevel = powerWall.charge;
                     IsCharging = powerWall.battery.instant_power < 0;
                     IsDischarging = powerWall.battery.instant_power > 0;
+                    
+                    LoadImported = Math.Round(powerWall.load.energy_imported / 1000, 2);
+                    SolarExported = Math.Round(powerWall.solar.energy_exported / 1000, 2);
+                    BatteryExported = Math.Round(powerWall.battery.energy_exported / 1000, 2);
+                    BatteryImported = Math.Round(powerWall.battery.energy_imported / 1000, 2);
                 }
 
                 if (abbModbus != null)
