@@ -11,6 +11,19 @@ namespace EnergyHost.Tests.Tests
     [TestClass]
     public class PowerwallTests : TestBase
     {
+
+        [TestMethod]
+        public async Task GetPowerToday()
+        {
+            var pw = Resolve<IPowerwallService>();
+
+            var result = await pw.GetUsedToday();
+
+            Assert.IsTrue(result > 0);
+
+        }
+
+
         [TestMethod]
         public async Task TestGetData()
         {

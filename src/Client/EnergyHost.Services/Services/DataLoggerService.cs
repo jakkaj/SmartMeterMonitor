@@ -432,12 +432,14 @@ namespace EnergyHost.Services.Services
             {
                 var tAbbModbus = _abbService.GetModbus();
                 var tPowerall = _powerwallService.GetPowerwall();
-
-                await Task.WhenAll(tAbbModbus, tPowerall);
+                var tUsed = _powerwallService.GetUsedToday();
+                await Task.WhenAll(tAbbModbus, tPowerall, tUsed);
 
                 var abbModbus = await tAbbModbus;
 
                 var powerWall = await tPowerall;
+
+                var pUsed = await tUsed;
 
                 if (powerWall != null)
                 {
@@ -452,6 +454,8 @@ namespace EnergyHost.Services.Services
                     SolarExported = Math.Round(powerWall.solar.energy_exported / 1000, 2);
                     BatteryExported = Math.Round(powerWall.battery.energy_exported / 1000, 2);
                     BatteryImported = Math.Round(powerWall.battery.energy_imported / 1000, 2);
+
+                    Consumption = pUsed;
                 }
 
                 if (abbModbus != null)
@@ -474,7 +478,7 @@ namespace EnergyHost.Services.Services
                     if (abbModbus?.energyDetails != null)
                     {
                         SolarToday = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Production").values[0].value) / 1000;
-                        Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value) / 1000;
+                        //Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value) / 1000;
                         Purchased = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Purchased").values[0].value) / 1000;
                         SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value) / 1000;
                         FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value) / 1000;

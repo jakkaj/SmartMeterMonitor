@@ -6,5 +6,6 @@ namespace EnergyHost.Contract
     public interface IPowerwallService
     {
         Task<Powerwall> GetPowerwall();
+        Task<double> GetUsedToday();
     }
 }

@@ -17,12 +17,37 @@ namespace EnergyHost.Services.Services
         private readonly ILogService _logService;
         private readonly IOptions<EnergyHostSettings> _settings;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IInfluxService _influxService;
 
-        public PowerwallService(ILogService logService, IOptions<EnergyHostSettings> settings, IHttpClientFactory httpClientFactory)
+        public PowerwallService(ILogService logService, 
+            IOptions<EnergyHostSettings> settings, 
+            IHttpClientFactory httpClientFactory, 
+            IInfluxService influxService)
         {
             _logService = logService;
             _settings = settings;
             _httpClientFactory = httpClientFactory;
+            _influxService = influxService;
+        }
+
+
+        public async Task<double> GetUsedToday()
+        {
+            var dtToday = DateTime.Today.ToUniversalTime();
+
+            var dtMidnight = dtToday.ToString("s") + "Z";
+
+            var start = await _influxService.Query("house", $"SELECT first(\"LoadImported\") from \"currentStatus\" WHERE time > '{dtMidnight}' tz('Australia/Sydney')");
+            var end = await _influxService.Query("house", $"SELECT last(\"LoadImported\") from \"currentStatus\" WHERE time > '{dtMidnight}' tz('Australia/Sydney')");
+
+            var startVal = start.Results[0].Series[0].Values[0][1];
+
+            var endVal = end.Results[0].Series[0].Values[0][1];
+
+
+            var result = Convert.ToDouble(endVal) - Convert.ToDouble(startVal);
+
+            return Math.Round(result, 2);
         }
 
         public async Task<Powerwall> GetPowerwall()
