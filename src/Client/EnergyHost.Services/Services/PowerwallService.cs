@@ -33,7 +33,7 @@ namespace EnergyHost.Services.Services
 
         public async Task<double> GetUsedToday()
         {
-            var dtToday = DateTime.Today.ToUniversalTime();
+            var dtToday = DateTime.Today.ToUniversalTime().Subtract(TimeSpan.FromMinutes(1));
 
             var dtMidnight = dtToday.ToString("s") + "Z";
 
