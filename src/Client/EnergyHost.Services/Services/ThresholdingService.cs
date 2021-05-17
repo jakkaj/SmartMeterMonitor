@@ -53,7 +53,7 @@ namespace EnergyHost.Services.Services
 
             }
 
-            if ((double)data["CurrentPriceIn"] > threshold)
+            if ((double)data["CurrentPriceIn"] > threshold && (double)data["BatteryLevel"] < 30)
             {
                 var daikinOff = false;
                 if (testMode)
