@@ -13,6 +13,9 @@ import os
 from tesla_powerwall import Powerwall
 from tesla_powerwall import User
 
+import asyncio
+from tesla_api import TeslaApiClient
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -22,7 +25,42 @@ load_dotenv()
 GW_USER=os.getenv("GW_USER")
 GW_PASSWORD=os.getenv("GW_PASSWORD")
 GW_IP=os.getenv("GW_IP")
+TESLA_USER=os.getenv("TESLA_USER")
+TESLA_PASSWORD=os.getenv("TESLA_PASSWORD")
 
+loop = asyncio.get_event_loop()
+
+
+async def getreserve():
+    client = TeslaApiClient(TESLA_USER, TESLA_PASSWORD) 
+    energy_sites = await client.list_energy_sites()
+    assert(len(energy_sites)==1)   
+    reserve = await energy_sites[0].get_backup_reserve_percent()    
+    await client.close()
+    print(reserve)
+    return reserve
+
+
+async def setreserve():
+    client = TeslaApiClient(TESLA_USER, TESLA_PASSWORD)        
+    energy_sites = await client.list_energy_sites()    
+    assert(len(energy_sites)==1)
+    print("Increment backup reserve percent")
+    await energy_sites[0].set_backup_reserve_percent(0)    
+    await client.close()
+    return "OK"
+
+@app.route('/reserve', methods=['GET'])
+def reserve_get():
+    percent = request.args.get('percent')
+    result = loop.run_until_complete(getreserve())
+    return str(result)
+
+
+@app.route('/reserve', methods=['PUT'])
+def reserve_set():
+    percent = request.args.get('percent')
+    return loop.run_until_complete(setreserve())    
 
 @app.route('/powerwall')
 def powerwall():   

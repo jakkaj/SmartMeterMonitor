@@ -2,7 +2,7 @@ import asyncio
 from tesla_api import TeslaApiClient
 
 async def main():
-    client = TeslaApiClient('jakkaj@gmail.com', '^JjJ#ElDrmz6^5N')
+    client = TeslaApiClient('j@mail.com', '12345')
 
     energy_sites = await client.list_energy_sites()
     print("Number of energy sites = %d" % (len(energy_sites)))
