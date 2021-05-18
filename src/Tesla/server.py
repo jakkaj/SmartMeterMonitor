@@ -41,12 +41,12 @@ async def getreserve():
     return reserve
 
 
-async def setreserve():
+async def setreserve(percent):
     client = TeslaApiClient(TESLA_USER, TESLA_PASSWORD)        
     energy_sites = await client.list_energy_sites()    
     assert(len(energy_sites)==1)
     print("Increment backup reserve percent")
-    await energy_sites[0].set_backup_reserve_percent(0)    
+    await energy_sites[0].set_backup_reserve_percent(int(percent))    
     await client.close()
     return "OK"
 
@@ -60,7 +60,7 @@ def reserve_get():
 @app.route('/reserve', methods=['PUT'])
 def reserve_set():
     percent = request.args.get('percent')
-    return loop.run_until_complete(setreserve())    
+    return loop.run_until_complete(setreserve(percent))    
 
 @app.route('/powerwall')
 def powerwall():   
