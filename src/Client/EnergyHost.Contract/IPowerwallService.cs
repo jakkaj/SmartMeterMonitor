@@ -9,5 +9,6 @@ namespace EnergyHost.Contract
         Task<double> GetUsedToday();
         Task<int> GetReservePercent();
         Task<string> SetReservePercent(int reserve);
+        Task ConfigureReserve(double currentPriceIn, double batteryPercentage);
     }
 }

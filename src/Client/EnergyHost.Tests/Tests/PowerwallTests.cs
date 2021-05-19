@@ -11,6 +11,12 @@ namespace EnergyHost.Tests.Tests
     [TestClass]
     public class PowerwallTests : TestBase
     {
+        [TestMethod]
+        public async Task ConfigureReserve()
+        {
+            var pw = Resolve<IPowerwallService>();
+            await pw.ConfigureReserve(18, 45);
+        }
 
         [TestMethod]
         public async Task GetReserve()

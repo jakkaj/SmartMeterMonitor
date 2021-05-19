@@ -316,7 +316,10 @@ namespace EnergyHost.Services.Services
         {
             while (true)
             {
+                await _powerwallService.ConfigureReserve(CurrentPriceIn, BatteryLevel);
+
                 AmberUsage = await _amberService.GetUsage();
+
                 if (AmberUsage != null)
                 {
                     await _writeAmberUsage();

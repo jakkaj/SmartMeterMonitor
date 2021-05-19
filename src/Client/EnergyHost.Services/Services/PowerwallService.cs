@@ -30,6 +30,30 @@ namespace EnergyHost.Services.Services
             _influxService = influxService;
         }
 
+        public async Task ConfigureReserve(double currentPriceIn, double batteryPercentage)
+        {
+            var dt = DateTime.Now;
+
+            if (dt.Hour >= 1 && dt.Hour < 5)
+            {
+                var percent = await GetReservePercent();
+                var setPercent = _settings.Value.TESLA_OVERNIGHT_RESERVE;
+
+                if (percent != setPercent && batteryPercentage < setPercent + 10)
+                {
+                    await SetReservePercent(setPercent);
+                }
+            }else if (dt.Hour == 5)
+            {
+                var percent = await GetReservePercent();
+                if (percent != 0)
+                {
+                    await SetReservePercent(0);
+                }
+            }
+
+        }
+
 
         public async Task<int> GetReservePercent()
         {
