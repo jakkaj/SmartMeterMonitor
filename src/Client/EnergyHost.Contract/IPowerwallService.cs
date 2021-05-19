@@ -7,5 +7,7 @@ namespace EnergyHost.Contract
     {
         Task<Powerwall> GetPowerwall();
         Task<double> GetUsedToday();
+        Task<int> GetReservePercent();
+        Task<string> SetReservePercent(int reserve);
     }
 }

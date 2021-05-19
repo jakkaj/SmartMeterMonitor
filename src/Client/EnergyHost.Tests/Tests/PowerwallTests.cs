@@ -13,6 +13,36 @@ namespace EnergyHost.Tests.Tests
     {
 
         [TestMethod]
+        public async Task GetReserve()
+        {
+            var pw = Resolve<IPowerwallService>();
+
+            var result = await pw.GetReservePercent();
+
+            Assert.IsTrue(result >= 0);
+        }
+
+        [TestMethod]
+        public async Task SetReserve()
+        {
+            var pw = Resolve<IPowerwallService>();
+
+            await pw.SetReservePercent(50);
+
+            var result = await pw.GetReservePercent();
+
+            Assert.IsTrue(result == 50);
+
+            await Task.Delay(TimeSpan.FromSeconds(10));
+
+            await pw.SetReservePercent(0);
+
+            result = await pw.GetReservePercent();
+
+            Assert.IsTrue(result == 0);
+        }
+
+        [TestMethod]
         public async Task GetPowerToday()
         {
             var pw = Resolve<IPowerwallService>();
