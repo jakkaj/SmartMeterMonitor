@@ -17,6 +17,11 @@ namespace EnergyHost.Tests.Tests
             var service = Resolve<IDarkSkyService>();
             var forecast  = await service.Get();
 
+            foreach (var day in forecast.Daily.Data)
+            {
+                Debug.WriteLine(day.CloudCover);
+            }
+
             foreach (var i in forecast.Hourly.Data)
             {
                 var s = "";
