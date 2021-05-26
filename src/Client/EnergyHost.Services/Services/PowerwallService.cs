@@ -38,8 +38,7 @@ namespace EnergyHost.Services.Services
             {
                 var percent = await GetReservePercent();
                 var setPercent = _settings.Value.TESLA_OVERNIGHT_RESERVE;
-
-                if (percent != setPercent && batteryPercentage < setPercent + 10)
+                if (percent != setPercent && batteryPercentage < setPercent)
                 {
                     await SetReservePercent(setPercent);
                 }
