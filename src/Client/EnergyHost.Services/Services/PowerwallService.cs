@@ -41,7 +41,7 @@ namespace EnergyHost.Services.Services
                 return;
             }
 
-            if (dt.Hour >= 1 && dt.Hour < 5)
+            if (dt.Hour >= 0 && dt.Hour < 6)
             {
                 var percent = await GetReservePercent();
                 
@@ -49,7 +49,7 @@ namespace EnergyHost.Services.Services
                 {
                     await SetReservePercent(setPercent);
                 }
-            }else if (dt.Hour == 5)
+            }else if (dt.Hour == 6)
             {
                 var percent = await GetReservePercent();
                 if (percent != 0)
