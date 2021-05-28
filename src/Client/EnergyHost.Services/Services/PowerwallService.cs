@@ -49,7 +49,7 @@ namespace EnergyHost.Services.Services
                 {
                     await SetReservePercent(setPercent);
                 }
-            }else if (dt.Hour == 6)
+            }else if (dt.Hour <= 7)
             {
                 var percent = await GetReservePercent();
                 if (percent != 0)
@@ -72,7 +72,7 @@ namespace EnergyHost.Services.Services
                     if (!result.IsSuccessStatusCode)
                     {
                         _logService.WriteError($"Error in get powerwall: {result.ReasonPhrase}");
-                        return 0;
+                        return -1;
                     }
 
                     var s = await result.Content.ReadAsStringAsync();
