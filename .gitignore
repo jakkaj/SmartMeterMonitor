@@ -402,3 +402,4 @@ healthchecksdb
 
 .vscode
 secrets.h
+src/Tesla/token_file.json
