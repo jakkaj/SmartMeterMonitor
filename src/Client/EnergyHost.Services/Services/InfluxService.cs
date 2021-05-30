@@ -23,6 +23,8 @@ namespace EnergyHost.Services.Services
 {
     public class InfluxService : IInfluxService
     {
+        bool _created;
+
         private readonly ILogService _logService;
         private readonly IOptions<EnergyHostSettings> _settings;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -154,11 +156,16 @@ namespace EnergyHost.Services.Services
 
         private async Task _createDatabase(string influxDbUrl, string dbName)
         {
+            if (_created)
+            {
+                return;
+            }
             try
             {
                 var url = new Uri($"{influxDbUrl}/query?q=CREATE DATABASE {dbName}");
                 var client = _httpClientFactory.CreateClient();
                 await client.GetAsync(url);
+                _created = true;
             }
             catch (Exception ex)
             {
