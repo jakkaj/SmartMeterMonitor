@@ -34,15 +34,22 @@ namespace EnergyHost.Services.Services
         {
             var dt = DateTime.Now;
 
-            if (dt.Hour >= 1 && dt.Hour < 5)
+            var setPercent = _settings.Value.TESLA_OVERNIGHT_RESERVE;
+
+            if(setPercent == 0)
+            {
+                return;
+            }
+
+            if (dt.Hour >= 1 && dt.Hour < 6)
             {
                 var percent = await GetReservePercent();
-                var setPercent = _settings.Value.TESLA_OVERNIGHT_RESERVE;
+                
                 if (percent != setPercent && batteryPercentage < setPercent)
                 {
                     await SetReservePercent(setPercent);
                 }
-            }else if (dt.Hour == 5)
+            }else if (dt.Hour <= 7)
             {
                 var percent = await GetReservePercent();
                 if (percent != 0)
@@ -65,7 +72,7 @@ namespace EnergyHost.Services.Services
                     if (!result.IsSuccessStatusCode)
                     {
                         _logService.WriteError($"Error in get powerwall: {result.ReasonPhrase}");
-                        return 0;
+                        return -1;
                     }
 
                     var s = await result.Content.ReadAsStringAsync();
