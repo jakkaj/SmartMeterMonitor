@@ -52,6 +52,7 @@ async def load_token():
 async def getreserve():
     token = await load_token()
     client = TeslaApiClient(token=token, on_new_token=save_token) 
+    client.authenticate()
     energy_sites = await client.list_energy_sites()
     assert(len(energy_sites)==1)   
     reserve = await energy_sites[0].get_backup_reserve_percent()    
