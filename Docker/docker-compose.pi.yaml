@@ -1,4 +1,4 @@
-version: '3'
+version: '2.4'
 services:
   tesla:    
     restart: always
@@ -28,13 +28,17 @@ services:
       - "9001:9001"
     volumes:
     - eclipse-mosquitto
-  influxdb:
+  influxdb:    
     image: "arm32v7/influxdb"
     ports:
     - "8086:8086"
     volumes:
     - /data/influx2:/var/lib/influxdb 
     restart: always
+    environment:
+    - INFLUXDB_LOGGING_LEVEL=warn
+    - INFLUXDB_DATA_INDEX_VERSION=tsi1 
+    - INFLUXDB_DATA_CACHE_SNAPSHOT_MEMORY_SIZE=12m
   grafana:
     image: "grafana/grafana"
     environment: 
