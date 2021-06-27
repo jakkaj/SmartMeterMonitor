@@ -8,6 +8,7 @@ dir=/data/influx2/$date
 mkdir $dir
 command="influxd backup -portable -host 127.0.0.1:8088 ./var/lib/influxdb/$date"
 /usr/bin/docker exec $container $command
+cp /data/grafana/grafana.db $dir/grafana.db
 zip -r /home/pi/backup/influx/$date.zip $dir
 rclone copy /home/pi/backup/influx/$date.zip onedrive:backup/house
 rm /home/pi/backup/influx/$date.zip
