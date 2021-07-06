@@ -7,6 +7,7 @@ import (
 	"time"
 
 	cognitosrp "github.com/alexrudd/cognito-srp/v4"
+	"github.com/golang-jwt/jwt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -14,8 +15,16 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
+func ValidateExp(token string) bool {
+
+	claims := &jwt.StandardClaims{}
+
+	_, _ = jwt.ParseWithClaims(token, claims, nil)
+
+	return claims.VerifyExpiresAt(time.Now().UTC().Unix(), true)
+}
+
 func AmberAuth(refresh string) (amberTokens *AmberTokens, err error) {
-	// configure cognito srp
 
 	user := os.Getenv("USER")
 	password := os.Getenv("PASSWORD")
