@@ -1,5 +1,12 @@
 version: '2.4'
 services:
+  amber:    
+    restart: always
+    build: 
+      context: ../src/Amber 
+      dockerfile: Dockerfile    
+    ports:
+    - 3004:3004
   tesla:    
     restart: always
     build: 
