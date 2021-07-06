@@ -14,19 +14,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
-func AmberAuth() (err error) {
+func AmberAuth(refresh *string) (amberTokens *AmberTokens, err error) {
 	// configure cognito srp
 
 	user := os.Getenv("USER")
 	password := os.Getenv("PASSWORD")
 
 	if user == "" || password == "" {
-		return fmt.Errorf("USER and PASSWORD env vars must be set")
+		return nil, fmt.Errorf("USER and PASSWORD env vars must be set")
 	}
 
 	csrp, err := cognitosrp.NewCognitoSRP(user, password, "ap-southeast-2_vPQVymJLn", "11naqf0mbruts1osrjsnl2ee1", nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// configure cognito identity provider
@@ -36,10 +36,36 @@ func AmberAuth() (err error) {
 	)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	svc := cip.NewFromConfig(cfg)
+
+	if refresh != nil {
+
+		fmt.Printf("Attemp refresh: %v", refresh)
+
+		params := map[string]string{
+			"REFRESH_TOKEN": *refresh,
+		}
+		resp, errInternal := svc.InitiateAuth(context.Background(), &cip.InitiateAuthInput{
+			AuthFlow:       types.AuthFlowTypeRefreshTokenAuth,
+			ClientId:       aws.String(csrp.GetClientId()),
+			AuthParameters: params,
+		})
+
+		if errInternal != nil {
+			return nil, errInternal
+		}
+
+		amberTokens := &AmberTokens{
+			AccessToken:  resp.AuthenticationResult.AccessToken,
+			IDToken:      resp.AuthenticationResult.IdToken,
+			RefreshToken: resp.AuthenticationResult.RefreshToken,
+		}
+
+		return amberTokens, nil
+	}
 
 	// initiate auth
 	resp, err := svc.InitiateAuth(context.Background(), &cip.InitiateAuthInput{
@@ -48,8 +74,10 @@ func AmberAuth() (err error) {
 		AuthParameters: csrp.GetAuthParams(),
 	})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+
+	fmt.Printf("Challenge type %v \n", resp.ChallengeName)
 
 	// respond to password verifier challenge
 	if resp.ChallengeName == types.ChallengeNameTypePasswordVerifier {
@@ -60,15 +88,26 @@ func AmberAuth() (err error) {
 			ChallengeResponses: challengeResponses,
 			ClientId:           aws.String(csrp.GetClientId()),
 		})
+
 		if err != nil {
 			panic(err)
 		}
 
-		// print the tokens
-		fmt.Printf("Access Token: %s\n", *resp.AuthenticationResult.AccessToken)
-		fmt.Printf("ID Token: %s\n", *resp.AuthenticationResult.IdToken)
-		fmt.Printf("Refresh Token: %s\n", *resp.AuthenticationResult.RefreshToken)
+		amberTokens := &AmberTokens{
+			AccessToken:  resp.AuthenticationResult.AccessToken,
+			IDToken:      resp.AuthenticationResult.IdToken,
+			RefreshToken: resp.AuthenticationResult.RefreshToken,
+		}
+
+		return amberTokens, nil
+
 	}
 
-	return nil
+	return nil, fmt.Errorf("Something happened that we don't know about... yet")
+}
+
+type AmberTokens struct {
+	AccessToken  *string
+	IDToken      *string
+	RefreshToken *string
 }

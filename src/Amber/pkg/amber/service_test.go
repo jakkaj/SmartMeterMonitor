@@ -8,6 +8,19 @@ import (
 )
 
 func TestUuth(t *testing.T) {
-	err := amber.AmberAuth()
+	amberResult, err := amber.AmberAuth(nil)
 	assert.NoError(t, err)
+
+	assert.NotNil(t, amberResult)
+
+	amber2, err := amber.AmberAuth(amberResult.RefreshToken)
+
+	assert.NoError(t, err)
+
+	assert.NotNil(t, amber2.AccessToken)
+
+	_, err = amber.AmberAuth(amberResult.RefreshToken)
+
+	assert.NoError(t, err)
+
 }
