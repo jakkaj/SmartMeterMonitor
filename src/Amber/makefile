@@ -11,3 +11,9 @@ test:
 test-watcher:
 	@echo "Running test watcher"
 	bash ./.devcontainer/test_watcher.sh
+
+build:
+	go build -o amberserver
+
+run: build
+	./amberserver
