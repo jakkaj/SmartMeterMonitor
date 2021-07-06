@@ -1,100 +1,23 @@
 {
     "data": {
-        "whoami": "bluff@f.com",
+        "whoami": "p@p.com",
         "sitePricing": {
-            "remark": "The wholesale price is spiking! This happens just a few hours each year. Reduce your usage as much as you can.",
-            "solarRemark": "Your FiT is incredible right now because the grid needs your help. Try to reduce your usage and export as much as you can!",
-            "spikeRemark": "\n# Price Spikes\n\n**The wholesale price is currently spiking**. Reducing your usage of power-hungry appliances now is the best way to maximise your savings over the year.\n\n[Click here for more information](#show-forecast-information)\n",
+            "remark": "Use less energy if you can - it's expensive and dirty right now.",
+            "solarRemark": "🌘 Your solar has finished generating for the day.",
+            "spikeRemark": null,
             "meterWindows": [
                 {
                     "usageType": "GENERAL",
-                    "forecastInformation": [
-                        {
-                            "start": "2021-07-06T07:30:00.000Z",
-                            "end": "2021-07-06T09:00:00.000Z",
-                            "level": "SPIKE",
-                            "title": "Price Spike",
-                            "message": "\n**Prices are currently spiking and volatility is forecast to continue until 7:30pm.**\n\nWe recommend you wait to use power-hungry appliances (e.g. your aircon or heating) until after the price spike has finished.\n\nThere are many low-powered devices you can continue using normally, like lights, fans, TVs, laptops, and your fridge.\n\n[Click here for more information on what you can do to save money during a price spike](https://help.amberelectric.com.au/hc/en-us/articles/360050203632-What-should-I-do-during-a-price-spike-)\n",
-                            "__typename": "ForecastInfo"
-                        }
-                    ],
+                    "forecastInformation": [],
                     "currentPeriod": {
-                        "start": "2021-07-06T07:30:00.000Z",
-                        "kwhPriceInCents": 940,
-                        "kwhPriceRange": {
-                            "minInCents": 571,
-                            "maxInCents": 1042,
-                            "__typename": "PriceRange"
-                        },
-                        "renewablePercentage": 1,
-                        "indicator": "SPIKE",
+                        "start": "2021-07-06T11:30:00.000Z",
+                        "kwhPriceInCents": 38,
+                        "kwhPriceRange": null,
+                        "renewablePercentage": 0,
+                        "indicator": "BAD",
                         "__typename": "MarketPeriod"
                     },
                     "previousPeriods": [
-                        {
-                            "start": "2021-07-05T07:30:00.000Z",
-                            "kwhPriceInCents": 58,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 4,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T08:00:00.000Z",
-                            "kwhPriceInCents": 65,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 4,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T08:30:00.000Z",
-                            "kwhPriceInCents": 55,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T09:00:00.000Z",
-                            "kwhPriceInCents": 58,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T09:30:00.000Z",
-                            "kwhPriceInCents": 65,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T10:00:00.000Z",
-                            "kwhPriceInCents": 56,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T10:30:00.000Z",
-                            "kwhPriceInCents": 60,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T11:00:00.000Z",
-                            "kwhPriceInCents": 25,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "NEUTRAL",
-                            "__typename": "MarketPeriod"
-                        },
                         {
                             "start": "2021-07-05T11:30:00.000Z",
                             "kwhPriceInCents": 24,
@@ -414,48 +337,42 @@
                             "renewablePercentage": 1,
                             "indicator": "BAD",
                             "__typename": "MarketPeriod"
-                        }
-                    ],
-                    "forecastPeriods": [
+                        },
                         {
-                            "start": "2021-07-06T08:00:00.000Z",
-                            "kwhPriceInCents": 1800,
-                            "kwhPriceRange": {
-                                "minInCents": 67,
-                                "maxInCents": 1803,
-                                "__typename": "PriceRange"
-                            },
+                            "start": "2021-07-06T07:30:00.000Z",
+                            "kwhPriceInCents": 363,
+                            "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "SPIKE",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-06T08:00:00.000Z",
+                            "kwhPriceInCents": 109,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T08:30:00.000Z",
-                            "kwhPriceInCents": 1800,
-                            "kwhPriceRange": {
-                                "minInCents": 48,
-                                "maxInCents": 1803,
-                                "__typename": "PriceRange"
-                            },
+                            "kwhPriceInCents": 78,
+                            "kwhPriceRange": null,
                             "renewablePercentage": 1,
-                            "indicator": "SPIKE",
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T09:00:00.000Z",
-                            "kwhPriceInCents": 1752,
-                            "kwhPriceRange": {
-                                "minInCents": 44,
-                                "maxInCents": 1803,
-                                "__typename": "PriceRange"
-                            },
+                            "kwhPriceInCents": 66,
+                            "kwhPriceRange": null,
                             "renewablePercentage": 1,
-                            "indicator": "SPIKE",
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T09:30:00.000Z",
-                            "kwhPriceInCents": 51,
+                            "kwhPriceInCents": 69,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -463,39 +380,33 @@
                         },
                         {
                             "start": "2021-07-06T10:00:00.000Z",
-                            "kwhPriceInCents": 46,
+                            "kwhPriceInCents": 69,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 0,
+                            "renewablePercentage": 1,
                             "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T10:30:00.000Z",
-                            "kwhPriceInCents": 48,
+                            "kwhPriceInCents": 71,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 0,
+                            "renewablePercentage": 1,
                             "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T11:00:00.000Z",
-                            "kwhPriceInCents": 47,
+                            "kwhPriceInCents": 45,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 1,
+                            "renewablePercentage": 0,
                             "indicator": "BAD",
                             "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-06T11:30:00.000Z",
-                            "kwhPriceInCents": 47,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 1,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
+                        }
+                    ],
+                    "forecastPeriods": [
                         {
                             "start": "2021-07-06T12:00:00.000Z",
-                            "kwhPriceInCents": 50,
+                            "kwhPriceInCents": 51,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -503,7 +414,7 @@
                         },
                         {
                             "start": "2021-07-06T12:30:00.000Z",
-                            "kwhPriceInCents": 45,
+                            "kwhPriceInCents": 36,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -511,7 +422,7 @@
                         },
                         {
                             "start": "2021-07-06T13:00:00.000Z",
-                            "kwhPriceInCents": 45,
+                            "kwhPriceInCents": 39,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -519,7 +430,7 @@
                         },
                         {
                             "start": "2021-07-06T13:30:00.000Z",
-                            "kwhPriceInCents": 45,
+                            "kwhPriceInCents": 34,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -535,7 +446,7 @@
                         },
                         {
                             "start": "2021-07-06T14:30:00.000Z",
-                            "kwhPriceInCents": 30,
+                            "kwhPriceInCents": 44,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -543,31 +454,31 @@
                         },
                         {
                             "start": "2021-07-06T15:00:00.000Z",
-                            "kwhPriceInCents": 23,
+                            "kwhPriceInCents": 38,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-06T15:30:00.000Z",
+                            "kwhPriceInCents": 24,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "NEUTRAL",
                             "__typename": "MarketPeriod"
                         },
                         {
-                            "start": "2021-07-06T15:30:00.000Z",
-                            "kwhPriceInCents": 22,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 2,
-                            "indicator": "NEUTRAL",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
                             "start": "2021-07-06T16:00:00.000Z",
-                            "kwhPriceInCents": 21,
+                            "kwhPriceInCents": 18,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 2,
-                            "indicator": "NEUTRAL",
+                            "renewablePercentage": 1,
+                            "indicator": "GOOD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T16:30:00.000Z",
-                            "kwhPriceInCents": 18,
+                            "kwhPriceInCents": 17,
                             "kwhPriceRange": null,
                             "renewablePercentage": 2,
                             "indicator": "GOOD",
@@ -623,7 +534,7 @@
                         },
                         {
                             "start": "2021-07-06T20:00:00.000Z",
-                            "kwhPriceInCents": 17,
+                            "kwhPriceInCents": 19,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "GOOD",
@@ -631,15 +542,15 @@
                         },
                         {
                             "start": "2021-07-06T20:30:00.000Z",
-                            "kwhPriceInCents": 26,
+                            "kwhPriceInCents": 45,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
-                            "indicator": "NEUTRAL",
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T21:00:00.000Z",
-                            "kwhPriceInCents": 35,
+                            "kwhPriceInCents": 47,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -647,7 +558,7 @@
                         },
                         {
                             "start": "2021-07-06T21:30:00.000Z",
-                            "kwhPriceInCents": 43,
+                            "kwhPriceInCents": 47,
                             "kwhPriceRange": null,
                             "renewablePercentage": 4,
                             "indicator": "BAD",
@@ -655,7 +566,7 @@
                         },
                         {
                             "start": "2021-07-06T22:00:00.000Z",
-                            "kwhPriceInCents": 36,
+                            "kwhPriceInCents": 33,
                             "kwhPriceRange": null,
                             "renewablePercentage": 8,
                             "indicator": "BAD",
@@ -663,17 +574,17 @@
                         },
                         {
                             "start": "2021-07-06T22:30:00.000Z",
-                            "kwhPriceInCents": 19,
+                            "kwhPriceInCents": 21,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 14,
-                            "indicator": "GOOD",
+                            "renewablePercentage": 13,
+                            "indicator": "NEUTRAL",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T23:00:00.000Z",
-                            "kwhPriceInCents": 22,
+                            "kwhPriceInCents": 23,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 17,
+                            "renewablePercentage": 18,
                             "indicator": "NEUTRAL",
                             "__typename": "MarketPeriod"
                         },
@@ -807,9 +718,73 @@
                         },
                         {
                             "start": "2021-07-07T07:30:00.000Z",
+                            "kwhPriceInCents": 86,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T08:00:00.000Z",
                             "kwhPriceInCents": 87,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T08:30:00.000Z",
+                            "kwhPriceInCents": 87,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T09:00:00.000Z",
+                            "kwhPriceInCents": 70,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T09:30:00.000Z",
+                            "kwhPriceInCents": 69,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 2,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T10:00:00.000Z",
+                            "kwhPriceInCents": 68,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 2,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T10:30:00.000Z",
+                            "kwhPriceInCents": 70,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 3,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T11:00:00.000Z",
+                            "kwhPriceInCents": 45,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 4,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T11:30:00.000Z",
+                            "kwhPriceInCents": 47,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 4,
                             "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         }
@@ -818,89 +793,16 @@
                 },
                 {
                     "usageType": "FEED_IN",
-                    "forecastInformation": [
-                        {
-                            "start": "2021-07-06T07:30:00.000Z",
-                            "end": "2021-07-06T09:00:00.000Z",
-                            "level": "SPIKE",
-                            "title": "Price Spike",
-                            "message": "\n**Prices are currently spiking and volatility is forecast to continue until 7:30pm.**\n\nWe recommend you wait to use power-hungry appliances (e.g. your aircon or heating) until after the price spike has finished.\n\nThere are many low-powered devices you can continue using normally, like lights, fans, TVs, laptops, and your fridge.\n\n[Click here for more information on what you can do to save money during a price spike](https://help.amberelectric.com.au/hc/en-us/articles/360050203632-What-should-I-do-during-a-price-spike-)\n",
-                            "__typename": "ForecastInfo"
-                        }
-                    ],
+                    "forecastInformation": [],
                     "currentPeriod": {
-                        "start": "2021-07-06T07:30:00.000Z",
-                        "kwhPriceInCents": -823,
+                        "start": "2021-07-06T11:30:00.000Z",
+                        "kwhPriceInCents": -24,
                         "kwhPriceRange": null,
-                        "renewablePercentage": 1,
-                        "indicator": "SPIKE",
+                        "renewablePercentage": 0,
+                        "indicator": "BAD",
                         "__typename": "MarketPeriod"
                     },
                     "previousPeriods": [
-                        {
-                            "start": "2021-07-05T07:30:00.000Z",
-                            "kwhPriceInCents": -22,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 4,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T08:00:00.000Z",
-                            "kwhPriceInCents": -28,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 4,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T08:30:00.000Z",
-                            "kwhPriceInCents": -19,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T09:00:00.000Z",
-                            "kwhPriceInCents": -22,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T09:30:00.000Z",
-                            "kwhPriceInCents": -28,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T10:00:00.000Z",
-                            "kwhPriceInCents": -20,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T10:30:00.000Z",
-                            "kwhPriceInCents": -23,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-05T11:00:00.000Z",
-                            "kwhPriceInCents": -12,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 5,
-                            "indicator": "NEUTRAL",
-                            "__typename": "MarketPeriod"
-                        },
                         {
                             "start": "2021-07-05T11:30:00.000Z",
                             "kwhPriceInCents": -12,
@@ -1220,48 +1122,42 @@
                             "renewablePercentage": 1,
                             "indicator": "BAD",
                             "__typename": "MarketPeriod"
-                        }
-                    ],
-                    "forecastPeriods": [
+                        },
                         {
-                            "start": "2021-07-06T08:00:00.000Z",
-                            "kwhPriceInCents": -1605,
-                            "kwhPriceRange": {
-                                "minInCents": -27,
-                                "maxInCents": -1605,
-                                "__typename": "PriceRange"
-                            },
+                            "start": "2021-07-06T07:30:00.000Z",
+                            "kwhPriceInCents": -299,
+                            "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "SPIKE",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-06T08:00:00.000Z",
+                            "kwhPriceInCents": -68,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T08:30:00.000Z",
-                            "kwhPriceInCents": -1605,
-                            "kwhPriceRange": {
-                                "minInCents": -10,
-                                "maxInCents": -1605,
-                                "__typename": "PriceRange"
-                            },
+                            "kwhPriceInCents": -40,
+                            "kwhPriceRange": null,
                             "renewablePercentage": 1,
-                            "indicator": "SPIKE",
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T09:00:00.000Z",
-                            "kwhPriceInCents": -1562,
-                            "kwhPriceRange": {
-                                "minInCents": -6,
-                                "maxInCents": -1605,
-                                "__typename": "PriceRange"
-                            },
+                            "kwhPriceInCents": -29,
+                            "kwhPriceRange": null,
                             "renewablePercentage": 1,
-                            "indicator": "SPIKE",
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T09:30:00.000Z",
-                            "kwhPriceInCents": -16,
+                            "kwhPriceInCents": -32,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -1269,39 +1165,33 @@
                         },
                         {
                             "start": "2021-07-06T10:00:00.000Z",
-                            "kwhPriceInCents": -11,
+                            "kwhPriceInCents": -32,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 0,
-                            "indicator": "NEUTRAL",
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T10:30:00.000Z",
-                            "kwhPriceInCents": -13,
+                            "kwhPriceInCents": -34,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 0,
-                            "indicator": "NEUTRAL",
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T11:00:00.000Z",
-                            "kwhPriceInCents": -32,
+                            "kwhPriceInCents": -30,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 1,
+                            "renewablePercentage": 0,
                             "indicator": "BAD",
                             "__typename": "MarketPeriod"
-                        },
-                        {
-                            "start": "2021-07-06T11:30:00.000Z",
-                            "kwhPriceInCents": -32,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 1,
-                            "indicator": "BAD",
-                            "__typename": "MarketPeriod"
-                        },
+                        }
+                    ],
+                    "forecastPeriods": [
                         {
                             "start": "2021-07-06T12:00:00.000Z",
-                            "kwhPriceInCents": -36,
+                            "kwhPriceInCents": -37,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -1309,7 +1199,7 @@
                         },
                         {
                             "start": "2021-07-06T12:30:00.000Z",
-                            "kwhPriceInCents": -32,
+                            "kwhPriceInCents": -23,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -1317,7 +1207,7 @@
                         },
                         {
                             "start": "2021-07-06T13:00:00.000Z",
-                            "kwhPriceInCents": -32,
+                            "kwhPriceInCents": -26,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -1325,7 +1215,7 @@
                         },
                         {
                             "start": "2021-07-06T13:30:00.000Z",
-                            "kwhPriceInCents": -32,
+                            "kwhPriceInCents": -22,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -1341,7 +1231,7 @@
                         },
                         {
                             "start": "2021-07-06T14:30:00.000Z",
-                            "kwhPriceInCents": -18,
+                            "kwhPriceInCents": -31,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -1349,31 +1239,31 @@
                         },
                         {
                             "start": "2021-07-06T15:00:00.000Z",
-                            "kwhPriceInCents": -12,
+                            "kwhPriceInCents": -26,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-06T15:30:00.000Z",
+                            "kwhPriceInCents": -13,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "NEUTRAL",
                             "__typename": "MarketPeriod"
                         },
                         {
-                            "start": "2021-07-06T15:30:00.000Z",
-                            "kwhPriceInCents": -10,
-                            "kwhPriceRange": null,
-                            "renewablePercentage": 2,
-                            "indicator": "NEUTRAL",
-                            "__typename": "MarketPeriod"
-                        },
-                        {
                             "start": "2021-07-06T16:00:00.000Z",
-                            "kwhPriceInCents": -10,
+                            "kwhPriceInCents": -7,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 2,
-                            "indicator": "NEUTRAL",
+                            "renewablePercentage": 1,
+                            "indicator": "GOOD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T16:30:00.000Z",
-                            "kwhPriceInCents": -7,
+                            "kwhPriceInCents": -6,
                             "kwhPriceRange": null,
                             "renewablePercentage": 2,
                             "indicator": "GOOD",
@@ -1413,7 +1303,7 @@
                         },
                         {
                             "start": "2021-07-06T19:00:00.000Z",
-                            "kwhPriceInCents": -6,
+                            "kwhPriceInCents": -7,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "GOOD",
@@ -1429,7 +1319,7 @@
                         },
                         {
                             "start": "2021-07-06T20:00:00.000Z",
-                            "kwhPriceInCents": -7,
+                            "kwhPriceInCents": -8,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "GOOD",
@@ -1437,15 +1327,15 @@
                         },
                         {
                             "start": "2021-07-06T20:30:00.000Z",
-                            "kwhPriceInCents": -14,
+                            "kwhPriceInCents": -32,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
-                            "indicator": "NEUTRAL",
+                            "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T21:00:00.000Z",
-                            "kwhPriceInCents": -22,
+                            "kwhPriceInCents": -32,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -1453,7 +1343,7 @@
                         },
                         {
                             "start": "2021-07-06T21:30:00.000Z",
-                            "kwhPriceInCents": -29,
+                            "kwhPriceInCents": -32,
                             "kwhPriceRange": null,
                             "renewablePercentage": 4,
                             "indicator": "BAD",
@@ -1461,7 +1351,7 @@
                         },
                         {
                             "start": "2021-07-06T22:00:00.000Z",
-                            "kwhPriceInCents": -23,
+                            "kwhPriceInCents": -19,
                             "kwhPriceRange": null,
                             "renewablePercentage": 8,
                             "indicator": "BAD",
@@ -1469,17 +1359,17 @@
                         },
                         {
                             "start": "2021-07-06T22:30:00.000Z",
-                            "kwhPriceInCents": -7,
+                            "kwhPriceInCents": -9,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 14,
-                            "indicator": "GOOD",
+                            "renewablePercentage": 13,
+                            "indicator": "NEUTRAL",
                             "__typename": "MarketPeriod"
                         },
                         {
                             "start": "2021-07-06T23:00:00.000Z",
-                            "kwhPriceInCents": -9,
+                            "kwhPriceInCents": -10,
                             "kwhPriceRange": null,
-                            "renewablePercentage": 17,
+                            "renewablePercentage": 18,
                             "indicator": "NEUTRAL",
                             "__typename": "MarketPeriod"
                         },
@@ -1605,7 +1495,7 @@
                         },
                         {
                             "start": "2021-07-07T07:00:00.000Z",
-                            "kwhPriceInCents": -29,
+                            "kwhPriceInCents": -30,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
                             "indicator": "BAD",
@@ -1616,6 +1506,70 @@
                             "kwhPriceInCents": -48,
                             "kwhPriceRange": null,
                             "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T08:00:00.000Z",
+                            "kwhPriceInCents": -48,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T08:30:00.000Z",
+                            "kwhPriceInCents": -48,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T09:00:00.000Z",
+                            "kwhPriceInCents": -32,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 1,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T09:30:00.000Z",
+                            "kwhPriceInCents": -32,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 2,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T10:00:00.000Z",
+                            "kwhPriceInCents": -31,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 2,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T10:30:00.000Z",
+                            "kwhPriceInCents": -33,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 3,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T11:00:00.000Z",
+                            "kwhPriceInCents": -30,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 4,
+                            "indicator": "BAD",
+                            "__typename": "MarketPeriod"
+                        },
+                        {
+                            "start": "2021-07-07T11:30:00.000Z",
+                            "kwhPriceInCents": -32,
+                            "kwhPriceRange": null,
+                            "renewablePercentage": 4,
                             "indicator": "BAD",
                             "__typename": "MarketPeriod"
                         }
