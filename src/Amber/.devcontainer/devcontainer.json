@@ -1,0 +1,66 @@
+{
+    "name": "Platform",
+    "dockerFile": "Dockerfile",
+
+    "extensions": [
+        "IBM.output-colorizer",
+        "davidanson.vscode-markdownlint",
+        "eamodio.gitlens",
+        "eriklynd.json-tools",
+        "golang.go",
+        "jeppeandersen.vscode-kafka",
+        "ms-python.python",
+        "ms-vscode.go",
+        "searking.preview-vscode",
+        "adamhartford.vscode-base64",
+        "shardulm94.trailing-spaces",
+    ],
+
+    "settings": {
+        "terminal.integrated.shell.linux": "zsh",
+        "go.gopath": "/go",
+        "go.lintTool": "golangci-lint",
+        "go.lintFlags": [
+          "--fast"
+        ],
+        "go.useLanguageServer": true,
+        "[go]": {
+            "editor.formatOnSave": true,
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": true,
+            },
+            // Optional: Disable snippets, as they conflict with completion ranking.
+            "editor.snippetSuggestions": "none",
+        },
+        "[go.mod]": {
+            "editor.formatOnSave": true,
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": true,
+            },
+        },
+        "gopls": {
+            // Add parameter placeholders when completing a function.
+            "usePlaceholders": true,
+
+            // If true, enable additional analyses with staticcheck.
+            // Warning: This will significantly increase memory usage.
+            "staticcheck": false,
+        }
+      },
+
+    "runArgs": [
+        "--env-file", "${localWorkspaceFolder}/.devcontainer/.env",
+        "--cap-add=SYS_PTRACE",
+        "--security-opt",
+        "seccomp=unconfined",
+        "--network=host",
+    ],
+
+    "postCreateCommand": "go mod download",
+
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",        
+        "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/root/.ssh,type=bind,readonly",
+        "source=mcpc-bashhistory,target=/commandhistory,type=volume",
+    ],
+}
