@@ -14,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
-func AmberAuth(refresh *string) (amberTokens *AmberTokens, err error) {
+func AmberAuth(refresh string) (amberTokens *AmberTokens, err error) {
 	// configure cognito srp
 
 	user := os.Getenv("USER")
@@ -41,12 +41,12 @@ func AmberAuth(refresh *string) (amberTokens *AmberTokens, err error) {
 
 	svc := cip.NewFromConfig(cfg)
 
-	if refresh != nil {
+	if refresh != "" {
 
-		fmt.Printf("Attemp refresh: %v", refresh)
+		fmt.Println("Attempt refresh")
 
 		params := map[string]string{
-			"REFRESH_TOKEN": *refresh,
+			"REFRESH_TOKEN": refresh,
 		}
 		resp, errInternal := svc.InitiateAuth(context.Background(), &cip.InitiateAuthInput{
 			AuthFlow:       types.AuthFlowTypeRefreshTokenAuth,
@@ -55,18 +55,19 @@ func AmberAuth(refresh *string) (amberTokens *AmberTokens, err error) {
 		})
 
 		if errInternal != nil {
-			return nil, errInternal
+			fmt.Println("Refresh failed")
+			return AmberAuth("")
 		}
 
 		amberTokens := &AmberTokens{
-			AccessToken:  resp.AuthenticationResult.AccessToken,
-			IDToken:      resp.AuthenticationResult.IdToken,
-			RefreshToken: resp.AuthenticationResult.RefreshToken,
+			AccessToken: *resp.AuthenticationResult.AccessToken,
+			IDToken:     *resp.AuthenticationResult.IdToken,
 		}
 
 		return amberTokens, nil
 	}
 
+	fmt.Println("Attempting user and pass")
 	// initiate auth
 	resp, err := svc.InitiateAuth(context.Background(), &cip.InitiateAuthInput{
 		AuthFlow:       types.AuthFlowTypeUserSrpAuth,
@@ -94,9 +95,9 @@ func AmberAuth(refresh *string) (amberTokens *AmberTokens, err error) {
 		}
 
 		amberTokens := &AmberTokens{
-			AccessToken:  resp.AuthenticationResult.AccessToken,
-			IDToken:      resp.AuthenticationResult.IdToken,
-			RefreshToken: resp.AuthenticationResult.RefreshToken,
+			AccessToken:  *resp.AuthenticationResult.AccessToken,
+			IDToken:      *resp.AuthenticationResult.IdToken,
+			RefreshToken: *resp.AuthenticationResult.RefreshToken,
 		}
 
 		return amberTokens, nil
@@ -107,7 +108,7 @@ func AmberAuth(refresh *string) (amberTokens *AmberTokens, err error) {
 }
 
 type AmberTokens struct {
-	AccessToken  *string
-	IDToken      *string
-	RefreshToken *string
+	AccessToken  string
+	IDToken      string
+	RefreshToken string
 }
