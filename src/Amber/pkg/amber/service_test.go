@@ -1,7 +1,6 @@
 package amber_test
 
 import (
-	"fmt"
 	"pkg/amber/pkg/amber"
 	"testing"
 
@@ -26,7 +25,10 @@ func TestService(t *testing.T) {
 	assert.NotEqual(t, "", res.LivePrice)
 	assert.NotEqual(t, "", res.Usage)
 
-	fmt.Println(res.LivePrice)
+	// err = ioutil.WriteFile("../../examples/livepriceresult.json", []byte(res.LivePrice), 0644)
+	// assert.NoError(t, err)
+	// err = ioutil.WriteFile("../../examples/usageresult.json", []byte(res.LivePrice), 0644)
+	// assert.NoError(t, err)
 
 }
 
