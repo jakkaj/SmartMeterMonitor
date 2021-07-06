@@ -4,7 +4,8 @@ FROM golang:1.16.3-alpine3.13 AS builder
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
-    GOARCH=amd64
+    GOARCH=arm \
+    GOARM=5
 
 
 # Move to working directory /build
@@ -25,7 +26,7 @@ RUN go build -o app
 #####################################
 
 
-FROM scratch
+FROM alpine
 
 WORKDIR /app/
 

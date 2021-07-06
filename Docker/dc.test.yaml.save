@@ -1,0 +1,13 @@
+version: '3'
+services:
+  influxdb:
+    image: "arm32v7/influxdb"
+  arm32v7/influxdb  #command: tail -F anything
+    ports:
+    - "8086:8086"
+    volumes:
+    - /data/influx2:/var/lib/influxdb 
+    restart: always
+    environment:
+    - INFLUXDB_LOGGING_LEVEL=warn
+    - INFLUXDB_DATA_INDEX_VERSION=tsi1
