@@ -21,7 +21,7 @@ namespace EnergyHost.Services.Services
         private readonly ISunSpecService _abbService;
         private readonly IDarkSkyService _darkSkyService;
         private readonly IInfluxService _influxService;
-        private readonly IAmberService _amberService;
+        private readonly IAmberServiceV2 _amberService;
         private readonly IEnergyFuturesService _energyFuturesService;
         private readonly IMQTTService _mqttService;
         private readonly ISystemStatusService _statusService;
@@ -54,7 +54,7 @@ namespace EnergyHost.Services.Services
         public double SelfConsumption { get; set; }
         public double Purchased { get; set; }
         public double Consumption { get; set; }
-        public AmberUsage AmberUsage { get; set; }
+        public AmberPriceComposed AmberUsage { get; set; }
 
         
         public double BatteryUsage { get; set; } //Battery
@@ -74,7 +74,7 @@ namespace EnergyHost.Services.Services
             ISunSpecService abbService,
             IDarkSkyService darkSkyService,
             IInfluxService influxService,
-            IAmberService amberService,
+            IAmberServiceV2 amberService,
             IEnergyFuturesService energyFuturesService,
             IMQTTService mqttService,
             ISystemStatusService statusService,
@@ -254,35 +254,18 @@ namespace EnergyHost.Services.Services
             {
                 await Task.Delay(5000);
             }
-
-            var usage = new List<DailyUsage>();
-            usage.AddRange(AmberUsage.data.lastMonthDailyUsage);
-            usage.AddRange(AmberUsage.data.lastWeekDailyUsage);
-            usage.AddRange(AmberUsage.data.thisWeekDailyUsage);
-
-            await _writeUsage(usage);
-
-
-            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastMonthUsage, null,
-                AmberUsage.data.lastMonthUsage.FromGrid.date);
-            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastMonthUsage, null,
-                AmberUsage.data.lastMonthUsage.ToGrid.date);
-
-            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastWeekUsage, null,
-                AmberUsage.data.lastWeekUsage.FromGrid.date);
-            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastWeekUsage, null,
-                AmberUsage.data.lastWeekUsage.ToGrid.date);
-
-            if (AmberUsage.data.thisWeekUsage.ToGrid != null)
-            {
-                await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.thisWeekUsage,
-                    null, AmberUsage.data.thisWeekUsage.FromGrid.date);
-                await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.thisWeekUsage, null,
-                    AmberUsage.data.thisWeekUsage.ToGrid.date);
-            }
+            await _writeUsageV2(AmberUsage);
         }
 
 
+
+        public async Task _writeUsageV2(AmberPriceComposed composed)
+        {
+            foreach(var d in composed.Days)
+            {                
+                await _influxService.WriteObject("house", $"amberDailyUsageFromGrid", d, null, d.Start.ToUniversalTime());
+            }
+        }
 
         public async Task _writeUsage(List<DailyUsage> usage)
         {
@@ -318,7 +301,8 @@ namespace EnergyHost.Services.Services
             {
                 await _powerwallService.ConfigureReserve(CurrentPriceIn, BatteryLevel);
 
-                AmberUsage = await _amberService.GetUsage();
+                var amberData = await _amberService.Get();
+                AmberUsage = _amberService.Compose(amberData);               
 
                 if (AmberUsage != null)
                 {

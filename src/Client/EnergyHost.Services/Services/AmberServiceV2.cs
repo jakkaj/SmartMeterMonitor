@@ -65,6 +65,7 @@ namespace EnergyHost.Services.Services
                 amberDay.Start = amberDay.Periods[0].Start;
                 amberDay.Kwh = amberDay.Periods.Sum(_ => _.Kwh);
                 amberDay.ActualPriceInCents = amberDay.Periods.Sum(_ => _.ActualPrice);
+                amberDay.usageCost = amberDay.ActualPriceInCents / 100;
                 days.Add(amberDay);
             }
 

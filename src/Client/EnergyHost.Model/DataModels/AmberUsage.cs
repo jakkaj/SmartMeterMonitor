@@ -293,6 +293,7 @@ namespace EnergyHost.Model.DataModels
         public DateTime Start { get; set; }
         public double Kwh { get; set; }
         public double ActualPriceInCents { get; set; }
+        public double usageCost { get; set; }
         public List<AmberPeriod> Periods { get; set; } = new List<AmberPeriod>();
     }
 
@@ -301,6 +302,7 @@ namespace EnergyHost.Model.DataModels
         public List<AmberDay> Days { get; set; }
         public double CurrentPrice { get; set; }
         public int RenewablePercentage { get; set; }
+        
 
     }
 }
