@@ -87,6 +87,7 @@ namespace EnergyHost.Services.Services
 
                 using (var client = _httpClientFactory.CreateClient())
                 {
+                    _logService.WriteLog($"Getting amber data: {_settings.Value.AMBER_DATA_URL}");
                     var uri = new Uri(_settings.Value.AMBER_DATA_URL);
                     var result = await client.GetAsync(uri);
                     if (!result.IsSuccessStatusCode)
