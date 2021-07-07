@@ -272,5 +272,35 @@ namespace EnergyHost.Model.DataModels
         public string Usage { get; set; }
     }
 
+    public class AmberPeriod
+    {
+        public DateTime End { get; set; }
+        public double Kwh { get; set; }
+        public DateTime Start { get; set; }
+        public int KwhPriceInCents { get; set; }       
+        public int RenewablePercentage { get; set; }
+        public double ActualPrice
+        {
+            get
+            {
+                return KwhPriceInCents * Kwh;
+            }
+        }
+    }
 
+    public class AmberDay
+    {
+        public DateTime Start { get; set; }
+        public double Kwh { get; set; }
+        public double ActualPriceInCents { get; set; }
+        public List<AmberPeriod> Periods { get; set; } = new List<AmberPeriod>();
+    }
+
+    public class AmberPriceComposed
+    {
+        public List<AmberDay> Days { get; set; }
+        public double CurrentPrice { get; set; }
+        public int RenewablePercentage { get; set; }
+
+    }
 }

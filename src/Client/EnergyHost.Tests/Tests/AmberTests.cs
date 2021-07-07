@@ -1,22 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using EnergyHost.Contract;
+using EnergyHost.Model.DataModels;
 using EnergyHost.Model.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 
 namespace EnergyHost.Tests.Tests
 {
     [TestClass]
     public class AmberTests : TestBase
     {
+        [TestMethod]
+        public async Task TestComposeV2Local()
+        {
+            var data = File.ReadAllText("c:\\temp\\amberdatatest.json");
 
+            var amberData = JsonConvert.DeserializeObject<AmberGraphDataParsed>(data);
+
+            var aService = Resolve<IAmberServiceV2>();
+
+            var days = aService.Compose(amberData);
+            foreach (var d in days.Days)
+            {
+                Debug.WriteLine(d.ActualPriceInCents / 100);
+            }
+        }
 
         [TestMethod]
         public async Task GetDataV2()
@@ -25,7 +42,13 @@ namespace EnergyHost.Tests.Tests
 
             var amberData = await aService.Get();
 
+            var json = JsonConvert.SerializeObject(amberData);
+
+            File.WriteAllText("c:\\temp\\amberdatatest.json", json);
+
             Assert.IsNotNull(amberData);
+
+
         }
 
 
