@@ -39,5 +39,6 @@ namespace EnergyHost.Model.Settings
         public string TESLA_RESERVE_URL { get; set; }
         public int TESLA_OVERNIGHT_RESERVE { get; set; }
 
+        public string AMBER_DATA_URL { get; set; }
     }
 }

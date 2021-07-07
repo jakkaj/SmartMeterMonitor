@@ -16,6 +16,19 @@ namespace EnergyHost.Tests.Tests
     [TestClass]
     public class AmberTests : TestBase
     {
+
+
+        [TestMethod]
+        public async Task GetDataV2()
+        {
+            var aService = Resolve<IAmberServiceV2>();
+
+            var amberData = await aService.Get();
+
+            Assert.IsNotNull(amberData);
+        }
+
+
         [TestMethod]
         public async void GetConfig()
         {

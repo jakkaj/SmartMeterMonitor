@@ -37,6 +37,7 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddSingleton<INetatmoService, NetatmoService>();
             services.AddSingleton<IPowerwallService, PowerwallService>();
 
+            services.AddSingleton<IAmberServiceV2, AmberServiceV2>();
 
             services.AddHttpClient();
 
