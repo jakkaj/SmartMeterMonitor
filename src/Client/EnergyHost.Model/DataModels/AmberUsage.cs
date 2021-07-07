@@ -155,7 +155,7 @@ namespace EnergyHost.Model.DataModels
     public class UsagePeriods
     {
         public object controlled { get; set; }
-        public List<FeedIn> feedIn { get; set; }
+        public List<General> feedIn { get; set; }
         public List<General> general { get; set; }
         public string __typename { get; set; }
     }
@@ -295,7 +295,7 @@ namespace EnergyHost.Model.DataModels
         public double ActualPriceInCents { get; set; }
         public double usageCost { get; set; }
         public List<AmberPeriod> Periods { get; set; } = new List<AmberPeriod>();
-    }
+    }    
 
     public class AmberPriceComposed
     {

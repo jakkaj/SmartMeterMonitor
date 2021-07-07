@@ -54,7 +54,7 @@ namespace EnergyHost.Services.Services
         public double SelfConsumption { get; set; }
         public double Purchased { get; set; }
         public double Consumption { get; set; }
-        public AmberPriceComposed AmberUsage { get; set; }
+        public AmberGraphDataParsed AmberUsage { get; set; }
 
         
         public double BatteryUsage { get; set; } //Battery
@@ -254,16 +254,17 @@ namespace EnergyHost.Services.Services
             {
                 await Task.Delay(5000);
             }
-            await _writeUsageV2(AmberUsage);
+            await _writeUsageV2(_amberService.Compose(AmberUsage), "FromGrid");
+            await _writeUsageV2(_amberService.Compose(AmberUsage, true), "ToGrid");
         }
 
 
 
-        public async Task _writeUsageV2(AmberPriceComposed composed)
+        public async Task _writeUsageV2(AmberPriceComposed composed, string meter)
         {
             foreach(var d in composed.Days)
             {                
-                await _influxService.WriteObject("house", $"amberDailyUsageFromGrid", d, null, d.Start.ToUniversalTime());
+                await _influxService.WriteObject("house", $"amberDailyUsage{meter}", d, null, d.Start.ToUniversalTime());
             }
         }
 
@@ -301,8 +302,8 @@ namespace EnergyHost.Services.Services
             {
                 await _powerwallService.ConfigureReserve(CurrentPriceIn, BatteryLevel);
 
-                var amberData = await _amberService.Get();
-                AmberUsage = _amberService.Compose(amberData);               
+                AmberUsage = await _amberService.Get();
+                
 
                 if (AmberUsage != null)
                 {

@@ -29,7 +29,8 @@ namespace EnergyHost.Tests.Tests
             var aService = Resolve<IAmberServiceV2>();
 
             var days = aService.Compose(amberData);
-            foreach (var d in days.Days)
+            var feedIn = aService.Compose(amberData, true);
+            foreach (var d in feedIn.Days)
             {
                 Debug.WriteLine(d.ActualPriceInCents / 100);
             }

@@ -29,13 +29,18 @@ namespace EnergyHost.Services.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public AmberPriceComposed Compose(AmberGraphDataParsed data)
+
+        public AmberPriceComposed Compose(AmberGraphDataParsed data, bool feedIn = false)
         {
+
+
             List<AmberDay> days = new List<AmberDay>();
-            foreach(var day in data.LivePrice.data.snapshots.billingDays)
+            foreach (var day in data.LivePrice.data.snapshots.billingDays)
             {
                 var amberDay = new AmberDay();
-                foreach(var period in day.usagePeriods.general)
+
+                foreach (var period in feedIn ?
+                    day.usagePeriods.feedIn : day.usagePeriods.general)
                 {
                     var p = new AmberPeriod
                     {
@@ -44,15 +49,18 @@ namespace EnergyHost.Services.Services
                         Kwh = period.kwh
                     };
 
-                    var priceFor = data.Usage.data.snapshots.billingDays.First(_ => _.marketDate == day.marketDate)
-                        .usageSummaries.general.pricePeriods.First(_2 => _2.start == p.Start);
+                    var priceFor = feedIn ?
+                        data.Usage.data.snapshots.billingDays.First(_ => _.marketDate == day.marketDate)
+                            .usageSummaries.feedIn.pricePeriods.First(_2 => _2.start == p.Start)
+                    :
+                        data.Usage.data.snapshots.billingDays.First(_ => _.marketDate == day.marketDate)
+                            .usageSummaries.general.pricePeriods.First(_2 => _2.start == p.Start);
 
-                    if(priceFor != null)
-                    {
-                        Debug.WriteLine(priceFor.kwhPriceInCents);
+                    if (priceFor != null)
+                    {                        
                         p.KwhPriceInCents = priceFor.kwhPriceInCents;
                         p.RenewablePercentage = priceFor.renewablePercentage;
-                        
+
                     }
                     else
                     {
@@ -97,7 +105,7 @@ namespace EnergyHost.Services.Services
                     }
 
                     var s = await result.Content.ReadAsStringAsync();
-                   
+
                     var model = JsonConvert.DeserializeObject<AmberServerResponse>(s);
 
                     var parsed = new AmberGraphDataParsed();
