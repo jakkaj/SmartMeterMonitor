@@ -14,8 +14,8 @@ func Start() {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 	app := api.NewApp(shutdown)
-	app.Handle("/amber", amber.HandleAmberRequest)
-	server := api.New(3004, app)
+	app.Handle("/clipsal", amber.HandleAmberRequest)
+	server := api.New(3005, app)
 
 	err := server.Run()
 	if err != nil {

@@ -22,7 +22,7 @@ func TestService(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	assert.NotEqual(t, "", res.LivePrice)
+	assert.NotEqual(t, "", res.Usage)
 
 	// err = ioutil.WriteFile("../../examples/livepriceresult.json", []byte(res.LivePrice), 0644)
 	// assert.NoError(t, err)

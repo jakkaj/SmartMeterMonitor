@@ -16,5 +16,5 @@ build:
 	go build -o clipsalserver
 
 run: build
-	./amberserver
+	./clipsalserver
 
