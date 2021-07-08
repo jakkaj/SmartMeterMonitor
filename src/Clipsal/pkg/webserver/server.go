@@ -11,10 +11,12 @@ import (
 )
 
 func Start() {
+
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 	app := api.NewApp(shutdown)
 	app.Handle("/clipsal", amber.HandleAmberRequest)
+	app.Handle("/instant", amber.HandleInstantRequest)
 	server := api.New(3005, app)
 
 	err := server.Run()
