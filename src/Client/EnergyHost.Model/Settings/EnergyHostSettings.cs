@@ -42,5 +42,6 @@ namespace EnergyHost.Model.Settings
         public string AMBER_DATA_URL { get; set; }
 
         public string CLIPSAL_DATA_URL { get; set; }
+        public string CLIPSAL_INST_URL { get; set; }
     }
 }

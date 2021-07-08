@@ -32,4 +32,42 @@ namespace EnergyHost.Model.EnergyModels
     }
 
 
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
+    public class Appliance
+    {
+        public string assignment { get; set; }
+        public double power { get; set; }
+        public string display_name { get; set; }
+    }
+
+    public class Weather
+    {
+        public string datetime { get; set; }
+        public string condition { get; set; }
+        public string description { get; set; }
+        public double temperature { get; set; }
+        public string icon { get; set; }
+        public int id { get; set; }
+        public bool daytime { get; set; }
+    }
+
+    public class ClipsalInstant
+    {
+        public double solar { get; set; }
+        public double battery { get; set; }
+        public string last_updated { get; set; }
+        public List<Appliance> appliances { get; set; }
+        public object battery_soc_fraction { get; set; }
+        public object battery_duration_remaining { get; set; }
+        public double grid { get; set; }
+        public double consumption { get; set; }
+        public double self_powered_fraction { get; set; }
+        public bool blackout { get; set; }
+        public double tariff_rate { get; set; }
+        public Weather weather { get; set; }
+    }
+
+
+
+
 }

@@ -99,5 +99,42 @@ namespace EnergyHost.Services.Services
             }
 
         }
+
+        public async Task<ClipsalInstant> GetInstant()
+        {
+            try
+            {
+
+
+                using (var client = _httpClientFactory.CreateClient())
+                {
+                    _logService.WriteLog($"Getting Clipsal data: {_settings.Value.CLIPSAL_INST_URL}");
+
+                    var uri = new Uri(_settings.Value.CLIPSAL_INST_URL);
+                    var result = await client.GetAsync(uri);
+                    if (!result.IsSuccessStatusCode)
+                    {
+                        _logService.WriteError($"Error in get clipsa; data: {result.ReasonPhrase}");
+                        return null;
+                    }
+
+                    var s = await result.Content.ReadAsStringAsync();
+
+                    var model = JsonConvert.DeserializeObject<AmberServerResponse>(s);
+
+                    var parsed = JsonConvert.DeserializeObject<ClipsalInstant>(model.Usage);
+
+
+
+                    return parsed;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logService.WriteError(ex);
+                return null;
+            }
+
+        }
     }
 }
