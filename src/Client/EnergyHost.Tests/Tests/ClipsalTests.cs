@@ -12,6 +12,17 @@ namespace EnergyHost.Tests.Tests
     [TestClass]
     public class ClipsalTests : TestBase
     {
+
+        [TestMethod]
+        public async Task GetInstant()
+        {
+            var s = Resolve<IClipsalService>();
+
+            var data = await s.GetInstant();
+
+            Assert.IsNotNull(data);
+        }
+
         [TestMethod]
         public async Task PopulateClipsal()
         {

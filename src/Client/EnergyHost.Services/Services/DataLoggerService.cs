@@ -58,7 +58,7 @@ namespace EnergyHost.Services.Services
         public AmberGraphDataParsed AmberUsage { get; set; }
         public List<ClipsalInflux> ClipsalUsage { get; set; }
 
-        
+
         public double BatteryUsage { get; set; } //Battery
         public double LoadUsage { get; set; } //House
         public double BatteryLevel { get; set; }
@@ -113,6 +113,7 @@ namespace EnergyHost.Services.Services
             //_abbPoller();
 
             _deviceUpdate10s();
+            _deviceUpdate30s();
 
             _fiveMinuteEvenPoller();
             _hourEvenPoller();
@@ -266,8 +267,8 @@ namespace EnergyHost.Services.Services
 
         public async Task _writeUsageV2(AmberPriceComposed composed, string meter)
         {
-            foreach(var d in composed.Days)
-            {                
+            foreach (var d in composed.Days)
+            {
                 await _influxService.WriteObject("house", $"amberDailyUsage{meter}", d, null, d.Start.ToUniversalTime());
             }
         }
@@ -278,6 +279,19 @@ namespace EnergyHost.Services.Services
             {
                 await _influxService.WriteObject("house", $"deviceUsage", d, null, d.date);
             }
+        }
+
+        public async Task _writeClipsalInst(ClipsalInstant clipsal)
+        {
+            var influx = new ClipsalInflux
+            {
+                ac = clipsal.appliances.First(_ => _.assignment == "load_air_conditioner__1").power,
+                powerpoints = clipsal.appliances.First(_ => _.assignment == "load_powerpoint__1").power,
+                oven = clipsal.appliances.First(_ => _.assignment == "load_oven__1").power,
+                other = clipsal.appliances.First(_ => _.assignment == "load_residual").power
+            };
+
+            await _influxService.WriteObject("house", $"deviceUsageInstant",influx, null, DateTime.Now.ToUniversalTime());
         }
 
         public async Task _writeUsage(List<DailyUsage> usage)
@@ -327,7 +341,7 @@ namespace EnergyHost.Services.Services
                     await _writeAmberUsage();
                 }
 
-                if(clipsalUsage != null && clipsalUsage.Count > 0)
+                if (clipsalUsage != null && clipsalUsage.Count > 0)
                 {
                     ClipsalUsage = _clipsalService.Compose(clipsalUsage);
                     await _writeClipsal(ClipsalUsage);
@@ -437,6 +451,17 @@ namespace EnergyHost.Services.Services
         //    }
         //}
 
+        async void _deviceUpdate30s()
+        {
+            while (true)
+            {
+                var inst = await _clipsalService.GetInstant();
+                await _writeClipsalInst(inst);
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+        }
+
+
         async void _deviceUpdate10s()
         {
             while (true)
@@ -460,7 +485,7 @@ namespace EnergyHost.Services.Services
                     BatteryLevel = powerWall.charge;
                     IsCharging = powerWall.battery.instant_power < 0;
                     IsDischarging = powerWall.battery.instant_power > 0;
-                    
+
                     LoadImported = Math.Round(powerWall.load.energy_imported / 1000, 2);
                     SolarExported = Math.Round(powerWall.solar.energy_exported / 1000, 2);
                     BatteryExported = Math.Round(powerWall.battery.energy_exported / 1000, 2);

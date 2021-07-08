@@ -10,5 +10,6 @@ namespace EnergyHost.Contract
     {
         Task<List<ClipsalUsage>> Get(int days);
         List<ClipsalInflux> Compose(List<ClipsalUsage> usage);
+        Task<ClipsalInstant> GetInstant();
     }
 }
