@@ -38,6 +38,7 @@ namespace EnergyHost.Services.ServiceSetup
             services.AddSingleton<IPowerwallService, PowerwallService>();
 
             services.AddSingleton<IAmberServiceV2, AmberServiceV2>();
+            services.AddSingleton<IClipsalService, ClipsalService>();
 
             services.AddHttpClient();
 
