@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-var baseUrl = "https://j6we4yx2qf.execute-api.ap-southeast-2.amazonaws.com/prod/v1/sites/523/costs"
+var baseUrl = "https://j6we4yx2qf.execute-api.ap-southeast-2.amazonaws.com/prod/v1/sites/523/usage?"
 
 type Service struct {
 	RefreshToken string
@@ -22,7 +22,7 @@ func NewService() (service *Service) {
 	return &Service{}
 }
 
-func (s *Service) Get() (res *Response, err error) {
+func (s *Service) Get(querystring string) (res *Response, err error) {
 
 	err = s.Authenticate()
 
@@ -36,7 +36,7 @@ func (s *Service) Get() (res *Response, err error) {
 	//chanUsage := make(chan string)
 
 	go func() {
-		res, errInternal := s.request()
+		res, errInternal := s.request(querystring)
 
 		if errInternal != nil {
 			chanLivePrice <- ""
@@ -50,8 +50,8 @@ func (s *Service) Get() (res *Response, err error) {
 	return
 }
 
-func (s *Service) request() (result string, err error) {
-	req, err := http.NewRequest("GET", baseUrl, nil)
+func (s *Service) request(querystring string) (result string, err error) {
+	req, err := http.NewRequest("GET", baseUrl+querystring, nil)
 	if err != nil {
 		return "", err
 	}

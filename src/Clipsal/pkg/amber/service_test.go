@@ -18,7 +18,7 @@ func TestService(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	res, err := s.Get()
+	res, err := s.Get("from_datetime=2021-07-07%2000%3A00%3A00&to_datetime=2021-07-08%2000%3A00%3A00")
 
 	assert.NoError(t, err)
 

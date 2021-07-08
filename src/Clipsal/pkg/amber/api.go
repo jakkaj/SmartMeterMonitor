@@ -3,6 +3,7 @@ package amber
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -10,7 +11,9 @@ func HandleAmberRequest(ctx context.Context, w http.ResponseWriter, r *http.Requ
 
 	s := NewService()
 
-	res, err := s.Get()
+	fmt.Println(r.URL.RawQuery)
+
+	res, err := s.Get(r.URL.RawQuery)
 
 	if err != nil {
 		return err
