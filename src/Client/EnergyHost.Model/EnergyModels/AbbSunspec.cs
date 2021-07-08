@@ -140,8 +140,7 @@ namespace EnergyHost.Model.EnergyModels
         public int WH { get; set; }
         public double AphA { get; set; }
         public double Hz { get; set; }
-        public int StVnd { get; set; }
-        public double DCA { get; set; }
+        public int StVnd { get; set; }        
         public double PF { get; set; }
         public object TmpTrns { get; set; }
         public double DCV { get; set; }
@@ -174,8 +173,7 @@ namespace EnergyHost.Model.EnergyModels
         public int WH { get; set; }
         public double AphA { get; set; }
         public double Hz { get; set; }
-        public int StVnd { get; set; }
-        public object DCA { get; set; }
+        public int StVnd { get; set; }        
         public object PF { get; set; }
         public object TmpTrns { get; set; }
         public object DCV { get; set; }
