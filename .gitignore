@@ -404,3 +404,5 @@ healthchecksdb
 secrets.h
 src/Tesla/token_file.json
 src/Amber/amberserver
+src/Clipsal/amberdata
+src/Clipsal/amberserver
