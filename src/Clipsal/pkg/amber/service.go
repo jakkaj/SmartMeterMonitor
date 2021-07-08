@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 )
 
 var baseUrl = "https://j6we4yx2qf.execute-api.ap-southeast-2.amazonaws.com/prod/v1/sites/523/usage?"
+
+var instUrl = "https://j6we4yx2qf.execute-api.ap-southeast-2.amazonaws.com/prod/v1/sites/523/live_data_summary"
 
 type Service struct {
 	RefreshToken string
@@ -18,8 +21,47 @@ type Response struct {
 	Usage string
 }
 
+var once sync.Once
+
+var (
+	instService *Service
+)
+
 func NewService() (service *Service) {
-	return &Service{}
+	once.Do(func() {
+
+		instService = &Service{}
+
+	})
+	return instService
+}
+
+func (s *Service) GetInst() (res *Response, err error) {
+
+	err = s.Authenticate()
+
+	if err != nil {
+		return
+	}
+
+	res = &Response{}
+
+	chanLivePrice := make(chan string)
+	//chanUsage := make(chan string)
+
+	go func() {
+		res, errInternal := s.request(instUrl, "")
+
+		if errInternal != nil {
+			chanLivePrice <- ""
+		}
+
+		chanLivePrice <- res
+	}()
+
+	res.Usage = <-chanLivePrice
+
+	return
 }
 
 func (s *Service) Get(querystring string) (res *Response, err error) {
@@ -36,7 +78,7 @@ func (s *Service) Get(querystring string) (res *Response, err error) {
 	//chanUsage := make(chan string)
 
 	go func() {
-		res, errInternal := s.request(querystring)
+		res, errInternal := s.request(baseUrl, querystring)
 
 		if errInternal != nil {
 			chanLivePrice <- ""
@@ -50,8 +92,12 @@ func (s *Service) Get(querystring string) (res *Response, err error) {
 	return
 }
 
-func (s *Service) request(querystring string) (result string, err error) {
-	req, err := http.NewRequest("GET", baseUrl+querystring, nil)
+func (s *Service) request(url string, querystring string) (result string, err error) {
+
+	reqUrl := url + querystring
+
+	fmt.Printf("\nGetting: %v\n", reqUrl)
+	req, err := http.NewRequest("GET", reqUrl, nil)
 	if err != nil {
 		return "", err
 	}

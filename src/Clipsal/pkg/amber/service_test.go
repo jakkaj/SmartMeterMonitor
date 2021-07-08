@@ -2,10 +2,28 @@ package amber_test
 
 import (
 	"clipsaldata/pkg/amber"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestInstService(t *testing.T) {
+	s := amber.NewService()
+
+	err := s.Authenticate()
+
+	assert.NoError(t, err)
+
+	res, err := s.GetInst()
+
+	assert.NoError(t, err)
+
+	assert.NotEqual(t, "", res.Usage)
+
+	fmt.Println(res.Usage)
+
+}
 
 func TestService(t *testing.T) {
 	s := amber.NewService()

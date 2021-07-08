@@ -7,6 +7,21 @@ import (
 	"net/http"
 )
 
+func HandleInstantRequest(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+
+	s := NewService()
+
+	fmt.Println(r.URL.RawQuery)
+
+	res, err := s.GetInst()
+
+	if err != nil {
+		return err
+	}
+
+	return Respond(ctx, w, res, http.StatusOK)
+}
+
 func HandleAmberRequest(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 
 	s := NewService()
