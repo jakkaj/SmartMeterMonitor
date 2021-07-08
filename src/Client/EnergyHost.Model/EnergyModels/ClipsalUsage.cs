@@ -26,5 +26,14 @@ namespace EnergyHost.Model.EnergyModels
         public double total_cost { get; set; }
     }
 
+    public class ClipsalInflux
+    {
+        public DateTime date { get; set; }
+        public double powerpoints { get; set; }
+        public double oven { get; set; }
+        public double ac { get; set; }
+        public double other { get; set; }
+    }
+
 
 }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,26 @@ namespace EnergyHost.Services.Services
             _settings = settings;
             _httpClientFactory = httpClientFactory;
         }
+
+        public List<ClipsalInflux> Compose(List<ClipsalUsage> usage)
+        {
+            var l = new List<ClipsalInflux>();
+            foreach (var u in usage)
+            {
+                var ci = new ClipsalInflux
+                {
+                    date = DateTime.Parse(u.date).ToUniversalTime(),
+                    powerpoints = u.assignments.First(_ => _.assignment == "load_powerpoint__1").amount,
+                    oven = u.assignments.First(_ => _.assignment == "load_oven__1").amount,
+                    ac = u.assignments.First(_ => _.assignment == "load_air_conditioner__1").amount,
+                    other = u.assignments.First(_ => _.assignment == "load_residual").amount
+                };
+                l.Add(ci);
+            }
+
+            return l;
+        }
+
         public async Task<List<ClipsalUsage>> Get()
         {
             try

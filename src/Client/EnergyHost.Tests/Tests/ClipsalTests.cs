@@ -20,9 +20,11 @@ namespace EnergyHost.Tests.Tests
 
             Assert.IsNotNull(data);
 
-            foreach(var d in data)
+            var composed = s.Compose(data);
+
+            foreach(var i in composed)
             {
-                Debug.WriteLine(d.date);
+                Debug.WriteLine(i.date);
             }
         }
     }

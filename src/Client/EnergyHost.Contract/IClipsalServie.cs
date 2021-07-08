@@ -9,5 +9,6 @@ namespace EnergyHost.Contract
     public interface IClipsalService
     {
         Task<List<ClipsalUsage>> Get();
+        List<ClipsalInflux> Compose(List<ClipsalUsage> usage);
     }
 }

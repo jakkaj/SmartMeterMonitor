@@ -29,6 +29,7 @@ namespace EnergyHost.Services.Services
         private readonly INotificationService _notificationService;
         private readonly INetatmoService _netatmoService;
         private readonly IPowerwallService _powerwallService;
+        private readonly IClipsalService _clipsalService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -55,6 +56,7 @@ namespace EnergyHost.Services.Services
         public double Purchased { get; set; }
         public double Consumption { get; set; }
         public AmberGraphDataParsed AmberUsage { get; set; }
+        public List<ClipsalInflux> ClipsalUsage { get; set; }
 
         
         public double BatteryUsage { get; set; } //Battery
@@ -81,7 +83,8 @@ namespace EnergyHost.Services.Services
             IThresholdingService thresholdingService,
             INotificationService notificationService,
             INetatmoService netatmoService,
-            IPowerwallService powerwallService
+            IPowerwallService powerwallService,
+            IClipsalService clipsalService
             )
         {
             _logService = logService;
@@ -96,6 +99,7 @@ namespace EnergyHost.Services.Services
             _notificationService = notificationService;
             _netatmoService = netatmoService;
             _powerwallService = powerwallService;
+            _clipsalService = clipsalService;
             _daikinService = daikinService;
         }
 
@@ -268,6 +272,14 @@ namespace EnergyHost.Services.Services
             }
         }
 
+        public async Task _writeClipsal(List<ClipsalInflux> clipsal)
+        {
+            foreach (var d in clipsal)
+            {
+                await _influxService.WriteObject("house", $"appliances", d, null, d.date);
+            }
+        }
+
         public async Task _writeUsage(List<DailyUsage> usage)
         {
             foreach (var u in usage)
@@ -302,12 +314,23 @@ namespace EnergyHost.Services.Services
             {
                 await _powerwallService.ConfigureReserve(CurrentPriceIn, BatteryLevel);
 
-                AmberUsage = await _amberService.Get();
-                
+                var t1 = _amberService.Get();
+                var t2 = _clipsalService.Get();
+
+                Task.WaitAll(t1, t2);
+
+                AmberUsage = await t1;
+                var clipsalUsage = await t2;
 
                 if (AmberUsage != null)
                 {
                     await _writeAmberUsage();
+                }
+
+                if(clipsalUsage != null && clipsalUsage.Count > 0)
+                {
+                    ClipsalUsage = _clipsalService.Compose(clipsalUsage);
+                    await _writeClipsal(ClipsalUsage);
                 }
 
 
