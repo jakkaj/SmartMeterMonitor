@@ -1,4 +1,4 @@
-module amberdata
+module clipsaldata
 
 go 1.16
 

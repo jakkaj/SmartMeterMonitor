@@ -1,8 +1,8 @@
 package webserver
 
 import (
-	"amberdata/pkg/amber"
-	"amberdata/pkg/api"
+	"clipsaldata/pkg/amber"
+	"clipsaldata/pkg/api"
 	"fmt"
 	"os"
 	"os/signal"

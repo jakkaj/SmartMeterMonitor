@@ -1,7 +1,7 @@
 package amber_test
 
 import (
-	"amberdata/pkg/amber"
+	"clipsaldata/pkg/amber"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

@@ -1,6 +1,6 @@
 package main
 
-import "amberdata/pkg/webserver"
+import "clipsaldata/pkg/webserver"
 
 func main() {
 	webserver.Start()
