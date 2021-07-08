@@ -3,7 +3,7 @@ services:
   clipsal:    
     restart: always
     build: 
-      context: ../src/Amber 
+      context: ../src/Clipsal 
       dockerfile: Dockerfile    
     ports:
     - 3005:3005
