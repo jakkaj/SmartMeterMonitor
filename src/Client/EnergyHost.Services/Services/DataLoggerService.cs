@@ -276,7 +276,7 @@ namespace EnergyHost.Services.Services
         {
             foreach (var d in clipsal)
             {
-                await _influxService.WriteObject("house", $"appliances", d, null, d.date);
+                await _influxService.WriteObject("house", $"deviceUsage", d, null, d.date);
             }
         }
 
@@ -315,7 +315,7 @@ namespace EnergyHost.Services.Services
                 await _powerwallService.ConfigureReserve(CurrentPriceIn, BatteryLevel);
 
                 var t1 = _amberService.Get();
-                var t2 = _clipsalService.Get();
+                var t2 = _clipsalService.Get(0);
 
                 Task.WaitAll(t1, t2);
 

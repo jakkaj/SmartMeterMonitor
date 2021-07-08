@@ -4,26 +4,22 @@ using System.Text;
 
 namespace EnergyHost.Model.EnergyModels
 {
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
-    public class Component
-    {
-        public string type { get; set; }
-        public double amount { get; set; }
-        public string aggregation_type { get; set; }
-    }
-
-    public class Assignment
-    {
-        public string assignment { get; set; }
-        public double amount { get; set; }
-    }
-
     public class ClipsalUsage
     {
-        public string date { get; set; }
-        public List<Component> components { get; set; }
-        public List<Assignment> assignments { get; set; }
-        public double total_cost { get; set; }
+        public string datetime { get; set; }
+        public double pv_site_net__1 { get; set; }
+        public double consumed { get; set; }
+        public double load_oven__1 { get; set; }
+        public double load_powerpoint__1 { get; set; }
+        public double load_residual { get; set; }
+        public double ac_load_net { get; set; }
+        public double sold { get; set; }
+        public double saved { get; set; }
+        public double battery_storage__1 { get; set; }
+        public double bought { get; set; }
+        public double load_air_conditioner__1 { get; set; }
+        public int clipsal_solar_id { get; set; }
+        public double total_consumed { get; set; }
     }
 
     public class ClipsalInflux
