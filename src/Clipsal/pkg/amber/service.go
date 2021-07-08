@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-var baseUrl = "https://backend.amberelectric.com.au/graphql"
+var baseUrl = "https://j6we4yx2qf.execute-api.ap-southeast-2.amazonaws.com/prod/v1/sites/523/costs"
 
 type Service struct {
 	RefreshToken string
@@ -15,8 +15,7 @@ type Service struct {
 }
 
 type Response struct {
-	LivePrice string
-	Usage     string
+	Usage string
 }
 
 func NewService() (service *Service) {
@@ -34,10 +33,10 @@ func (s *Service) Get() (res *Response, err error) {
 	res = &Response{}
 
 	chanLivePrice := make(chan string)
-	chanUsage := make(chan string)
+	//chanUsage := make(chan string)
 
 	go func() {
-		res, errInternal := s.request(queryLivePrice)
+		res, errInternal := s.request()
 
 		if errInternal != nil {
 			chanLivePrice <- ""
@@ -46,24 +45,13 @@ func (s *Service) Get() (res *Response, err error) {
 		chanLivePrice <- res
 	}()
 
-	go func() {
-		res, errInternal := s.request(queryUsage)
-
-		if errInternal != nil {
-			chanUsage <- ""
-		}
-
-		chanUsage <- res
-	}()
-
-	res.LivePrice = <-chanLivePrice
-	res.Usage = <-chanUsage
+	res.Usage = <-chanLivePrice
 
 	return
 }
 
-func (s *Service) request(query string) (result string, err error) {
-	req, err := http.NewRequest("POST", baseUrl, bytes.NewBuffer([]byte(query)))
+func (s *Service) request() (result string, err error) {
+	req, err := http.NewRequest("GET", baseUrl, nil)
 	if err != nil {
 		return "", err
 	}

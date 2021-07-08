@@ -13,7 +13,7 @@ test-watcher:
 	bash ./.devcontainer/test_watcher.sh
 
 build:
-	go build -o amberserver
+	go build -o clipsalserver
 
 run: build
 	./amberserver

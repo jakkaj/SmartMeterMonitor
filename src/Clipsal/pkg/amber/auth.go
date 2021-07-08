@@ -33,7 +33,7 @@ func AmberAuth(refresh string) (amberTokens *AmberTokens, err error) {
 		return nil, fmt.Errorf("USER and PASSWORD env vars must be set")
 	}
 
-	csrp, err := cognitosrp.NewCognitoSRP(user, password, "ap-southeast-2_vPQVymJLn", "11naqf0mbruts1osrjsnl2ee1", nil)
+	csrp, err := cognitosrp.NewCognitoSRP(user, password, "ap-southeast-2_Pv9NZBa67", "4fdq4dgpt32g2hr8pdajum5pqd", nil)
 	if err != nil {
 		return nil, err
 	}
