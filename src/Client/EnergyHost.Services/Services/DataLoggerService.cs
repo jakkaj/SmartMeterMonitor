@@ -181,7 +181,7 @@ namespace EnergyHost.Services.Services
                     { "SolarExported", SolarExported },
                     { "BatteryImported", BatteryImported },
                     { "BatteryExported", BatteryExported },
-                    { "bedroomtemp", NetatmoData?.BedroomTemp ?? 0 },
+                    { "bedroomTemp", NetatmoData?.BedroomTemp ?? 0 },
                     { "bedroomHumidity", NetatmoData?.BedroomHumidity ?? 0},
                     { "bedroomCO2", NetatmoData?.BedroomCO2 ?? 0},
 
