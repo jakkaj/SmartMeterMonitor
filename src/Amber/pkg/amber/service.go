@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 )
 
 var baseUrl = "https://backend.amberelectric.com.au/graphql"
@@ -19,8 +20,20 @@ type Response struct {
 	Usage     string
 }
 
+var once sync.Once
+
+var (
+	instService *Service
+)
+
 func NewService() (service *Service) {
-	return &Service{}
+	once.Do(func() {
+
+		instService = &Service{}
+
+	})
+	return instService
+
 }
 
 func (s *Service) Get() (res *Response, err error) {
