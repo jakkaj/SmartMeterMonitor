@@ -8,11 +8,14 @@ namespace EnergyHost.Model.DataModels
     {
         public double? IndoorTemp { get; set; }
         public double? OutdoorTemp { get; set; }
+        public double? BedroomTemp { get; set; }
         public double? AbsPressure { get; set; }
         public double? Pressure { get; set; }
         public double? CO2 { get; set; }
+        public double? BedroomCO2 { get; set; }
         public double? IndoorHumidity { get; set; }
         public double? OutdoorHumidity { get; set; }
+        public double? BedroomHumidity { get; set; }
         public double? Noise { get; set; }
         public double? Rain { get; set; }
         public double? Rain24 { get; set; }

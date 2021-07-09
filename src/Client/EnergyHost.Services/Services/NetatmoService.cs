@@ -44,16 +44,19 @@ namespace EnergyHost.Services.Services
                 var outdoorData = result.Body.Devices[0].Modules[0].DashboardData;
                 var windData = result.Body.Devices[0].Modules[1].DashboardData;
                 var rainData = result.Body.Devices[0].Modules[2].DashboardData;
-
+                var bedroomData = result.Body.Devices[0].Modules[3].DashboardData;
                 var netatmoData = new NetatmoData
                 {
                     IndoorTemp = indoorData.Temperature,
                     OutdoorTemp = outdoorData.Temperature,
+                    BedroomTemp = bedroomData.Temperature,
                     AbsPressure = indoorData.AbsolutePressure,
                     Pressure = indoorData.Pressure,
                     CO2 = indoorData.CO2,
+                    BedroomCO2 = bedroomData.CO2,
                     IndoorHumidity = indoorData.Humidity,
                     OutdoorHumidity = outdoorData.Humidity,
+                    BedroomHumidity = bedroomData.Humidity,
                     Noise = indoorData.Noise,
                     Rain = rainData.Rain,
                     Rain24 = rainData.SumRain24,

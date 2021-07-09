@@ -181,7 +181,10 @@ namespace EnergyHost.Services.Services
                     { "LoadImported", LoadImported },
                     { "SolarExported", SolarExported },
                     { "BatteryImported", BatteryImported },
-                    { "BatteryExported", BatteryExported }
+                    { "BatteryExported", BatteryExported },
+                    { "bedroomtemp", NetatmoData?.BedroomTemp ?? 0 },
+                    { "bedroomHumidity", NetatmoData?.BedroomHumidity ?? 0},
+                    { "bedroomCO2", NetatmoData?.BedroomCO2 ?? 0},
 
 
                     //{ "MonthTotalCost", AmberUsage?.data.lastMonthUsage.FromGrid.actualCost ?? 0 },
