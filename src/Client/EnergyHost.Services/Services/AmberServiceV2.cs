@@ -38,7 +38,10 @@ namespace EnergyHost.Services.Services
             foreach (var day in data.LivePrice.data.snapshots.billingDays)
             {
                 var amberDay = new AmberDay();
-
+                if (day.usagePeriods == null)
+                {
+                    continue;
+                }
                 foreach (var period in feedIn ?
                     day.usagePeriods.feedIn : day.usagePeriods.general)
                 {
