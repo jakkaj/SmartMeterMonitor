@@ -285,15 +285,22 @@ namespace EnergyHost.Services.Services
 
         public async Task _writeClipsalInst(ClipsalInstant clipsal)
         {
-            var influx = new ClipsalInflux
+            try
             {
-                ac = clipsal.appliances.First(_ => _.assignment == "load_air_conditioner__1").power,
-                powerpoints = clipsal.appliances.First(_ => _.assignment == "load_powerpoint__1").power,
-                oven = clipsal.appliances.First(_ => _.assignment == "load_oven__1").power,
-                other = clipsal.appliances.First(_ => _.assignment == "load_residual").power
-            };
+                var influx = new ClipsalInflux
+                {
+                    ac = clipsal.appliances.First(_ => _.assignment == "load_air_conditioner__1").power,
+                    powerpoints = clipsal.appliances.First(_ => _.assignment == "load_powerpoint__1").power,
+                    oven = clipsal.appliances.First(_ => _.assignment == "load_oven__1").power,
+                    other = clipsal.appliances.First(_ => _.assignment == "load_residual").power
+                };
 
-            await _influxService.WriteObject("house", $"deviceUsageInstant",influx, null, DateTime.Now.ToUniversalTime());
+                await _influxService.WriteObject("house", $"deviceUsageInstant", influx, null, DateTime.Now.ToUniversalTime());
+            }catch(Exception ex)
+            {
+                _logService.WriteError(ex);
+            }
+            
         }
 
         public async Task _writeUsage(List<DailyUsage> usage)
