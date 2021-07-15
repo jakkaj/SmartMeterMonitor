@@ -466,7 +466,7 @@ namespace EnergyHost.Services.Services
             {
                 var inst = await _clipsalService.GetInstant();
                 await _writeClipsalInst(inst);
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                await Task.Delay(TimeSpan.FromSeconds(30));
             }
         }
 
