@@ -113,7 +113,7 @@ namespace EnergyHost.Services.Services
             //_abbPoller();
 
             _deviceUpdate10s();
-            _deviceUpdate30s();
+            _deviceUpdate60s();
 
             _fiveMinuteEvenPoller();
             _hourEvenPoller();
@@ -460,13 +460,13 @@ namespace EnergyHost.Services.Services
         //    }
         //}
 
-        async void _deviceUpdate30s()
+        async void _deviceUpdate60s()
         {
             while (true)
             {
                 var inst = await _clipsalService.GetInstant();
                 await _writeClipsalInst(inst);
-                await Task.Delay(TimeSpan.FromSeconds(30));
+                await Task.Delay(TimeSpan.FromSeconds(60));
             }
         }
 
