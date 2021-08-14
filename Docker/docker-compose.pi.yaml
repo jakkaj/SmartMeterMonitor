@@ -1,5 +1,13 @@
 version: '2.4'
 services:
+  clipsal:    
+    restart: always
+    build: 
+      context: ../src/Clipsal 
+      dockerfile: Dockerfile    
+    ports:
+    - 3005:3005
+    env_file: .env_clipsal
   amber:    
     restart: always
     build: 

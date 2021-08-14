@@ -21,7 +21,7 @@ namespace EnergyHost.Services.Services
         private readonly ISunSpecService _abbService;
         private readonly IDarkSkyService _darkSkyService;
         private readonly IInfluxService _influxService;
-        private readonly IAmberService _amberService;
+        private readonly IAmberServiceV2 _amberService;
         private readonly IEnergyFuturesService _energyFuturesService;
         private readonly IMQTTService _mqttService;
         private readonly ISystemStatusService _statusService;
@@ -29,6 +29,7 @@ namespace EnergyHost.Services.Services
         private readonly INotificationService _notificationService;
         private readonly INetatmoService _netatmoService;
         private readonly IPowerwallService _powerwallService;
+        private readonly IClipsalService _clipsalService;
         private readonly IDaikinService _daikinService;
 
         public double SolarOutput { get; set; } = 0;
@@ -54,9 +55,10 @@ namespace EnergyHost.Services.Services
         public double SelfConsumption { get; set; }
         public double Purchased { get; set; }
         public double Consumption { get; set; }
-        public AmberUsage AmberUsage { get; set; }
+        public AmberGraphDataParsed AmberUsage { get; set; }
+        public List<ClipsalInflux> ClipsalUsage { get; set; }
 
-        
+
         public double BatteryUsage { get; set; } //Battery
         public double LoadUsage { get; set; } //House
         public double BatteryLevel { get; set; }
@@ -74,14 +76,15 @@ namespace EnergyHost.Services.Services
             ISunSpecService abbService,
             IDarkSkyService darkSkyService,
             IInfluxService influxService,
-            IAmberService amberService,
+            IAmberServiceV2 amberService,
             IEnergyFuturesService energyFuturesService,
             IMQTTService mqttService,
             ISystemStatusService statusService,
             IThresholdingService thresholdingService,
             INotificationService notificationService,
             INetatmoService netatmoService,
-            IPowerwallService powerwallService
+            IPowerwallService powerwallService,
+            IClipsalService clipsalService
             )
         {
             _logService = logService;
@@ -96,6 +99,7 @@ namespace EnergyHost.Services.Services
             _notificationService = notificationService;
             _netatmoService = netatmoService;
             _powerwallService = powerwallService;
+            _clipsalService = clipsalService;
             _daikinService = daikinService;
         }
 
@@ -109,6 +113,7 @@ namespace EnergyHost.Services.Services
             //_abbPoller();
 
             _deviceUpdate10s();
+            _deviceUpdate60s();
 
             _fiveMinuteEvenPoller();
             _hourEvenPoller();
@@ -163,8 +168,7 @@ namespace EnergyHost.Services.Services
                     { "Purchased", Purchased },
                     { "SelfConsumption", SelfConsumption },
                     { "FeedIn", FeedIn },
-                    { "Consumption", Consumption },
-                    { "SystemVoltage", SystemVoltage },
+                    { "Consumption", Consumption },                    
                     { "SolarHistory", EnergyFutures?.Futures[0].SolarHistory != null ? EnergyFutures?.Futures[0].SolarHistory : 0},
                     { "CurrentPriceIn", CurrentPriceIn },
                     { "CurrentPriceOut", CurrentPriceOut },
@@ -176,7 +180,10 @@ namespace EnergyHost.Services.Services
                     { "LoadImported", LoadImported },
                     { "SolarExported", SolarExported },
                     { "BatteryImported", BatteryImported },
-                    { "BatteryExported", BatteryExported }
+                    { "BatteryExported", BatteryExported },
+                    { "bedroomTemp", NetatmoData?.BedroomTemp ?? 0 },
+                    { "bedroomHumidity", NetatmoData?.BedroomHumidity ?? 0},
+                    { "bedroomCO2", NetatmoData?.BedroomCO2 ?? 0},
 
 
                     //{ "MonthTotalCost", AmberUsage?.data.lastMonthUsage.FromGrid.actualCost ?? 0 },
@@ -254,35 +261,47 @@ namespace EnergyHost.Services.Services
             {
                 await Task.Delay(5000);
             }
-
-            var usage = new List<DailyUsage>();
-            usage.AddRange(AmberUsage.data.lastMonthDailyUsage);
-            usage.AddRange(AmberUsage.data.lastWeekDailyUsage);
-            usage.AddRange(AmberUsage.data.thisWeekDailyUsage);
-
-            await _writeUsage(usage);
-
-
-            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastMonthUsage, null,
-                AmberUsage.data.lastMonthUsage.FromGrid.date);
-            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastMonthUsage, null,
-                AmberUsage.data.lastMonthUsage.ToGrid.date);
-
-            await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.lastWeekUsage, null,
-                AmberUsage.data.lastWeekUsage.FromGrid.date);
-            await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.lastWeekUsage, null,
-                AmberUsage.data.lastWeekUsage.ToGrid.date);
-
-            if (AmberUsage.data.thisWeekUsage.ToGrid != null)
-            {
-                await _influxService.WriteObject("house", "amberPeriodUsageFromGrid", AmberUsage.data.thisWeekUsage,
-                    null, AmberUsage.data.thisWeekUsage.FromGrid.date);
-                await _influxService.WriteObject("house", "amberPeriodUsageToGrid", AmberUsage.data.thisWeekUsage, null,
-                    AmberUsage.data.thisWeekUsage.ToGrid.date);
-            }
+            await _writeUsageV2(_amberService.Compose(AmberUsage), "FromGrid");
+            await _writeUsageV2(_amberService.Compose(AmberUsage, true), "ToGrid");
         }
 
 
+
+        public async Task _writeUsageV2(AmberPriceComposed composed, string meter)
+        {
+            foreach (var d in composed.Days)
+            {
+                await _influxService.WriteObject("house", $"amberDailyUsage{meter}", d, null, d.Start.ToUniversalTime());
+            }
+        }
+
+        public async Task _writeClipsal(List<ClipsalInflux> clipsal)
+        {
+            foreach (var d in clipsal)
+            {
+                await _influxService.WriteObject("house", $"deviceUsage", d, null, d.date);
+            }
+        }
+
+        public async Task _writeClipsalInst(ClipsalInstant clipsal)
+        {
+            try
+            {
+                var influx = new ClipsalInflux
+                {
+                    ac = clipsal.appliances.First(_ => _.assignment == "load_air_conditioner__1").power,
+                    powerpoints = clipsal.appliances.First(_ => _.assignment == "load_powerpoint__1").power,
+                    oven = clipsal.appliances.First(_ => _.assignment == "load_oven__1").power,
+                    other = clipsal.appliances.First(_ => _.assignment == "load_residual").power
+                };
+
+                await _influxService.WriteObject("house", $"deviceUsageInstant", influx, null, DateTime.Now.ToUniversalTime());
+            }catch(Exception ex)
+            {
+                _logService.WriteError(ex);
+            }
+            
+        }
 
         public async Task _writeUsage(List<DailyUsage> usage)
         {
@@ -318,11 +337,23 @@ namespace EnergyHost.Services.Services
             {
                 await _powerwallService.ConfigureReserve(CurrentPriceIn, BatteryLevel);
 
-                AmberUsage = await _amberService.GetUsage();
+                var t1 = _amberService.Get();
+                var t2 = _clipsalService.Get(0);
+
+                Task.WaitAll(t1, t2);
+
+                AmberUsage = await t1;
+                var clipsalUsage = await t2;
 
                 if (AmberUsage != null)
                 {
                     await _writeAmberUsage();
+                }
+
+                if (clipsalUsage != null && clipsalUsage.Count > 0)
+                {
+                    ClipsalUsage = _clipsalService.Compose(clipsalUsage);
+                    await _writeClipsal(ClipsalUsage);
                 }
 
 
@@ -429,6 +460,17 @@ namespace EnergyHost.Services.Services
         //    }
         //}
 
+        async void _deviceUpdate60s()
+        {
+            while (true)
+            {
+                var inst = await _clipsalService.GetInstant();
+                await _writeClipsalInst(inst);
+                await Task.Delay(TimeSpan.FromSeconds(60));
+            }
+        }
+
+
         async void _deviceUpdate10s()
         {
             while (true)
@@ -452,7 +494,7 @@ namespace EnergyHost.Services.Services
                     BatteryLevel = powerWall.charge;
                     IsCharging = powerWall.battery.instant_power < 0;
                     IsDischarging = powerWall.battery.instant_power > 0;
-                    
+
                     LoadImported = Math.Round(powerWall.load.energy_imported / 1000, 2);
                     SolarExported = Math.Round(powerWall.solar.energy_exported / 1000, 2);
                     BatteryExported = Math.Round(powerWall.battery.energy_exported / 1000, 2);
