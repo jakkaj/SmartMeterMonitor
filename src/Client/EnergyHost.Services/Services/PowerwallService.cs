@@ -120,15 +120,21 @@ namespace EnergyHost.Services.Services
 
             var start = await _influxService.Query("house", $"SELECT first(\"LoadImported\") from \"currentStatus\" WHERE time > '{dtMidnight}' tz('Australia/Sydney')");
             var end = await _influxService.Query("house", $"SELECT last(\"LoadImported\") from \"currentStatus\" WHERE time > '{dtMidnight}' tz('Australia/Sydney')");
+            try
+            {
+                var startVal = start.Results[0].Series[0].Values[0][1];
 
-            var startVal = start.Results[0].Series[0].Values[0][1];
-
-            var endVal = end.Results[0].Series[0].Values[0][1];
+                var endVal = end.Results[0].Series[0].Values[0][1];
 
 
-            var result = Convert.ToDouble(endVal) - Convert.ToDouble(startVal);
+                var result = Convert.ToDouble(endVal) - Convert.ToDouble(startVal);
 
-            return Math.Round(result, 2);
+                return Math.Round(result, 2);
+            }
+            catch { }
+
+            return 0;
+
         }
 
         public async Task<Powerwall> GetPowerwall()
