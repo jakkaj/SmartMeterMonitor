@@ -23,7 +23,7 @@ namespace EnergyHost.Services.Services
         private readonly IInfluxService _influxService;
         private readonly IAmberServiceV2 _amberService;
         private readonly IEnergyFuturesService _energyFuturesService;
-        private readonly IMQTTService _mqttService;
+       
         private readonly ISystemStatusService _statusService;
         private readonly IThresholdingService _thresholdingService;
         private readonly INotificationService _notificationService;
@@ -78,7 +78,6 @@ namespace EnergyHost.Services.Services
             IInfluxService influxService,
             IAmberServiceV2 amberService,
             IEnergyFuturesService energyFuturesService,
-            IMQTTService mqttService,
             ISystemStatusService statusService,
             IThresholdingService thresholdingService,
             INotificationService notificationService,
@@ -93,7 +92,7 @@ namespace EnergyHost.Services.Services
             _influxService = influxService;
             _amberService = amberService;
             _energyFuturesService = energyFuturesService;
-            _mqttService = mqttService;
+            
             _statusService = statusService;
             _thresholdingService = thresholdingService;
             _notificationService = notificationService;
@@ -118,7 +117,7 @@ namespace EnergyHost.Services.Services
             _fiveMinuteEvenPoller();
             _hourEvenPoller();
 
-            await _mqttService.Setup();
+            //await _mqttService.Setup();
 
             await Task.Delay(TimeSpan.FromSeconds(10));
 
@@ -214,42 +213,42 @@ namespace EnergyHost.Services.Services
 
 
 
-            await _statusService.SendStatus(new EnergyPriceStatus
-            {
-                CurrentPriceIn = CurrentPriceIn,
-                CurrentPriceOut = CurrentPriceOut
+            //await _statusService.SendStatus(new EnergyPriceStatus
+            //{
+            //    CurrentPriceIn = CurrentPriceIn,
+            //    CurrentPriceOut = CurrentPriceOut
 
-            });
+            //});
 
-            await _statusService.SendStatus(new DaikinStatus
-            {
-                DaikinSetTemperature = DaikinSetTemperature,
-                DaikinInsideTemperature = DaikinInsideTemperature,
-                DaikinMode = DaikinMode,
-                DaikinPoweredOn = DaikinPoweredOn
-            });
+            //await _statusService.SendStatus(new DaikinStatus
+            //{
+            //    DaikinSetTemperature = DaikinSetTemperature,
+            //    DaikinInsideTemperature = DaikinInsideTemperature,
+            //    DaikinMode = DaikinMode,
+            //    DaikinPoweredOn = DaikinPoweredOn
+            //});
 
-            await _statusService.SendStatus(new WeatherStatus
-            {
-                CurrentTemp = CurrentWeather.temp,
-                Humidity = CurrentWeather.humid,
-                Pressure = CurrentWeather.pressure,
-                WindSpeed = CurrentWeather.wind,
-                MinToday = CurrentWeather.minToday,
-                MaxToday = CurrentWeather.maxToday,
-                MinTomorrow = CurrentWeather.minTomorrow,
-                MaxTomorrow = CurrentWeather.maxTomorrow
+            //await _statusService.SendStatus(new WeatherStatus
+            //{
+            //    CurrentTemp = CurrentWeather.temp,
+            //    Humidity = CurrentWeather.humid,
+            //    Pressure = CurrentWeather.pressure,
+            //    WindSpeed = CurrentWeather.wind,
+            //    MinToday = CurrentWeather.minToday,
+            //    MaxToday = CurrentWeather.maxToday,
+            //    MinTomorrow = CurrentWeather.minTomorrow,
+            //    MaxTomorrow = CurrentWeather.maxTomorrow
 
-            });
+            //});
 
-            await _statusService.SendStatus(new PowerStatus
-            {
-                KWHIn = _mqttService.KWH,
-                KWHSolar = SolarOutput,
-                KWHSolarToday = SolarToday
-            });
+            //await _statusService.SendStatus(new PowerStatus
+            //{
+            //    KWHIn = _mqttService.KWH,
+            //    KWHSolar = SolarOutput,
+            //    KWHSolarToday = SolarToday
+            //});
 
-            await _statusService.SendStatus(new TimeStatus(), false);//time pump
+            //await _statusService.SendStatus(new TimeStatus(), false);//time pump
 
             await _thresholdingService.RunChecks(data);
 
