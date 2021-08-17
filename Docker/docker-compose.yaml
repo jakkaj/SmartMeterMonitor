@@ -1,5 +1,28 @@
-version: '3'
+version: '2.4'
 services:
+  clipsal:    
+    restart: always
+    build: 
+      context: ../src/Clipsal 
+      dockerfile: Dockerfile    
+    ports:
+    - 3005:3005
+    env_file: .env_clipsal
+  amber:    
+    restart: always
+    build: 
+      context: ../src/Amber 
+      dockerfile: Dockerfile    
+    ports:
+    - 3004:3004
+    env_file: .env
+  tesla:    
+    restart: always
+    build: 
+      context: ../src/Tesla
+      dockerfile: Dockerfile    
+    ports:
+    - 5061:5001
   modbus:
     volumes:
       - /etc/localtime:/etc/localtime
@@ -21,13 +44,16 @@ services:
       - "9001:9001"
     volumes:
     - eclipse-mosquitto
-  influxdb:
-    image: "influxdb"
+  influxdb:    
+    image: "influxdb:1.8.9"
     ports:
     - "8086:8086"
     volumes:
-    - /data/influx2:/var/lib/influxdb 
+    
+    - /data/influx1:/var/lib/influxdb
     restart: always
+    
+    
   grafana:
     image: "grafana/grafana"
     environment: 

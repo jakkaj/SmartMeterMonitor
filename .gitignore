@@ -408,3 +408,4 @@ src/Clipsal/amberdata
 src/Clipsal/amberserver
 src/Clipsal/clipsalserver
 src/Clipsal/pkg/amber/accesstoken.json
+Docker/.env_clipsal
