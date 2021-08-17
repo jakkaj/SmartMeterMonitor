@@ -1,9 +1,9 @@
 
 ### Get first
-GET http://192.168.0.229:8086/query?db=house&q=SELECT first("LoadImported") from "currentStatus" WHERE time > '2021-05-14T14:00:00Z' tz('Australia/Sydney')
+GET http://192.168.0.246:8086/query?db=house&q=SELECT first("LoadImported") from "currentStatus" WHERE time > '2021-05-14T14:00:00Z' tz('Australia/Sydney')
 
 
 ### get last
-GET http://192.168.0.229:8086/query?db=house&q=SELECT last("LoadImported") from "currentStatus" WHERE time > '2021-05-14T14:00:00Z' tz('Australia/Sydney')
+GET http://192.168.0.246:8086/query?db=house&q=SELECT last("LoadImported") from "currentStatus" WHERE time > '2021-05-14T14:00:00Z' tz('Australia/Sydney')
 
 
