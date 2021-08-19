@@ -1,0 +1,3 @@
+
+### Test
+GET http://influxdbrestore:8086/query?db=house_bak&q=SELECT first("ctkwh") from "currentStatus" WHERE time > '2021-02-02T14:10:00Z' tz('Australia/Sydney')
