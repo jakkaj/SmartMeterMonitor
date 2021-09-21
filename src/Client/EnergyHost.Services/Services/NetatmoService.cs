@@ -47,23 +47,23 @@ namespace EnergyHost.Services.Services
                 var bedroomData = result.Body.Devices[0].Modules[3].DashboardData;
                 var netatmoData = new NetatmoData
                 {
-                    IndoorTemp = indoorData.Temperature,
-                    OutdoorTemp = outdoorData.Temperature,
-                    BedroomTemp = bedroomData.Temperature,
-                    AbsPressure = indoorData.AbsolutePressure,
-                    Pressure = indoorData.Pressure,
-                    CO2 = indoorData.CO2,
-                    BedroomCO2 = bedroomData.CO2,
-                    IndoorHumidity = indoorData.Humidity,
-                    OutdoorHumidity = outdoorData.Humidity,
-                    BedroomHumidity = bedroomData.Humidity,
-                    Noise = indoorData.Noise,
-                    Rain = rainData.Rain,
-                    Rain24 = rainData.SumRain24,
-                    Rain1 = rainData.SumRain1,
-                    WindAngle = windData.WindAngle,
-                    WindStrength = windData.WindStrength,
-                    WindGusts = windData.GustStrength
+                    IndoorTemp = indoorData?.Temperature,
+                    OutdoorTemp = outdoorData?.Temperature,
+                    BedroomTemp = bedroomData?.Temperature,
+                    AbsPressure = indoorData?.AbsolutePressure,
+                    Pressure = indoorData?.Pressure,
+                    CO2 = indoorData?.CO2,
+                    BedroomCO2 = bedroomData?.CO2,
+                    IndoorHumidity = indoorData?.Humidity,
+                    OutdoorHumidity = outdoorData?.Humidity,
+                    BedroomHumidity = bedroomData?.Humidity,
+                    Noise = indoorData?.Noise,
+                    Rain = rainData?.Rain,
+                    Rain24 = rainData?.SumRain24,
+                    Rain1 = rainData?.SumRain1,
+                    WindAngle = windData?.WindAngle,
+                    WindStrength = windData?.WindStrength,
+                    WindGusts = windData?.GustStrength
                 };
 
                 return netatmoData;
