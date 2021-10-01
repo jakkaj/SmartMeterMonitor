@@ -35,6 +35,13 @@ namespace EnergyHost.Services.Services
 
 
             List<AmberDay> days = new List<AmberDay>();
+
+            if (data == null || data.LivePrice == null || data.LivePrice.data == null)
+                
+            {
+                return null;
+            }
+
             foreach (var day in data.LivePrice.data.snapshots.billingDays)
             {
                 var amberDay = new AmberDay();

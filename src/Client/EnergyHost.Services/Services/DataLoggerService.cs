@@ -268,6 +268,10 @@ namespace EnergyHost.Services.Services
 
         public async Task _writeUsageV2(AmberPriceComposed composed, string meter)
         {
+            if(composed == null)
+            {
+                return;
+            }
             foreach (var d in composed.Days)
             {
                 await _influxService.WriteObject("house", $"amberDailyUsage{meter}", d, null, d.Start.ToUniversalTime());
