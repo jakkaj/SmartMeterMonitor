@@ -137,6 +137,31 @@ namespace EnergyHost.Services.Services
 
         }
 
+        public async Task<double> GetSolarToday()
+        {
+            var dtToday = DateTime.Today.ToUniversalTime().Subtract(TimeSpan.FromMinutes(1));
+
+            var dtMidnight = dtToday.ToString("s") + "Z";
+
+            var start = await _influxService.Query("house", $"SELECT first(\"SolarExported\") from \"currentStatus\" WHERE time > '{dtMidnight}' tz('Australia/Sydney')");
+            var end = await _influxService.Query("house", $"SELECT last(\"SolarExported\") from \"currentStatus\" WHERE time > '{dtMidnight}' tz('Australia/Sydney')");
+            try
+            {
+                var startVal = start.Results[0].Series[0].Values[0][1];
+
+                var endVal = end.Results[0].Series[0].Values[0][1];
+
+
+                var result = Convert.ToDouble(endVal) - Convert.ToDouble(startVal);
+
+                return Math.Round(result, 2);
+            }
+            catch { }
+
+            return 0;
+
+        }
+
         public async Task<Powerwall> GetPowerwall()
         {
             try

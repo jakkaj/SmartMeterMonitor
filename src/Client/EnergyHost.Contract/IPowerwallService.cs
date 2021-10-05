@@ -10,5 +10,7 @@ namespace EnergyHost.Contract
         Task<int> GetReservePercent();
         Task<string> SetReservePercent(int reserve);
         Task ConfigureReserve(double currentPriceIn, double batteryPercentage);
+
+        Task<double> GetSolarToday();
     }
 }

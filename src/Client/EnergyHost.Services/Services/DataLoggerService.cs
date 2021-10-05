@@ -481,7 +481,8 @@ namespace EnergyHost.Services.Services
                 var tAbbModbus = _abbService.GetModbus();
                 var tPowerall = _powerwallService.GetPowerwall();
                 var tUsed = _powerwallService.GetUsedToday();
-                await Task.WhenAll(tAbbModbus, tPowerall, tUsed);
+                var tSolarToday = _powerwallService.GetSolarToday();
+                await Task.WhenAll(tAbbModbus, tPowerall, tUsed, tSolarToday);
 
                 var abbModbus = await tAbbModbus;
 
@@ -539,7 +540,7 @@ namespace EnergyHost.Services.Services
 
                     if (abbModbus.PhVphA != null)
                     {
-                        SystemVoltage = (double)abbModbus.PhVphA;
+                        SystemVoltage = (double)abbModbus.PPVphAB;
                     }
                     else
                     {
@@ -548,6 +549,10 @@ namespace EnergyHost.Services.Services
 
 
                 }
+
+                var solarToday = await tSolarToday;
+
+                SolarToday = solarToday;
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
