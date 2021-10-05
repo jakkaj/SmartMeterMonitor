@@ -34,6 +34,8 @@ namespace EnergyHost.Services.Services
 
         public double SolarOutput { get; set; } = 0;
         public double EnergyUsage { get; set; } = 0; //Grid
+        public double SiteImported { get; set; } = 0;
+        public double SiteExported { get; set; } = 0;
         public double SystemVoltage { get; set; } = 0;
         public double SolarToday { get; set; } = 0;
         public double DaikinInsideTemperature { get; set; }
@@ -178,6 +180,8 @@ namespace EnergyHost.Services.Services
                     { "IsDischarging", IsDischarging },
                     { "LoadImported", LoadImported },
                     { "SolarExported", SolarExported },
+                    { "SiteExported", SiteExported},
+                    { "SiteImported", SiteImported},
                     { "BatteryImported", BatteryImported },
                     { "BatteryExported", BatteryExported },
                     { "bedroomTemp", NetatmoData?.BedroomTemp ?? 0 },
@@ -504,6 +508,9 @@ namespace EnergyHost.Services.Services
                     SolarOutput = Math.Round(powerWall.solar.instant_power / 1000, 2);
                     BatteryExported = Math.Round(powerWall.battery.energy_exported / 1000, 2);
                     BatteryImported = Math.Round(powerWall.battery.energy_imported / 1000, 2);
+
+                    SiteExported = Math.Round(powerWall.site.energy_exported / 1000, 2);
+                    SiteImported = Math.Round(powerWall.site.energy_imported / 1000, 2);
 
                     Consumption = pUsed;
                 }
