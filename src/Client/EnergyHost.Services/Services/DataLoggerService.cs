@@ -478,13 +478,13 @@ namespace EnergyHost.Services.Services
         {
             while (true)
             {
-                var tAbbModbus = _abbService.GetModbus();
+                //var tAbbModbus = _abbService.GetModbus();
                 var tPowerall = _powerwallService.GetPowerwall();
                 var tUsed = _powerwallService.GetUsedToday();
                 var tSolarToday = _powerwallService.GetSolarToday();
-                await Task.WhenAll(tAbbModbus, tPowerall, tUsed, tSolarToday);
+                await Task.WhenAll(tPowerall, tUsed, tSolarToday);
 
-                var abbModbus = await tAbbModbus;
+                //var abbModbus = await tAbbModbus;
 
                 var powerWall = await tPowerall;
 
@@ -501,54 +501,55 @@ namespace EnergyHost.Services.Services
 
                     LoadImported = Math.Round(powerWall.load.energy_imported / 1000, 2);
                     SolarExported = Math.Round(powerWall.solar.energy_exported / 1000, 2);
+                    SolarOutput = Math.Round(powerWall.solar.instant_power / 1000, 2);
                     BatteryExported = Math.Round(powerWall.battery.energy_exported / 1000, 2);
                     BatteryImported = Math.Round(powerWall.battery.energy_imported / 1000, 2);
 
                     Consumption = pUsed;
                 }
 
-                if (abbModbus != null)
-                {
+                //if (abbModbus != null)
+                //{
 
-                    //if (-abbModbus?.meter?.W != null && -abbModbus.meter.W != 0)
-                    //{
-                    //    EnergyUsage = -abbModbus.meter.W / 1000;
-                    //}
-                    ////else
-                    ////{
-                    ////    EnergyUsage = abbModbus.siteCurrentPowerFlow.GRID.currentPower;
-                    ////}
+                //    //if (-abbModbus?.meter?.W != null && -abbModbus.meter.W != 0)
+                //    //{
+                //    //    EnergyUsage = -abbModbus.meter.W / 1000;
+                //    //}
+                //    ////else
+                //    ////{
+                //    ////    EnergyUsage = abbModbus.siteCurrentPowerFlow.GRID.currentPower;
+                //    ////}
 
-                    if (abbModbus.W != 0)
-                    {
-                        SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
-                    }
+                //    //if (abbModbus.W != 0)
+                //    //{
+                //    //    SolarOutput = Convert.ToDouble(abbModbus.W) / 1000;
+                //    //}
 
-                    if (abbModbus?.energyDetails != null)
-                    {
-                        SolarToday = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Production").values[0].value) / 1000;
-                        //Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value) / 1000;
-                        Purchased = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Purchased").values[0].value) / 1000;
-                        SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value) / 1000;
-                        FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value) / 1000;
+                //    if (abbModbus?.energyDetails != null)
+                //    {
+                //        SolarToday = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Production").values[0].value) / 1000;
+                //        //Consumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Consumption").values[0].value) / 1000;
+                //        Purchased = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "Purchased").values[0].value) / 1000;
+                //        SelfConsumption = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "SelfConsumption").values[0].value) / 1000;
+                //        FeedIn = Convert.ToDouble(abbModbus.energyDetails.meters.First(_ => _.type == "FeedIn").values[0].value) / 1000;
 
-                    }
-                    else
-                    {
-                        SolarOutput = 0;
-                    }
+                //    }
+                //    else
+                //    {
+                //        SolarOutput = 0;
+                //    }
 
-                    if (abbModbus.PhVphA != null)
-                    {
-                        SystemVoltage = (double)abbModbus.PPVphAB;
-                    }
-                    else
-                    {
-                        SystemVoltage = 0;
-                    }
+                //    if (abbModbus.PhVphA != null)
+                //    {
+                //        SystemVoltage = (double)abbModbus.PPVphAB;
+                //    }
+                //    else
+                //    {
+                //        SystemVoltage = 0;
+                //    }
 
 
-                }
+                //}
 
                 var solarToday = await tSolarToday;
 
