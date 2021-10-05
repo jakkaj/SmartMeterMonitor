@@ -537,7 +537,7 @@ namespace EnergyHost.Services.Services
                     else
                     {
                         SolarOutput = 0;
-                    }aa
+                    }
                     if (abbModbus.PhVphA != null)
                     {
                         SystemVoltage = (double)abbModbus.PPVphAB;
