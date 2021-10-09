@@ -27,6 +27,60 @@ namespace EnergyHost.Services.Services
             _httpClientFactory = httpClientFactory;
         }
 
+        bool _lastOvenOn = false;
+        DateTime _startOven = DateTime.Now;
+
+        public async Task CheckOven(List<ClipsalInflux> clipsal)
+        {
+            if (clipsal.Count() == 0)
+            {
+                return;
+            }
+
+            var oven = clipsal.Last().oven;
+
+            var ovenOn = oven > 1;
+
+            if (ovenOn && !_lastOvenOn)
+            {
+                _startOven = DateTime.Now;
+            }
+
+            var ovenWarmUp = TimeSpan.FromMinutes(10);
+
+            if (!ovenOn && _lastOvenOn && DateTime.Now.Subtract(_startOven) > ovenWarmUp)
+            {
+                //call the url
+                await _notifyOven();                
+            }
+
+            _lastOvenOn = ovenOn;
+
+
+
+
+        }
+
+        async Task _notifyOven()
+        {
+            try
+            {
+                using (var client = _httpClientFactory.CreateClient())
+                {
+                    _logService.WriteLog($"Notify Oven: {_settings.Value.CLIPSAL_OVEN_URL}");
+
+                    var uri = new Uri(_settings.Value.CLIPSAL_OVEN_URL);
+                    var result = await client.GetAsync(uri);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logService.WriteError(ex);
+                return;
+            }
+
+        }
+
         public List<ClipsalInflux> Compose(List<ClipsalUsage> usage)
         {
             var l = new List<ClipsalInflux>();

@@ -288,7 +288,11 @@ namespace EnergyHost.Services.Services
             {
                 await _influxService.WriteObject("house", $"deviceUsage", d, null, d.date);
             }
+
+            await _clipsalService.CheckOven(clipsal);
         }
+
+       
 
         public async Task _writeClipsalInst(ClipsalInstant clipsal)
         {
