@@ -69,7 +69,7 @@ namespace EnergyHost.Services.Services
                 {
                     _logService.WriteLog($"Notify Oven: {_settings.Value.CLIPSAL_OVEN_URL}");
 
-                    var uri = new Uri(_settings.Value.CLIPSAL_OVEN_URL);
+                    var uri = new Uri(_settings.Value.CLIPSAL_OVEN_URL); //using www.virtualbuttons.com
                     var result = await client.GetAsync(uri);
                 }
             }
