@@ -46,7 +46,7 @@ namespace EnergyHost.Services.Services
                 _startOven = DateTime.Now;
             }
 
-            var ovenWarmUp = TimeSpan.FromMinutes(10);
+            var ovenWarmUp = TimeSpan.FromMinutes(6);
 
             if (!ovenOn && _lastOvenOn && DateTime.Now.Subtract(_startOven) > ovenWarmUp)
             {
