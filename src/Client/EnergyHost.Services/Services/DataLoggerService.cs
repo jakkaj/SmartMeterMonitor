@@ -287,9 +287,7 @@ namespace EnergyHost.Services.Services
             foreach (var d in clipsal)
             {
                 await _influxService.WriteObject("house", $"deviceUsage", d, null, d.date);
-            }
-
-            await _clipsalService.CheckOven(clipsal);
+            }            
         }
 
        
@@ -306,7 +304,11 @@ namespace EnergyHost.Services.Services
                     other = clipsal.appliances.First(_ => _.assignment == "load_residual").power
                 };
 
+                
+
                 await _influxService.WriteObject("house", $"deviceUsageInstant", influx, null, DateTime.Now.ToUniversalTime());
+
+                await _clipsalService.CheckOven(influx.oven);
             }catch(Exception ex)
             {
                 _logService.WriteError(ex);

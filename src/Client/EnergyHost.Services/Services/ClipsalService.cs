@@ -30,15 +30,8 @@ namespace EnergyHost.Services.Services
         bool _lastOvenOn = false;
         DateTime _startOven = DateTime.Now;
 
-        public async Task CheckOven(List<ClipsalInflux> clipsal)
+        public async Task CheckOven(double oven)
         {
-            if (clipsal.Count() == 0)
-            {
-                return;
-            }
-
-            var oven = clipsal.Last().oven;
-
             var ovenOn = oven > 1;
 
             if (ovenOn && !_lastOvenOn)
