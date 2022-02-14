@@ -82,10 +82,10 @@ namespace EnergyHost.Services.Services
                 var ci = new ClipsalInflux
                 {
                     date = DateTime.Parse(u.datetime).ToUniversalTime(),
-                    powerpoints = u.load_powerpoint__1 / 1000,
-                    oven = u.load_oven__1 / 1000,
-                    ac = u.load_air_conditioner__1 / 1000,
-                    other = u.load_residual / 1000
+                    powerpoints = (u.load_powerpoint__1 ?? 0) / 1000,
+                    oven = (u.load_oven__1 ?? 0) / 1000,
+                    ac = (u.load_air_conditioner__1 ?? 0) / 1000,
+                    other = (u.load_residual ?? 0) / 1000
                 };
                 l.Add(ci);
             }
